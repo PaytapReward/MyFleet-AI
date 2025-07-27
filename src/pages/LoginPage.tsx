@@ -167,7 +167,7 @@ const LoginPage = () => {
                   </Button>
                 </div>
                 <div className="text-xs text-muted-foreground text-center mt-4">
-                  For demo purposes, use OTP: <strong>12345</strong>
+                  For demo purposes, use OTP: <strong>123456</strong>
                 </div>
               </>
             )}

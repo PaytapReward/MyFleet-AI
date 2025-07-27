@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const login = async (phone: string, otp: string): Promise<boolean> => {
     // Mock OTP verification - in real app, this would call backend API
-    if (otp === '12345') {
+    if (otp === '123456') {
       // Check if user exists (mock check)
       const existingUser = localStorage.getItem(`user_${phone}`);
       
