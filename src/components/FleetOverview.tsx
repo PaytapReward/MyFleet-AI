@@ -23,48 +23,48 @@ const FleetOverview = () => {
   const complianceRate = totalDocuments > 0 ? Math.round((activeDocuments / totalDocuments) * 100) : 0;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6">
       <Card className="shadow-sm hover:shadow-md transition-all duration-200">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Vehicles</CardTitle>
-          <TrendingUp className="h-4 w-4 text-primary" />
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 lg:p-6 lg:pb-2">
+          <CardTitle className="text-xs lg:text-sm font-medium">Total Vehicles</CardTitle>
+          <TrendingUp className="h-3 w-3 lg:h-4 lg:w-4 text-primary" />
         </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-foreground">{totalVehicles}</div>
-          <p className="text-xs text-muted-foreground">Active fleet size</p>
+        <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0">
+          <div className="text-lg lg:text-2xl font-bold text-foreground">{totalVehicles}</div>
+          <p className="text-[10px] lg:text-xs text-muted-foreground">Active fleet size</p>
         </CardContent>
       </Card>
 
       <Card className="shadow-sm hover:shadow-md transition-all duration-200">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">PayTap Balance</CardTitle>
-          <TrendingUp className="h-4 w-4 text-status-active" />
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 lg:p-6 lg:pb-2">
+          <CardTitle className="text-xs lg:text-sm font-medium">PayTap Balance</CardTitle>
+          <TrendingUp className="h-3 w-3 lg:h-4 lg:w-4 text-status-active" />
         </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-foreground">₹{totalPayTapBalance.toLocaleString()}</div>
-          <p className="text-xs text-muted-foreground">Total across fleet</p>
+        <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0">
+          <div className="text-lg lg:text-2xl font-bold text-foreground">₹{totalPayTapBalance.toLocaleString()}</div>
+          <p className="text-[10px] lg:text-xs text-muted-foreground">Total across fleet</p>
         </CardContent>
       </Card>
 
       <Card className="shadow-sm hover:shadow-md transition-all duration-200">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Pending Challans</CardTitle>
-          <AlertTriangle className="h-4 w-4 text-status-urgent" />
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 lg:p-6 lg:pb-2">
+          <CardTitle className="text-xs lg:text-sm font-medium">Pending Challans</CardTitle>
+          <AlertTriangle className="h-3 w-3 lg:h-4 lg:w-4 text-status-urgent" />
         </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-status-urgent">{totalChallans}</div>
-          <p className="text-xs text-muted-foreground">Requires attention</p>
+        <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0">
+          <div className="text-lg lg:text-2xl font-bold text-status-urgent">{totalChallans}</div>
+          <p className="text-[10px] lg:text-xs text-muted-foreground">Requires attention</p>
         </CardContent>
       </Card>
 
       <Card className="shadow-sm hover:shadow-md transition-all duration-200">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Documents Status</CardTitle>
-          <CheckCircle className="h-4 w-4 text-status-active" />
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 lg:p-6 lg:pb-2">
+          <CardTitle className="text-xs lg:text-sm font-medium">Documents</CardTitle>
+          <CheckCircle className="h-3 w-3 lg:h-4 lg:w-4 text-status-active" />
         </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-status-pending">{complianceRate}%</div>
-          <p className="text-xs text-muted-foreground">Compliance rate</p>
+        <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0">
+          <div className="text-lg lg:text-2xl font-bold text-status-pending">{complianceRate}%</div>
+          <p className="text-[10px] lg:text-xs text-muted-foreground">Compliance rate</p>
         </CardContent>
       </Card>
     </div>
