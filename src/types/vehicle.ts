@@ -20,5 +20,5 @@ export interface Vehicle {
 export interface AddVehicleFormData {
   number: string;
   model: string;
-  payTapBalance: number;
+  payTapActivationCode: string;
 }

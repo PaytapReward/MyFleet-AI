@@ -13,7 +13,7 @@ const AddVehicleModal = () => {
   const [formData, setFormData] = useState<AddVehicleFormData>({
     number: "",
     model: "",
-    payTapBalance: 0
+    payTapActivationCode: ""
   });
   const [isLoading, setIsLoading] = useState(false);
   
@@ -76,7 +76,7 @@ const AddVehicleModal = () => {
       });
 
       // Reset form and close modal
-      setFormData({ number: "", model: "", payTapBalance: 0 });
+      setFormData({ number: "", model: "", payTapActivationCode: "" });
       setOpen(false);
     } catch (error) {
       toast({
@@ -124,14 +124,13 @@ const AddVehicleModal = () => {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="balance">Initial PayTap Balance (₹)</Label>
+            <Label htmlFor="activationCode">Link PayTap Tag (Activation Code)</Label>
             <Input
-              id="balance"
-              type="number"
-              placeholder="0"
-              min="0"
-              value={formData.payTapBalance}
-              onChange={(e) => setFormData(prev => ({ ...prev, payTapBalance: parseInt(e.target.value) || 0 }))}
+              id="activationCode"
+              type="text"
+              placeholder="e.g., PAY123456789"
+              value={formData.payTapActivationCode}
+              onChange={(e) => setFormData(prev => ({ ...prev, payTapActivationCode: e.target.value }))}
             />
           </div>
 

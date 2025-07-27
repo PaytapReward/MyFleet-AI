@@ -52,8 +52,8 @@ export const VehicleProvider: React.FC<{ children: React.ReactNode }> = ({ child
       id: Date.now().toString(),
       number: vehicleData.number,
       model: vehicleData.model,
-      payTapBalance: vehicleData.payTapBalance,
-      fastTagLinked: false,
+      payTapBalance: 0, // Default balance, will be updated when PayTap is synced
+      fastTagLinked: vehicleData.payTapActivationCode ? true : false,
       driver: null,
       lastService: "Not scheduled",
       gpsLinked: false,
