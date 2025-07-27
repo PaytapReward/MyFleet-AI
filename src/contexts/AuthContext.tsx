@@ -66,13 +66,41 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (phone: string, otp: string): Promise<boolean> => {
     // Mock OTP verification - in real app, this would call backend API
     if (otp === '123456') {
-      // Check if user exists (mock check)
-      const existingUser = localStorage.getItem(`user_${phone}`);
+      console.log(`Attempting login for phone: ${phone}`);
       
-      if (existingUser) {
-        const userData = JSON.parse(existingUser);
-        saveUser(userData);
+      // Check if user exists (mock check)
+      const existingUserData = localStorage.getItem(`user_${phone}`);
+      console.log(`Existing user data for ${phone}:`, existingUserData);
+      
+      if (existingUserData) {
+        try {
+          const userData = JSON.parse(existingUserData);
+          console.log(`Parsed user data:`, userData);
+          
+          // Ensure the user object has all required properties
+          const completeUser: User = {
+            id: userData.id || Date.now().toString(),
+            phone: userData.phone || phone,
+            fullName: userData.fullName,
+            companyName: userData.companyName,
+            panNumber: userData.panNumber,
+            isOnboarded: userData.isOnboarded || false
+          };
+          
+          console.log(`Complete user object:`, completeUser);
+          saveUser(completeUser);
+        } catch (error) {
+          console.error(`Error parsing user data for ${phone}:`, error);
+          // If data is corrupted, treat as new user
+          const newUser: User = {
+            id: Date.now().toString(),
+            phone,
+            isOnboarded: false
+          };
+          saveUser(newUser);
+        }
       } else {
+        console.log(`No existing user found for ${phone}, creating new user`);
         // New user - create minimal profile
         const newUser: User = {
           id: Date.now().toString(),
@@ -93,16 +121,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     panNumber: string;
   }): Promise<boolean> => {
     try {
-      if (!user) return false;
+      if (!user) {
+        console.error('No user found during onboarding');
+        return false;
+      }
       
       const updatedUser: User = {
         ...user,
-        ...profileData,
+        fullName: profileData.fullName,
+        companyName: profileData.companyName,
+        panNumber: profileData.panNumber,
         isOnboarded: true
       };
       
-      // Save to phone-specific storage too
+      console.log(`Completing onboarding for user:`, updatedUser);
+      
+      // Save to phone-specific storage
       localStorage.setItem(`user_${user.phone}`, JSON.stringify(updatedUser));
+      console.log(`Saved user data to user_${user.phone}`);
+      
+      // Save to current user storage
       saveUser(updatedUser);
       
       // Create initial vehicle from onboarding data
@@ -127,6 +165,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       
       // Save initial vehicle to localStorage
       localStorage.setItem(`vehicles_${user.id}`, JSON.stringify([initialVehicle]));
+      console.log(`Saved initial vehicle for user ${user.id}:`, initialVehicle);
       
       return true;
     } catch (error) {
