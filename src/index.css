@@ -9,7 +9,7 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Fleet Management Brand Colors */
-    --background: 248 250 252;
+    --background: 0 0% 100%;
     --foreground: 215 25% 27%;
 
     --card: 0 0% 100%;
