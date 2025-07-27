@@ -144,4 +144,41 @@ All colors MUST be HSL.
   .fleet-card-hover {
     @apply hover:scale-[1.02] transition-transform duration-200;
   }
+
+  /* Mobile-first touch interactions */
+  @media (max-width: 768px) {
+    .mobile-card {
+      min-width: 280px;
+      max-width: 320px;
+    }
+    
+    .mobile-scroll {
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+    }
+    
+    .mobile-scroll > * {
+      scroll-snap-align: start;
+    }
+  }
+
+  /* Touch-friendly button states */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  /* Smooth transitions for mobile */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Pull-to-refresh styling */
+  .pull-to-refresh {
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+  }
+
+  .pull-to-refresh.pulling {
+    transform: translateY(60px);
+  }
 }

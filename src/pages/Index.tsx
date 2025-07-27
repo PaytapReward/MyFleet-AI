@@ -28,7 +28,7 @@ const Index = () => {
           </div>
           
           {/* Horizontal Scrolling Vehicle Cards */}
-          <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide">
+          <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide mobile-scroll">
             {mockVehicles.map((vehicle) => (
               <VehicleCard key={vehicle.id} vehicle={vehicle} />
             ))}
