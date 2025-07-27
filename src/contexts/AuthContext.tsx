@@ -20,6 +20,11 @@ interface AuthContextType {
     vehicleNumber: string;
     panNumber: string;
   }) => Promise<boolean>;
+  updateProfile: (profileData: {
+    fullName: string;
+    companyName: string;
+    panNumber: string;
+  }) => Promise<boolean>;
   sendOTP: (phone: string) => Promise<boolean>;
 }
 
@@ -174,6 +179,40 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  const updateProfile = async (profileData: {
+    fullName: string;
+    companyName: string;
+    panNumber: string;
+  }): Promise<boolean> => {
+    try {
+      if (!user) {
+        console.error('No user found during profile update');
+        return false;
+      }
+      
+      const updatedUser: User = {
+        ...user,
+        fullName: profileData.fullName,
+        companyName: profileData.companyName,
+        panNumber: profileData.panNumber,
+      };
+      
+      console.log(`Updating profile for user:`, updatedUser);
+      
+      // Save to phone-specific storage
+      localStorage.setItem(`user_${user.phone}`, JSON.stringify(updatedUser));
+      console.log(`Updated user data in user_${user.phone}`);
+      
+      // Save to current user storage
+      saveUser(updatedUser);
+      
+      return true;
+    } catch (error) {
+      console.error('Profile update failed:', error);
+      return false;
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('myfleet_user');
     setUser(null);
@@ -190,6 +229,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       login,
       logout,
       completeOnboarding,
+      updateProfile,
       sendOTP
     }}>
       {children}

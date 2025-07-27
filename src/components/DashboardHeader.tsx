@@ -1,6 +1,7 @@
-import { Bell, Menu, User, LogOut } from "lucide-react";
+import { Bell, Menu, User, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +13,7 @@ import {
 
 const DashboardHeader = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   
   return (
     <header className="bg-card border-b border-border px-4 py-3 shadow-sm">
@@ -42,12 +44,22 @@ const DashboardHeader = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium">{user?.fullName || 'Fleet Manager'}</p>
-                  <p className="text-xs text-muted-foreground">+91 {user?.phone}</p>
-                  {user?.companyName && (
-                    <p className="text-xs text-muted-foreground">{user.companyName}</p>
-                  )}
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium">{user?.fullName || 'Fleet Manager'}</p>
+                    <p className="text-xs text-muted-foreground">+91 {user?.phone}</p>
+                    {user?.companyName && (
+                      <p className="text-xs text-muted-foreground">{user.companyName}</p>
+                    )}
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className="h-6 w-6"
+                    onClick={() => navigate('/settings')}
+                  >
+                    <Settings className="h-4 w-4" />
+                  </Button>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
