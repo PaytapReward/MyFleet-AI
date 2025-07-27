@@ -14,7 +14,12 @@ interface AuthContextType {
   isLoading: boolean;
   login: (phone: string, otp: string) => Promise<boolean>;
   logout: () => void;
-  completeOnboarding: (userData: Partial<User>) => Promise<void>;
+  completeOnboarding: (profileData: {
+    fullName: string;
+    companyName: string;
+    vehicleNumber: string;
+    panNumber: string;
+  }) => Promise<boolean>;
   sendOTP: (phone: string) => Promise<boolean>;
 }
 
@@ -81,18 +86,53 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return false;
   };
 
-  const completeOnboarding = async (userData: Partial<User>): Promise<void> => {
-    if (!user) return;
-    
-    const updatedUser: User = {
-      ...user,
-      ...userData,
-      isOnboarded: true
-    };
-    
-    // Save to phone-specific storage too
-    localStorage.setItem(`user_${user.phone}`, JSON.stringify(updatedUser));
-    saveUser(updatedUser);
+  const completeOnboarding = async (profileData: {
+    fullName: string;
+    companyName: string;
+    vehicleNumber: string;
+    panNumber: string;
+  }): Promise<boolean> => {
+    try {
+      if (!user) return false;
+      
+      const updatedUser: User = {
+        ...user,
+        ...profileData,
+        isOnboarded: true
+      };
+      
+      // Save to phone-specific storage too
+      localStorage.setItem(`user_${user.phone}`, JSON.stringify(updatedUser));
+      saveUser(updatedUser);
+      
+      // Create initial vehicle from onboarding data
+      const initialVehicle = {
+        id: Date.now().toString(),
+        number: profileData.vehicleNumber,
+        model: "Not specified",
+        payTapBalance: 0,
+        fastTagLinked: false,
+        driver: null,
+        lastService: "Not scheduled",
+        gpsLinked: false,
+        challans: 0,
+        documents: {
+          pollution: { status: 'missing' as const },
+          registration: { status: 'missing' as const },
+          insurance: { status: 'missing' as const },
+          license: { status: 'missing' as const }
+        },
+        userId: user.id
+      };
+      
+      // Save initial vehicle to localStorage
+      localStorage.setItem(`vehicles_${user.id}`, JSON.stringify([initialVehicle]));
+      
+      return true;
+    } catch (error) {
+      console.error('Onboarding failed:', error);
+      return false;
+    }
   };
 
   const logout = () => {
