@@ -4,7 +4,7 @@ export interface Vehicle {
   model: string;
   payTapBalance: number;
   fastTagLinked: boolean;
-  driver: string | null;
+  driver: { id: string; name: string } | null;
   lastService: string;
   gpsLinked: boolean;
   challans: number;

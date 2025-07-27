@@ -7,6 +7,8 @@ interface VehicleContextType {
   addVehicle: (vehicleData: AddVehicleFormData) => void;
   removeVehicle: (vehicleId: string) => void;
   updateVehicle: (vehicleId: string, updates: Partial<Vehicle>) => void;
+  assignDriverToVehicle: (vehicleId: string, driverId: string) => void;
+  unassignDriverFromVehicle: (vehicleId: string, driverId: string) => void;
   isLoading: boolean;
 }
 
@@ -82,6 +84,24 @@ export const VehicleProvider: React.FC<{ children: React.ReactNode }> = ({ child
     );
   };
 
+  const assignDriverToVehicle = (vehicleId: string, driverId: string) => {
+    setVehicles(prev =>
+      prev.map(vehicle =>
+        vehicle.id === vehicleId 
+          ? { ...vehicle, driver: { id: driverId, name: 'Assigned' } }
+          : vehicle
+      )
+    );
+  };
+
+  const unassignDriverFromVehicle = (vehicleId: string, driverId: string) => {
+    setVehicles(prev =>
+      prev.map(vehicle =>
+        vehicle.id === vehicleId ? { ...vehicle, driver: null } : vehicle
+      )
+    );
+  };
+
   return (
     <VehicleContext.Provider
       value={{
@@ -89,6 +109,8 @@ export const VehicleProvider: React.FC<{ children: React.ReactNode }> = ({ child
         addVehicle,
         removeVehicle,
         updateVehicle,
+        assignDriverToVehicle,
+        unassignDriverFromVehicle,
         isLoading
       }}
     >

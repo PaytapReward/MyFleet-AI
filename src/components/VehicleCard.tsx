@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { 
   CreditCard, 
   Link as LinkIcon, 
@@ -14,6 +15,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import AssignDriverModal from "./AssignDriverModal";
+import { useDrivers } from "@/contexts/DriverContext";
 
 interface VehicleCardProps {
   vehicle: {
@@ -22,7 +25,7 @@ interface VehicleCardProps {
     model: string;
     payTapBalance: number;
     fastTagLinked: boolean;
-    driver: string | null;
+    driver: { id: string; name: string } | null;
     lastService: string;
     gpsLinked: boolean;
     challans: number;
@@ -36,6 +39,13 @@ interface VehicleCardProps {
 }
 
 const VehicleCard = ({ vehicle }: VehicleCardProps) => {
+  const { getDriverById } = useDrivers();
+  const [showDriverModal, setShowDriverModal] = useState(false);
+
+  // Get actual driver name from DriverContext
+  const actualDriver = vehicle.driver ? getDriverById(vehicle.driver.id) : null;
+  const driverName = actualDriver?.name || vehicle.driver?.name || null;
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'uploaded': return 'bg-status-active text-white';
@@ -109,11 +119,15 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
             <User className="h-4 w-4 text-primary" />
             <div>
               <p className="text-sm font-medium">Driver</p>
-              <p className="text-sm text-foreground">{vehicle.driver || 'Not Assigned'}</p>
+              <p className="text-sm text-foreground">{driverName || 'Not Assigned'}</p>
             </div>
           </div>
-          <Button size="sm" variant="secondary">
-            {vehicle.driver ? 'Change' : 'Assign'}
+          <Button 
+            size="sm" 
+            variant="secondary"
+            onClick={() => setShowDriverModal(true)}
+          >
+            {driverName ? 'Change' : 'Assign'}
           </Button>
         </div>
 
@@ -185,6 +199,15 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
           </div>
         </div>
       </CardContent>
+
+      {/* Driver Assignment Modal */}
+      <AssignDriverModal
+        open={showDriverModal}
+        setOpen={setShowDriverModal}
+        vehicleId={vehicle.id}
+        vehicleNumber={vehicle.number}
+        currentDriverId={vehicle.driver?.id}
+      />
     </Card>
   );
 };
