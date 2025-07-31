@@ -1,3 +1,23 @@
+// Generate mock financial data for different dates
+const generateFinancialData = () => {
+  const data = [];
+  const today = new Date();
+  
+  // Generate data for the last 365 days
+  for (let i = 0; i < 365; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() - i);
+    
+    data.push({
+      revenue: Math.floor(Math.random() * 5000) + 1000, // 1000-6000
+      expenses: Math.floor(Math.random() * 3000) + 500,  // 500-3500
+      date: date.toISOString().split('T')[0]
+    });
+  }
+  
+  return data;
+};
+
 export const mockVehicles = [
   {
     id: "1",
@@ -14,7 +34,8 @@ export const mockVehicles = [
       registration: { status: 'uploaded' as const, expiryDate: '2026-12-20' },
       insurance: { status: 'expired' as const, expiryDate: '2024-10-30' },
       license: { status: 'uploaded' as const, expiryDate: '2025-08-22' }
-    }
+    },
+    financialData: generateFinancialData()
   },
   {
     id: "2",
@@ -31,7 +52,8 @@ export const mockVehicles = [
       registration: { status: 'uploaded' as const, expiryDate: '2025-03-15' },
       insurance: { status: 'uploaded' as const, expiryDate: '2025-04-10' },
       license: { status: 'expired' as const, expiryDate: '2024-09-12' }
-    }
+    },
+    financialData: generateFinancialData()
   },
   {
     id: "3",
@@ -48,7 +70,8 @@ export const mockVehicles = [
       registration: { status: 'uploaded' as const, expiryDate: '2026-07-08' },
       insurance: { status: 'uploaded' as const, expiryDate: '2025-02-14' },
       license: { status: 'missing' as const }
-    }
+    },
+    financialData: generateFinancialData()
   },
   {
     id: "4",
@@ -65,7 +88,8 @@ export const mockVehicles = [
       registration: { status: 'uploaded' as const, expiryDate: '2025-11-18' },
       insurance: { status: 'uploaded' as const, expiryDate: '2025-09-25' },
       license: { status: 'uploaded' as const, expiryDate: '2026-01-15' }
-    }
+    },
+    financialData: generateFinancialData()
   },
   {
     id: "5",
@@ -82,6 +106,7 @@ export const mockVehicles = [
       registration: { status: 'uploaded' as const, expiryDate: '2025-12-10' },
       insurance: { status: 'uploaded' as const, expiryDate: '2025-07-22' },
       license: { status: 'uploaded' as const, expiryDate: '2025-03-08' }
-    }
+    },
+    financialData: generateFinancialData()
   }
 ];

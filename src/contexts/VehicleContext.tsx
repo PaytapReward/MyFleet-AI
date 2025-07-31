@@ -66,6 +66,7 @@ export const VehicleProvider: React.FC<{ children: React.ReactNode }> = ({ child
         insurance: { status: 'missing' },
         license: { status: 'missing' }
       },
+      financialData: [],
       userId: user.id
     };
 

@@ -1,3 +1,9 @@
+export interface FinancialData {
+  revenue: number;
+  expenses: number;
+  date: string;
+}
+
 export interface Vehicle {
   id: string;
   number: string;
@@ -14,8 +20,11 @@ export interface Vehicle {
     insurance: { status: 'uploaded' | 'missing' | 'expired', expiryDate?: string };
     license: { status: 'uploaded' | 'missing' | 'expired', expiryDate?: string };
   };
+  financialData: FinancialData[];
   userId: string;
 }
+
+export type PnLPeriod = 'today' | 'weekly' | 'monthly' | 'yearly';
 
 export interface AddVehicleFormData {
   number: string;
