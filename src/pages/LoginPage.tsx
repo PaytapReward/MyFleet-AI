@@ -81,6 +81,18 @@ const LoginPage = () => {
       <div className="lg:grid lg:grid-cols-5 h-screen">
         {/* Hero Section - Left Side */}
         <div className="lg:col-span-3 bg-gradient-to-br from-primary via-primary-glow to-accent p-8 lg:p-12 flex flex-col justify-center relative overflow-hidden">
+          {/* Login Box - Top Right Corner */}
+          <button 
+            onClick={() => {
+              const loginSection = document.querySelector('.login-section');
+              loginSection?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="absolute top-6 right-6 lg:top-8 lg:right-8 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20 transition-all duration-300 hover:scale-105"
+            aria-label="Go to login"
+          >
+            <span className="text-white text-sm font-medium">Login</span>
+          </button>
+
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-20 left-20 w-32 h-32 rounded-full bg-white/20"></div>
@@ -176,9 +188,9 @@ const LoginPage = () => {
         </div>
 
         {/* Login Form - Right Side */}
-        <div className="lg:col-span-2 flex items-center justify-center p-8 bg-background">
+        <div className="lg:col-span-2 flex items-center justify-center p-8 bg-gradient-to-bl from-primary/5 via-background to-accent/5 login-section">
           <div className="w-full max-w-md">
-            <Card className="w-full border-border/50 shadow-lg">
+            <Card className="w-full border-primary/20 shadow-xl bg-card/95 backdrop-blur-sm">
               <CardHeader className="text-center pb-4">
                 <CardTitle className="text-2xl font-bold">
                   {step === 'phone' ? 'Welcome Back' : 'Verify Your Identity'}
