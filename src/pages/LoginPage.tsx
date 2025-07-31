@@ -76,9 +76,9 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen bg-background">
       {/* Split Screen Layout */}
-      <div className="lg:grid lg:grid-cols-5 min-h-screen">
+      <div className="lg:grid lg:grid-cols-5 h-screen">
         {/* Hero Section - Left Side */}
         <div className="lg:col-span-3 bg-gradient-to-br from-primary via-primary-glow to-accent p-8 lg:p-12 flex flex-col justify-center relative overflow-hidden">
           {/* Background Pattern */}
