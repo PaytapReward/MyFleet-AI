@@ -30,14 +30,11 @@ const ProfitLossPage = () => {
               <ArrowLeft className="h-4 w-4" />
               Back to Dashboard
             </Button>
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold">Profit & Loss Statement</h1>
-                <p className="text-muted-foreground">
-                  Comprehensive financial overview and transaction details
-                </p>
-              </div>
-              <AddTransactionModal />
+            <div>
+              <h1 className="text-2xl font-bold">Profit & Loss Statement</h1>
+              <p className="text-muted-foreground">
+                Comprehensive financial overview and transaction details
+              </p>
             </div>
           </div>
         </div>
