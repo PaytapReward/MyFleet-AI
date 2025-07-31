@@ -176,9 +176,9 @@ const LoginPage = () => {
         </div>
 
         {/* Login Form - Right Side */}
-        <div className="lg:col-span-2 flex items-center justify-center p-8 bg-background">
+        <div className="lg:col-span-2 flex items-center justify-center p-8 bg-gradient-to-bl from-primary/5 via-background to-accent/5">
           <div className="w-full max-w-md">
-            <Card className="w-full border-border/50 shadow-lg">
+            <Card className="w-full border-primary/20 shadow-xl bg-card/95 backdrop-blur-sm">
               <CardHeader className="text-center pb-4">
                 <CardTitle className="text-2xl font-bold">
                   {step === 'phone' ? 'Welcome Back' : 'Verify Your Identity'}
