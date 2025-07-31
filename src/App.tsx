@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { VehicleProvider } from "@/contexts/VehicleContext";
 import { DriverProvider } from "@/contexts/DriverContext";
+import { ManualTransactionProvider } from "@/contexts/ManualTransactionContext";
 import Index from "./pages/Index";
 import LoginPage from "./pages/LoginPage";
 import OnboardingPage from "./pages/OnboardingPage";
@@ -58,13 +59,15 @@ const App = () => (
     <AuthProvider>
       <DriverProvider>
         <VehicleProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <AppRoutes />
-            </BrowserRouter>
-          </TooltipProvider>
+          <ManualTransactionProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <AppRoutes />
+              </BrowserRouter>
+            </TooltipProvider>
+          </ManualTransactionProvider>
         </VehicleProvider>
       </DriverProvider>
     </AuthProvider>

@@ -2,13 +2,19 @@ import { useMemo } from 'react';
 import { Transaction, TransactionFilters, ProfitLossData } from '@/types/transaction';
 import { generateMockTransactions } from '@/data/mockTransactions';
 import { useVehicles } from '@/contexts/VehicleContext';
+import { useManualTransactions } from '@/contexts/ManualTransactionContext';
 
 export const useTransactions = (filters?: TransactionFilters) => {
   const { vehicles } = useVehicles();
+  const { manualTransactions } = useManualTransactions();
   
   const allTransactions = useMemo(() => {
-    return generateMockTransactions(vehicles.map(v => ({ id: v.id, number: v.number })));
-  }, [vehicles]);
+    const mockTransactions = generateMockTransactions(vehicles.map(v => ({ id: v.id, number: v.number })));
+    // Combine mock transactions with manual transactions
+    return [...manualTransactions, ...mockTransactions].sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+  }, [vehicles, manualTransactions]);
   
   const filteredTransactions = useMemo(() => {
     let filtered = [...allTransactions];

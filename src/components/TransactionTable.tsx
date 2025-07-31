@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { ArrowUpDown, Download, ExternalLink, MapPin } from 'lucide-react';
+import { ArrowUpDown, Download, ExternalLink, MapPin, Trash2, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Transaction, TransactionType } from '@/types/transaction';
+import { Transaction, TransactionType, PaymentMethod } from '@/types/transaction';
+import { useManualTransactions } from '@/contexts/ManualTransactionContext';
 
 interface TransactionTableProps {
   transactions: Transaction[];
@@ -24,7 +25,9 @@ const typeColors: Record<TransactionType, string> = {
   insurance: 'bg-indigo-100 text-indigo-800 border-indigo-200',
   add_money: 'bg-green-100 text-green-800 border-green-200',
   permit: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  fine: 'bg-red-100 text-red-800 border-red-200'
+  fine: 'bg-red-100 text-red-800 border-red-200',
+  manual_income: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+  manual_expense: 'bg-slate-100 text-slate-800 border-slate-200'
 };
 
 const typeLabels: Record<TransactionType, string> = {
@@ -37,10 +40,20 @@ const typeLabels: Record<TransactionType, string> = {
   insurance: 'Insurance',
   add_money: 'Add Money',
   permit: 'Permit',
-  fine: 'Fine'
+  fine: 'Fine',
+  manual_income: 'Manual Income',
+  manual_expense: 'Manual Expense'
+};
+
+const paymentMethodLabels: Record<PaymentMethod, string> = {
+  upi: 'UPI',
+  cash: 'Cash',
+  bank_transfer: 'Bank Transfer',
+  other: 'Other'
 };
 
 export const TransactionTable = ({ transactions, isLoading }: TransactionTableProps) => {
+  const { removeManualTransaction } = useManualTransactions();
   const [sortField, setSortField] = useState<SortField>('date');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [currentPage, setCurrentPage] = useState(1);
@@ -89,13 +102,14 @@ export const TransactionTable = ({ transactions, isLoading }: TransactionTablePr
   const paginatedTransactions = sortedTransactions.slice(startIndex, startIndex + itemsPerPage);
   
   const exportToCSV = () => {
-    const headers = ['Date', 'Vehicle Number', 'Type', 'Description', 'Amount', 'Location', 'Reference'];
+    const headers = ['Date', 'Vehicle Number', 'Type', 'Description', 'Amount', 'Payment Method', 'Location', 'Reference'];
     const rows = transactions.map(t => [
       t.date,
       t.vehicleNumber,
       typeLabels[t.type],
       t.description,
       t.amount.toString(),
+      t.paymentMethod ? paymentMethodLabels[t.paymentMethod] : '',
       t.location || '',
       t.reference || ''
     ]);
@@ -111,6 +125,12 @@ export const TransactionTable = ({ transactions, isLoading }: TransactionTablePr
     a.download = `transactions_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+  };
+  
+  const handleDeleteTransaction = (transaction: Transaction) => {
+    if (transaction.isManual) {
+      removeManualTransaction(transaction.id);
+    }
   };
   
   if (isLoading) {
@@ -183,8 +203,10 @@ export const TransactionTable = ({ transactions, isLoading }: TransactionTablePr
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                   </div>
                 </TableHead>
+                <TableHead>Payment Method</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Reference</TableHead>
+                <TableHead className="w-12">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -208,6 +230,14 @@ export const TransactionTable = ({ transactions, isLoading }: TransactionTablePr
                     </span>
                   </TableCell>
                   <TableCell>
+                    {transaction.paymentMethod && (
+                      <div className="flex items-center text-sm">
+                        <CreditCard className="h-3 w-3 mr-1 text-muted-foreground" />
+                        <span>{paymentMethodLabels[transaction.paymentMethod]}</span>
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell>
                     {transaction.location && (
                       <div className="flex items-center text-sm text-muted-foreground">
                         <MapPin className="h-3 w-3 mr-1" />
@@ -217,6 +247,18 @@ export const TransactionTable = ({ transactions, isLoading }: TransactionTablePr
                   </TableCell>
                   <TableCell className="font-mono text-xs">
                     {transaction.reference}
+                  </TableCell>
+                  <TableCell>
+                    {transaction.isManual && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteTransaction(transaction)}
+                        className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}

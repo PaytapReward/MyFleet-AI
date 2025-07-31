@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { AddTransactionModal } from '@/components/AddTransactionModal';
 import { TransactionFilters } from '@/components/TransactionFilters';
 import { ProfitLossSummary } from '@/components/ProfitLossSummary';
 import { TransactionTable } from '@/components/TransactionTable';
@@ -28,11 +29,14 @@ const ProfitLossPage = () => {
               <ArrowLeft className="h-4 w-4" />
               Back to Dashboard
             </Button>
-            <div>
-              <h1 className="text-2xl font-bold">Profit & Loss Statement</h1>
-              <p className="text-muted-foreground">
-                Comprehensive financial overview and transaction details
-              </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold">Profit & Loss Statement</h1>
+                <p className="text-muted-foreground">
+                  Comprehensive financial overview and transaction details
+                </p>
+              </div>
+              <AddTransactionModal />
             </div>
           </div>
         </div>

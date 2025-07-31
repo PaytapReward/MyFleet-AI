@@ -8,7 +8,11 @@ export type TransactionType =
   | 'revenue'
   | 'toll'
   | 'permit'
-  | 'fine';
+  | 'fine'
+  | 'manual_income'
+  | 'manual_expense';
+
+export type PaymentMethod = 'upi' | 'cash' | 'bank_transfer' | 'other';
 
 export interface Transaction {
   id: string;
@@ -21,6 +25,8 @@ export interface Transaction {
   location?: string;
   reference?: string;
   category: 'income' | 'expense';
+  paymentMethod?: PaymentMethod;
+  isManual?: boolean;
 }
 
 export interface TransactionFilters {
