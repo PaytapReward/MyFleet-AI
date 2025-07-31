@@ -8,6 +8,7 @@ import { VehicleProvider } from "@/contexts/VehicleContext";
 import { DriverProvider } from "@/contexts/DriverContext";
 import { ManualTransactionProvider } from "@/contexts/ManualTransactionContext";
 import Index from "./pages/Index";
+import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import SettingsPage from "./pages/SettingsPage";
@@ -34,7 +35,13 @@ const AppRoutes = () => {
 
   // Not logged in
   if (!user) {
-    return <LoginPage />;
+    return (
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="*" element={<LandingPage />} />
+      </Routes>
+    );
   }
 
   // Logged in but not onboarded
