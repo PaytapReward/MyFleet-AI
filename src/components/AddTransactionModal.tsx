@@ -14,6 +14,12 @@ import { useVehicles } from '@/contexts/VehicleContext';
 import { PaymentMethod, TransactionType } from '@/types/transaction';
 import { useToast } from '@/hooks/use-toast';
 
+interface AddTransactionModalProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+  preSelectedType?: 'manual_income' | 'manual_expense';
+}
+
 const formSchema = z.object({
   type: z.enum(['manual_income', 'manual_expense']),
   vehicleId: z.string().min(1, 'Please select a vehicle'),
@@ -34,15 +40,25 @@ const paymentMethodOptions = [
   { value: 'other', label: 'Other' }
 ];
 
-export const AddTransactionModal = () => {
-  const [open, setOpen] = useState(false);
+export const AddTransactionModal = ({ 
+  isOpen: externalOpen, 
+  onClose: externalOnClose, 
+  preSelectedType 
+}: AddTransactionModalProps = {}) => {
+  const [internalOpen, setInternalOpen] = useState(false);
   const { addManualTransaction } = useManualTransactions();
   const { vehicles } = useVehicles();
   const { toast } = useToast();
-  
+
+  const open = externalOpen !== undefined ? externalOpen : internalOpen;
+  const setOpen = externalOnClose ? (value: boolean) => {
+    if (!value) externalOnClose();
+  } : setInternalOpen;
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      type: preSelectedType || 'manual_income',
       date: new Date().toISOString().split('T')[0],
       paymentMethod: 'upi'
     }
@@ -71,6 +87,7 @@ export const AddTransactionModal = () => {
     });
     
     form.reset({
+      type: preSelectedType || 'manual_income',
       date: new Date().toISOString().split('T')[0],
       paymentMethod: 'upi'
     });
@@ -79,12 +96,14 @@ export const AddTransactionModal = () => {
   
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          Add Transaction
-        </Button>
-      </DialogTrigger>
+      {externalOpen === undefined && (
+        <DialogTrigger asChild>
+          <Button className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Add Transaction
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add Manual Transaction</DialogTitle>

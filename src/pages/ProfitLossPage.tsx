@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AddTransactionModal } from '@/components/AddTransactionModal';
+import { AddTransactionHero } from '@/components/AddTransactionHero';
 import { TransactionFilters } from '@/components/TransactionFilters';
 import { ProfitLossSummary } from '@/components/ProfitLossSummary';
 import { TransactionTable } from '@/components/TransactionTable';
@@ -49,6 +50,9 @@ const ProfitLossPage = () => {
           onFiltersChange={setFilters}
           initialFilters={filters}
         />
+        
+        {/* Add Transaction Hero */}
+        <AddTransactionHero />
         
         {/* Summary Cards */}
         <ProfitLossSummary data={profitLossData} />
