@@ -1,0 +1,42 @@
+export type TransactionType = 
+  | 'fuel' 
+  | 'parking' 
+  | 'fasttag' 
+  | 'add_money' 
+  | 'maintenance' 
+  | 'insurance' 
+  | 'revenue'
+  | 'toll'
+  | 'permit'
+  | 'fine';
+
+export interface Transaction {
+  id: string;
+  vehicleId: string;
+  vehicleNumber: string;
+  type: TransactionType;
+  amount: number;
+  description: string;
+  date: string;
+  location?: string;
+  reference?: string;
+  category: 'income' | 'expense';
+}
+
+export interface TransactionFilters {
+  vehicleId?: string;
+  startDate?: string;
+  endDate?: string;
+  type?: TransactionType;
+  minAmount?: number;
+  maxAmount?: number;
+  search?: string;
+}
+
+export interface ProfitLossData {
+  totalRevenue: number;
+  totalExpenses: number;
+  netProfitLoss: number;
+  transactions: Transaction[];
+  expenseBreakdown: Record<TransactionType, number>;
+}

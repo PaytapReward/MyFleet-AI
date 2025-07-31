@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { TrendingUp, TrendingDown, AlertTriangle, DollarSign } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -7,6 +8,7 @@ import { useProfitLoss } from "@/hooks/useProfitLoss";
 import { PnLPeriod } from "@/types/vehicle";
 
 const FleetOverview = () => {
+  const navigate = useNavigate();
   const { vehicles } = useVehicles();
   const [selectedPeriod, setSelectedPeriod] = useState<PnLPeriod>('today');
   
@@ -69,7 +71,10 @@ const FleetOverview = () => {
         </CardContent>
       </Card>
 
-      <Card className="shadow-sm hover:shadow-md transition-all duration-200">
+      <Card 
+        className="shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
+        onClick={() => navigate('/profit-loss')}
+      >
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 lg:p-6 lg:pb-2">
           <CardTitle className="text-xs lg:text-sm font-medium">Profit & Loss</CardTitle>
           {isProfit ? (
