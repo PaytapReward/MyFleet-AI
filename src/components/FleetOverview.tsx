@@ -76,7 +76,7 @@ const FleetOverview = () => {
         onClick={() => navigate('/profit-loss')}
       >
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 lg:p-6 lg:pb-2">
-          <CardTitle className="text-xs lg:text-sm font-medium">Profit & Loss</CardTitle>
+          <CardTitle className="text-xs lg:text-sm font-medium">Statement</CardTitle>
           {isProfit ? (
             <TrendingUp className="h-3 w-3 lg:h-4 lg:w-4 text-status-active" />
           ) : (
