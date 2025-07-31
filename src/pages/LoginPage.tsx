@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +15,7 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { sendOTP, login } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSendOTP = async () => {
     if (!phone || phone.length !== 10) {
@@ -58,7 +60,10 @@ const LoginPage = () => {
     setIsLoading(true);
     try {
       const success = await login(phone, otp);
-      if (!success) {
+      if (success) {
+        // Navigate to home page after successful login
+        navigate('/');
+      } else {
         toast({
           title: "Invalid OTP",
           description: "Please enter the correct OTP",

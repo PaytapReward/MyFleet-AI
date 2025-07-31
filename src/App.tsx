@@ -46,7 +46,11 @@ const AppRoutes = () => {
 
   // Logged in but not onboarded
   if (!user.isOnboarded) {
-    return <OnboardingPage />;
+    return (
+      <Routes>
+        <Route path="*" element={<OnboardingPage />} />
+      </Routes>
+    );
   }
 
   // Fully authenticated and onboarded
@@ -55,6 +59,7 @@ const AppRoutes = () => {
       <Route path="/" element={<Index />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/profit-loss" element={<ProfitLossPage />} />
+      <Route path="/login" element={<Index />} /> {/* Redirect authenticated users to dashboard */}
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>
