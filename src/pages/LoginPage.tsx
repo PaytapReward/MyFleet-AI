@@ -81,22 +81,17 @@ const LoginPage = () => {
       <div className="lg:grid lg:grid-cols-5 h-screen">
         {/* Hero Section - Left Side */}
         <div className="lg:col-span-3 bg-gradient-to-br from-primary via-primary-glow to-accent p-8 lg:p-12 flex flex-col justify-center relative overflow-hidden">
-          {/* Login Icon - Top Right Corner */}
-          <div className="absolute top-6 right-6 lg:top-8 lg:right-8 flex items-center space-x-2">
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-white/20">
-              <span className="text-white text-sm font-medium">Login</span>
-            </div>
-            <button 
-              onClick={() => {
-                const loginSection = document.querySelector('.login-section');
-                loginSection?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm transition-all duration-300 hover:scale-105 group border border-white/20"
-              aria-label="Go to login"
-            >
-              <Smartphone className="h-5 w-5 text-white group-hover:text-white" />
-            </button>
-          </div>
+          {/* Login Box - Top Right Corner */}
+          <button 
+            onClick={() => {
+              const loginSection = document.querySelector('.login-section');
+              loginSection?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="absolute top-6 right-6 lg:top-8 lg:right-8 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20 transition-all duration-300 hover:scale-105"
+            aria-label="Go to login"
+          >
+            <span className="text-white text-sm font-medium">Login</span>
+          </button>
 
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-10">
