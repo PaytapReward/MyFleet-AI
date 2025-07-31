@@ -34,7 +34,10 @@ export const useProfitLoss = (vehicles: Vehicle[], period: PnLPeriod) => {
     let totalExpenses = 0;
     
     vehicles.forEach(vehicle => {
-      vehicle.financialData.forEach(data => {
+      // Safety check: ensure financialData exists and is an array
+      const financialData = vehicle.financialData || [];
+      
+      financialData.forEach(data => {
         if (period === 'today') {
           if (data.date === todayStr) {
             totalRevenue += data.revenue;
