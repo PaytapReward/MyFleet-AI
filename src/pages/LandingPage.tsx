@@ -52,9 +52,20 @@ const LandingPage = () => {
         </h2>
 
         {/* Subheadline */}
-        <p className="text-xl text-white/90 mb-12 leading-relaxed max-w-3xl mx-auto lg:mx-0">
+        <p className="text-xl text-white/90 mb-8 leading-relaxed max-w-3xl mx-auto lg:mx-0">
           Join thousands of MSME fleet operators who've transformed their business with intelligent tracking, automated reporting, and data-driven insights.
         </p>
+
+        {/* CTA Button */}
+        <div className="mb-12">
+          <Button
+            onClick={() => navigate('/login')}
+            size="lg"
+            className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6 h-auto font-semibold"
+          >
+            Get Started Now
+          </Button>
+        </div>
 
         {/* Benefits Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 max-w-4xl mx-auto lg:mx-0">
@@ -97,17 +108,6 @@ const LandingPage = () => {
               <p className="text-white/80 text-sm">Generate P&L statements and compliance reports instantly</p>
             </div>
           </div>
-        </div>
-
-        {/* CTA Button */}
-        <div className="mb-12">
-          <Button
-            onClick={() => navigate('/login')}
-            size="lg"
-            className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6 h-auto font-semibold"
-          >
-            Get Started Now
-          </Button>
         </div>
 
         {/* Trust Indicators */}
