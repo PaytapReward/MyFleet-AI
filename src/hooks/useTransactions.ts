@@ -9,12 +9,11 @@ export const useTransactions = (filters?: TransactionFilters) => {
   const { manualTransactions } = useManualTransactions();
   
   const allTransactions = useMemo(() => {
-    const mockTransactions = generateMockTransactions(vehicles.map(v => ({ id: v.id, number: v.number })));
-    // Combine mock transactions with manual transactions
-    return [...manualTransactions, ...mockTransactions].sort((a, b) => 
+    // Only show manual transactions - remove mock data for production
+    return [...manualTransactions].sort((a, b) => 
       new Date(b.date).getTime() - new Date(a.date).getTime()
     );
-  }, [vehicles, manualTransactions]);
+  }, [manualTransactions]);
   
   const filteredTransactions = useMemo(() => {
     let filtered = [...allTransactions];
