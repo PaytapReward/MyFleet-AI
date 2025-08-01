@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { TransactionFilters as ITransactionFilters, TransactionType } from '@/types/transaction';
+import { TransactionFilters as ITransactionFilters, TransactionType, DateRangeType } from '@/types/transaction';
 import { useVehicles } from '@/contexts/VehicleContext';
 
 interface TransactionFiltersProps {
@@ -25,23 +25,74 @@ const transactionTypeOptions: { value: TransactionType; label: string }[] = [
   { value: 'fine', label: 'Fine' }
 ];
 
+const dateRangeOptions = [
+  { value: 'today' as DateRangeType, label: 'Today' },
+  { value: 'yesterday' as DateRangeType, label: 'Yesterday' },
+  { value: 'last7days' as DateRangeType, label: 'Last 7 Days' },
+  { value: 'last30days' as DateRangeType, label: 'Last 30 Days' },
+  { value: 'thisMonth' as DateRangeType, label: 'This Month' },
+  { value: 'lastMonth' as DateRangeType, label: 'Last Month' },
+  { value: 'custom' as DateRangeType, label: 'Custom Range' }
+];
+
+const getDateRangeForType = (rangeType: DateRangeType) => {
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  
+  switch (rangeType) {
+    case 'today':
+      return { startDate: todayStr, endDate: todayStr };
+    
+    case 'yesterday':
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+      return { startDate: yesterdayStr, endDate: yesterdayStr };
+    
+    case 'last7days':
+      const sevenDaysAgo = new Date(today);
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      return { startDate: sevenDaysAgo.toISOString().split('T')[0], endDate: todayStr };
+    
+    case 'last30days':
+      const thirtyDaysAgo = new Date(today);
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      return { startDate: thirtyDaysAgo.toISOString().split('T')[0], endDate: todayStr };
+    
+    case 'thisMonth':
+      const firstDayThisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      return { startDate: firstDayThisMonth.toISOString().split('T')[0], endDate: todayStr };
+    
+    case 'lastMonth':
+      const firstDayLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+      const lastDayLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+      return { 
+        startDate: firstDayLastMonth.toISOString().split('T')[0], 
+        endDate: lastDayLastMonth.toISOString().split('T')[0] 
+      };
+    
+    case 'custom':
+    default:
+      return { startDate: undefined, endDate: undefined };
+  }
+};
+
 export const TransactionFilters = ({ onFiltersChange, initialFilters }: TransactionFiltersProps) => {
   const { vehicles } = useVehicles();
   const [filters, setFilters] = useState<ITransactionFilters>(initialFilters || {});
   const [showAdvanced, setShowAdvanced] = useState(false);
   
-  const today = new Date().toISOString().split('T')[0];
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-  
   useEffect(() => {
-    if (!initialFilters?.startDate && !initialFilters?.endDate) {
+    if (!initialFilters?.dateRangeType && !initialFilters?.startDate && !initialFilters?.endDate) {
+      const defaultRange = getDateRangeForType('last30days');
       setFilters(prev => ({
         ...prev,
-        startDate: thirtyDaysAgo,
-        endDate: today
+        dateRangeType: 'last30days',
+        startDate: defaultRange.startDate,
+        endDate: defaultRange.endDate
       }));
     }
-  }, [thirtyDaysAgo, today, initialFilters]);
+  }, [initialFilters]);
   
   useEffect(() => {
     onFiltersChange(filters);
@@ -50,11 +101,23 @@ export const TransactionFilters = ({ onFiltersChange, initialFilters }: Transact
   const updateFilter = (key: keyof ITransactionFilters, value: any) => {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
+
+  const handleDateRangeChange = (rangeType: DateRangeType) => {
+    const dateRange = getDateRangeForType(rangeType);
+    setFilters(prev => ({
+      ...prev,
+      dateRangeType: rangeType,
+      startDate: dateRange.startDate,
+      endDate: dateRange.endDate
+    }));
+  };
   
   const clearFilters = () => {
+    const defaultRange = getDateRangeForType('last30days');
     setFilters({
-      startDate: thirtyDaysAgo,
-      endDate: today
+      dateRangeType: 'last30days',
+      startDate: defaultRange.startDate,
+      endDate: defaultRange.endDate
     });
   };
 
@@ -77,19 +140,42 @@ export const TransactionFilters = ({ onFiltersChange, initialFilters }: Transact
         {/* Date Range */}
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-muted-foreground" />
-          <Input
-            type="date"
-            value={filters.startDate || thirtyDaysAgo}
-            onChange={(e) => updateFilter('startDate', e.target.value)}
-            className="w-auto text-sm"
-          />
-          <span className="text-muted-foreground">to</span>
-          <Input
-            type="date"
-            value={filters.endDate || today}
-            onChange={(e) => updateFilter('endDate', e.target.value)}
-            className="w-auto text-sm"
-          />
+          <Select 
+            value={filters.dateRangeType || 'last30days'} 
+            onValueChange={handleDateRangeChange}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select date range" />
+            </SelectTrigger>
+            <SelectContent>
+              {dateRangeOptions.map(option => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
+          {/* Custom Date Inputs - Show only when custom range is selected */}
+          {filters.dateRangeType === 'custom' && (
+            <>
+              <Input
+                type="date"
+                value={filters.startDate || ''}
+                onChange={(e) => updateFilter('startDate', e.target.value)}
+                className="w-auto text-sm"
+                placeholder="Start date"
+              />
+              <span className="text-muted-foreground">to</span>
+              <Input
+                type="date"
+                value={filters.endDate || ''}
+                onChange={(e) => updateFilter('endDate', e.target.value)}
+                className="w-auto text-sm"
+                placeholder="End date"
+              />
+            </>
+          )}
         </div>
 
         {/* Vehicle Filter */}
@@ -210,7 +296,7 @@ export const TransactionFilters = ({ onFiltersChange, initialFilters }: Transact
         </Collapsible>
 
         {/* Clear Filters */}
-        {(activeFilterCount > 0 || filters.startDate !== thirtyDaysAgo || filters.endDate !== today) && (
+        {(activeFilterCount > 0 || filters.dateRangeType !== 'last30days') && (
           <Button variant="ghost" size="sm" onClick={clearFilters} className="gap-2">
             <X className="h-4 w-4" />
             Clear

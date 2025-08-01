@@ -29,10 +29,13 @@ export interface Transaction {
   isManual?: boolean;
 }
 
+export type DateRangeType = 'today' | 'yesterday' | 'last7days' | 'last30days' | 'thisMonth' | 'lastMonth' | 'custom';
+
 export interface TransactionFilters {
   vehicleId?: string;
   startDate?: string;
   endDate?: string;
+  dateRangeType?: DateRangeType;
   type?: TransactionType;
   minAmount?: number;
   maxAmount?: number;
