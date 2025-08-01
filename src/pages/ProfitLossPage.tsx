@@ -31,12 +31,6 @@ const ProfitLossPage = () => {
               <span className="hidden sm:inline">Back to Dashboard</span>
               <span className="sm:hidden">Back</span>
             </Button>
-            <div className="flex-1">
-              <h1 className="text-xl md:text-2xl font-bold">Profit & Loss Statement</h1>
-              <p className="text-sm md:text-base text-muted-foreground">
-                Financial overview and transaction details
-              </p>
-            </div>
           </div>
         </div>
       </div>
