@@ -14,7 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      transactions: {
+        Row: {
+          amount: number
+          api_source: string | null
+          category: string
+          created_at: string
+          date: string
+          description: string
+          id: string
+          is_manual: boolean | null
+          location: string | null
+          payment_method: string | null
+          reference: string | null
+          type: string
+          updated_at: string
+          user_id: string
+          vehicle_id: string
+          vehicle_number: string
+        }
+        Insert: {
+          amount: number
+          api_source?: string | null
+          category: string
+          created_at?: string
+          date?: string
+          description: string
+          id?: string
+          is_manual?: boolean | null
+          location?: string | null
+          payment_method?: string | null
+          reference?: string | null
+          type: string
+          updated_at?: string
+          user_id: string
+          vehicle_id: string
+          vehicle_number: string
+        }
+        Update: {
+          amount?: number
+          api_source?: string | null
+          category?: string
+          created_at?: string
+          date?: string
+          description?: string
+          id?: string
+          is_manual?: boolean | null
+          location?: string | null
+          payment_method?: string | null
+          reference?: string | null
+          type?: string
+          updated_at?: string
+          user_id?: string
+          vehicle_id?: string
+          vehicle_number?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
