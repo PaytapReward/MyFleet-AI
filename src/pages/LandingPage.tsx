@@ -6,34 +6,41 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary via-primary-glow to-accent p-8 lg:p-12 flex flex-col justify-center relative overflow-hidden">
-      {/* Login Button - Top Right Corner */}
-      <Button
-        onClick={() => navigate('/login')}
-        variant="secondary"
-        className="absolute top-6 right-6 lg:top-8 lg:right-8 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white hover:text-white"
-      >
-        Login
-      </Button>
-
+    <div className="min-h-screen bg-gradient-to-br from-primary via-primary-glow to-accent relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-20 left-20 w-32 h-32 rounded-full bg-white/20"></div>
         <div className="absolute bottom-40 right-32 w-24 h-24 rounded-full bg-white/15"></div>
         <div className="absolute top-1/2 right-20 w-16 h-16 rounded-full bg-white/25"></div>
       </div>
-      
-      <div className="relative z-10 max-w-4xl mx-auto text-center lg:text-left">
-        {/* Logo */}
-        <div className="flex items-center justify-center lg:justify-start mb-8">
-          <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mr-4 backdrop-blur-sm">
-            <Truck className="h-6 w-6 text-white" />
+
+      {/* Header with Logo and Login */}
+      <header className="relative z-10 w-full p-6 lg:p-8">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          {/* Logo */}
+          <div className="flex items-center">
+            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-white/20 rounded-xl flex items-center justify-center mr-3 lg:mr-4 backdrop-blur-sm">
+              <Truck className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg lg:text-2xl font-bold text-white">MyFleet AI</h1>
+              <p className="text-white/80 text-xs lg:text-sm">Smart Fleet Management</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-white">MyFleet AI</h1>
-            <p className="text-white/80 text-sm">Smart Fleet Management</p>
-          </div>
+          
+          {/* Login Button */}
+          <Button
+            onClick={() => navigate('/login')}
+            variant="secondary"
+            className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white hover:text-white text-sm lg:text-base px-4 lg:px-6"
+          >
+            Login
+          </Button>
         </div>
+      </header>
+      
+      {/* Main Content */}
+      <div className="relative z-10 max-w-4xl mx-auto text-center lg:text-left px-6 lg:px-8 pb-8 lg:pb-12 flex-1 flex flex-col justify-center">
 
         {/* Main Headline */}
         <h2 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight">
