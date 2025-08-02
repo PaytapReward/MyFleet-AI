@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
 interface User {
   id: string;
@@ -51,82 +53,96 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Mock user storage - in real app, this would be secure storage
-  const loadUser = () => {
-    const storedUser = localStorage.getItem('myfleet_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
-  };
+  const loadUserProfile = async (supabaseUser: SupabaseUser) => {
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', supabaseUser.id)
+        .single();
 
-  const saveUser = (userData: User) => {
-    localStorage.setItem('myfleet_user', JSON.stringify(userData));
-    setUser(userData);
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error loading profile:', error);
+        return null;
+      }
+
+      if (profile) {
+        return {
+          id: supabaseUser.id,
+          phone: profile.phone,
+          fullName: profile.full_name,
+          companyName: profile.company_name,
+          panNumber: profile.pan_number,
+          isOnboarded: profile.is_onboarded || false,
+          role: profile.role || 'owner'
+        };
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+      return null;
+    }
   };
 
   const sendOTP = async (phone: string): Promise<boolean> => {
-    // Mock OTP sending - in real app, this would call backend API
-    console.log(`Sending OTP to ${phone}`);
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(true), 1000);
-    });
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: phone,
+      });
+      
+      if (error) {
+        console.error('OTP sending error:', error);
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('OTP sending error:', error);
+      return false;
+    }
   };
 
   const login = async (phone: string, otp: string, role: 'owner' | 'driver' = 'owner'): Promise<boolean> => {
-    // Mock OTP verification - in real app, this would call backend API
-    if (otp === '123456') {
-      console.log(`Attempting login for phone: ${phone}`);
-      
-      // Check if user exists (mock check)
-      const existingUserData = localStorage.getItem(`user_${phone}`);
-      console.log(`Existing user data for ${phone}:`, existingUserData);
-      
-      if (existingUserData) {
-        try {
-          const userData = JSON.parse(existingUserData);
-          console.log(`Parsed user data:`, userData);
-          
-          // Ensure the user object has all required properties
-          const completeUser: User = {
-            id: userData.id || Date.now().toString(),
-            phone: userData.phone || phone,
-            fullName: userData.fullName,
-            companyName: userData.companyName,
-            panNumber: userData.panNumber,
-            isOnboarded: userData.isOnboarded || false,
-            role: userData.role || role
-          };
-          
-          console.log(`Complete user object:`, completeUser);
-          saveUser(completeUser);
-        } catch (error) {
-          console.error(`Error parsing user data for ${phone}:`, error);
-          // If data is corrupted, treat as new user
-          const newUser: User = {
-            id: Date.now().toString(),
-            phone,
-            isOnboarded: false,
-            role
-          };
-          saveUser(newUser);
-        }
-      } else {
-        console.log(`No existing user found for ${phone}, creating new user`);
-        // New user - create minimal profile
-        const newUser: User = {
-          id: Date.now().toString(),
-          phone,
-          isOnboarded: false,
-          role
-        };
-        saveUser(newUser);
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        phone: phone,
+        token: otp,
+        type: 'sms'
+      });
+
+      if (error) {
+        console.error('Login error:', error);
+        return false;
       }
-      return true;
+
+      if (data.user) {
+        // For drivers, check if they exist in drivers table
+        if (role === 'driver') {
+          const { data: driverData, error: driverError } = await supabase
+            .from('drivers')
+            .select('*')
+            .eq('user_id', data.user.id)
+            .single();
+
+          if (driverError || !driverData) {
+            console.error('Driver not found or not authorized');
+            await supabase.auth.signOut();
+            return false;
+          }
+        }
+
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
     }
-    return false;
   };
 
   const completeOnboarding = async (profileData: {
@@ -136,51 +152,48 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     panNumber: string;
   }): Promise<boolean> => {
     try {
-      if (!user) {
-        console.error('No user found during onboarding');
+      if (!session?.user) {
+        console.error('No authenticated user found during onboarding');
         return false;
       }
       
-      const updatedUser: User = {
-        ...user,
-        fullName: profileData.fullName,
-        companyName: profileData.companyName,
-        panNumber: profileData.panNumber,
-        isOnboarded: true
-      };
-      
-      console.log(`Completing onboarding for user:`, updatedUser);
-      
-      // Save to phone-specific storage
-      localStorage.setItem(`user_${user.phone}`, JSON.stringify(updatedUser));
-      console.log(`Saved user data to user_${user.phone}`);
-      
-      // Save to current user storage
-      saveUser(updatedUser);
-      
-      // Create initial vehicle from onboarding data
-      const initialVehicle = {
-        id: Date.now().toString(),
-        number: profileData.vehicleNumber,
-        model: "Not specified",
-        payTapBalance: 0,
-        fastTagLinked: false,
-        driver: null,
-        lastService: "Not scheduled",
-        gpsLinked: false,
-        challans: 0,
-        documents: {
-          pollution: { status: 'missing' as const },
-          registration: { status: 'missing' as const },
-          insurance: { status: 'missing' as const },
-          license: { status: 'missing' as const }
-        },
-        userId: user.id
-      };
-      
-      // Save initial vehicle to localStorage
-      localStorage.setItem(`vehicles_${user.id}`, JSON.stringify([initialVehicle]));
-      console.log(`Saved initial vehicle for user ${user.id}:`, initialVehicle);
+      // Update or create profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          user_id: session.user.id,
+          phone: session.user.phone || '',
+          full_name: profileData.fullName,
+          company_name: profileData.companyName,
+          pan_number: profileData.panNumber,
+          is_onboarded: true,
+          role: 'owner'
+        });
+
+      if (profileError) {
+        console.error('Profile update error:', profileError);
+        return false;
+      }
+
+      // Create initial vehicle
+      const { error: vehicleError } = await supabase
+        .from('vehicles')
+        .insert({
+          user_id: session.user.id,
+          number: profileData.vehicleNumber,
+          model: "Not specified"
+        });
+
+      if (vehicleError) {
+        console.error('Vehicle creation error:', vehicleError);
+        return false;
+      }
+
+      // Reload user data
+      const updatedUser = await loadUserProfile(session.user);
+      if (updatedUser) {
+        setUser(updatedUser);
+      }
       
       return true;
     } catch (error) {
@@ -195,26 +208,30 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     panNumber: string;
   }): Promise<boolean> => {
     try {
-      if (!user) {
-        console.error('No user found during profile update');
+      if (!session?.user) {
+        console.error('No authenticated user found during profile update');
         return false;
       }
       
-      const updatedUser: User = {
-        ...user,
-        fullName: profileData.fullName,
-        companyName: profileData.companyName,
-        panNumber: profileData.panNumber,
-      };
-      
-      console.log(`Updating profile for user:`, updatedUser);
-      
-      // Save to phone-specific storage
-      localStorage.setItem(`user_${user.phone}`, JSON.stringify(updatedUser));
-      console.log(`Updated user data in user_${user.phone}`);
-      
-      // Save to current user storage
-      saveUser(updatedUser);
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          full_name: profileData.fullName,
+          company_name: profileData.companyName,
+          pan_number: profileData.panNumber,
+        })
+        .eq('user_id', session.user.id);
+
+      if (error) {
+        console.error('Profile update error:', error);
+        return false;
+      }
+
+      // Reload user data
+      const updatedUser = await loadUserProfile(session.user);
+      if (updatedUser) {
+        setUser(updatedUser);
+      }
       
       return true;
     } catch (error) {
@@ -230,9 +247,25 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     documentFile?: File;
   }): Promise<boolean> => {
     try {
-      // Mock driver creation - in real app, this would call backend API
-      console.log('Creating driver:', driverData);
-      // Here you would typically create a driver account and send OTP
+      if (!session?.user) {
+        console.error('No authenticated user found');
+        return false;
+      }
+
+      // Send OTP to driver's phone to create their account
+      const { error: otpError } = await supabase.auth.signInWithOtp({
+        phone: driverData.phone,
+      });
+
+      if (otpError) {
+        console.error('Error sending OTP to driver:', otpError);
+        return false;
+      }
+
+      // Note: In a real implementation, we would need a separate flow
+      // where the driver verifies their OTP and then we create their profile
+      console.log('OTP sent to driver. They need to verify to complete registration.');
+      
       return true;
     } catch (error) {
       console.error('Create driver error:', error);
@@ -240,13 +273,50 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('myfleet_user');
-    setUser(null);
+  const logout = async () => {
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+      setSession(null);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   useEffect(() => {
-    loadUser();
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setSession(session);
+        
+        if (session?.user) {
+          // Load user profile
+          setTimeout(async () => {
+            const userProfile = await loadUserProfile(session.user);
+            setUser(userProfile);
+            setIsLoading(false);
+          }, 0);
+        } else {
+          setUser(null);
+          setIsLoading(false);
+        }
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session?.user) {
+        loadUserProfile(session.user).then((userProfile) => {
+          setUser(userProfile);
+          setIsLoading(false);
+        });
+      } else {
+        setIsLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   return (

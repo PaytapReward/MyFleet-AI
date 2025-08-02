@@ -30,12 +30,20 @@ const LoginPage = () => {
 
     setIsLoading(true);
     try {
-      const success = await sendOTP(phone);
+      // Format phone for international use
+      const formattedPhone = `+91${phone}`;
+      const success = await sendOTP(formattedPhone);
       if (success) {
         setStep('otp');
         toast({
           title: "OTP Sent",
           description: "Please check your phone for the verification code",
+        });
+      } else {
+        toast({
+          title: "Failed to send OTP",
+          description: "Please try again",
+          variant: "destructive"
         });
       }
     } catch (error) {
@@ -60,14 +68,21 @@ const LoginPage = () => {
 
     setIsLoading(true);
     try {
-      const success = await login(phone, otp, role);
+      // Format phone for international use
+      const formattedPhone = `+91${phone}`;
+      const success = await login(formattedPhone, otp, role);
       if (success) {
-        // Navigate to home page after successful login
+        toast({
+          title: "Login Successful",
+          description: `Welcome to MyFleet!`
+        });
         navigate('/');
       } else {
         toast({
-          title: "Invalid OTP",
-          description: "Please enter the correct OTP",
+          title: "Login Failed",
+          description: role === 'driver' 
+            ? "Driver account not found. Please contact your fleet owner."
+            : "Invalid verification code or login failed",
           variant: "destructive"
         });
       }
@@ -217,11 +232,13 @@ const LoginPage = () => {
                     </Button>
                   </div>
                 </div>
-                <div className="bg-muted/50 p-3 rounded-lg border border-border/50">
-                  <p className="text-xs text-muted-foreground text-center">
-                    <strong>Demo Access:</strong> Use verification code <span className="font-mono font-bold">123456</span>
-                  </p>
-                </div>
+                {role === 'driver' && (
+                  <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <p className="text-xs text-blue-700 dark:text-blue-300 text-center">
+                      <strong>Driver Login:</strong> You can only login if your fleet owner has created your driver account.
+                    </p>
+                  </div>
+                )}
               </>
             )}
           </CardContent>

@@ -68,16 +68,24 @@ const AddVehicleModal = () => {
         return;
       }
 
-      addVehicle(formData);
+      const success = await addVehicle(formData);
       
-      toast({
-        title: "Success",
-        description: "Vehicle added successfully"
-      });
+      if (success) {
+        toast({
+          title: "Success",
+          description: "Vehicle added successfully"
+        });
 
-      // Reset form and close modal
-      setFormData({ number: "", model: "", payTapActivationCode: "" });
-      setOpen(false);
+        // Reset form and close modal
+        setFormData({ number: "", model: "", payTapActivationCode: "" });
+        setOpen(false);
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to add vehicle. Please try again."
+        });
+      }
     } catch (error) {
       toast({
         variant: "destructive",
