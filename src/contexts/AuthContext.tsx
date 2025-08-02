@@ -15,6 +15,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
+  isDemoMode: boolean;
   login: (phone: string, otp: string, role?: 'owner' | 'driver') => Promise<boolean>;
   logout: () => void;
   completeOnboarding: (profileData: {
@@ -55,6 +56,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Demo mode configuration
+  const DEMO_MODE = true;
+  const DEMO_OTP = "123456";
 
   const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
     try {
@@ -89,6 +94,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const sendOTP = async (phone: string): Promise<boolean> => {
+    if (DEMO_MODE) {
+      // In demo mode, always return success without actually sending OTP
+      console.log(`Demo mode: OTP would be sent to ${phone}. Use demo OTP: ${DEMO_OTP}`);
+      return true;
+    }
+
     try {
       const { error } = await supabase.auth.signInWithOtp({
         phone: phone,
@@ -107,6 +118,39 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const login = async (phone: string, otp: string, role: 'owner' | 'driver' = 'owner'): Promise<boolean> => {
+    if (DEMO_MODE) {
+      // In demo mode, verify against demo OTP
+      if (otp !== DEMO_OTP) {
+        console.log('Demo mode: Invalid OTP. Use demo OTP:', DEMO_OTP);
+        return false;
+      }
+
+      // Create demo user profile
+      const demoUserId = `demo-${phone.replace(/\D/g, '')}-${role}`;
+      const demoUser: User = {
+        id: demoUserId,
+        phone: phone,
+        fullName: role === 'owner' ? 'Demo Fleet Owner' : 'Demo Driver',
+        companyName: role === 'owner' ? 'Demo Transport Co.' : undefined,
+        panNumber: role === 'owner' ? 'DEMO1234P' : undefined,
+        isOnboarded: true,
+        role: role
+      };
+
+      // Create demo session
+      const demoSession = {
+        user: {
+          id: demoUserId,
+          phone: phone,
+        }
+      } as Session;
+
+      setUser(demoUser);
+      setSession(demoSession);
+      console.log('Demo mode: Login successful for', role);
+      return true;
+    }
+
     try {
       const { data, error } = await supabase.auth.verifyOtp({
         phone: phone,
@@ -332,6 +376,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     <AuthContext.Provider value={{
       user,
       isLoading,
+      isDemoMode: DEMO_MODE,
       login,
       logout,
       completeOnboarding,

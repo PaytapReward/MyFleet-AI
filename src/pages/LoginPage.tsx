@@ -14,7 +14,7 @@ const LoginPage = () => {
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [role, setRole] = useState<'owner' | 'driver'>('owner');
   const [isLoading, setIsLoading] = useState(false);
-  const { sendOTP, login } = useAuth();
+  const { sendOTP, login, isDemoMode } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -36,8 +36,10 @@ const LoginPage = () => {
       if (success) {
         setStep('otp');
         toast({
-          title: "OTP Sent",
-          description: "Please check your phone for the verification code",
+          title: isDemoMode ? "Demo Mode Active" : "OTP Sent",
+          description: isDemoMode 
+            ? "Use demo OTP: 123456" 
+            : "Please check your phone for the verification code",
         });
       } else {
         toast({
@@ -110,6 +112,16 @@ const LoginPage = () => {
               <p className="text-muted-foreground text-sm">Smart Fleet Management</p>
             </div>
           </div>
+          {isDemoMode && (
+            <div className="bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 rounded-lg p-3 mb-4">
+              <p className="text-orange-700 dark:text-orange-300 text-sm font-medium">
+                🚀 Demo Mode Active
+              </p>
+              <p className="text-orange-600 dark:text-orange-400 text-xs mt-1">
+                Use OTP: <span className="font-mono font-bold">123456</span> for any phone number
+              </p>
+            </div>
+          )}
         </div>
 
         <Card className="w-full border-primary/20 shadow-xl bg-card/95 backdrop-blur-sm">
@@ -195,14 +207,17 @@ const LoginPage = () => {
                   <Input
                     id="otp"
                     type="text"
-                    placeholder="123456"
+                    placeholder={isDemoMode ? "123456" : "Enter OTP"}
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     maxLength={6}
                     className="text-center text-lg tracking-widest font-mono"
                   />
                   <p className="text-sm text-muted-foreground text-center">
-                    Code sent to +91 {phone}
+                    {isDemoMode 
+                      ? `Demo mode: Use OTP 123456 for +91 ${phone}`
+                      : `Code sent to +91 ${phone}`
+                    }
                   </p>
                 </div>
                 <Button 
