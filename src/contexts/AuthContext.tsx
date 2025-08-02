@@ -7,13 +7,12 @@ interface User {
   companyName?: string;
   panNumber?: string;
   isOnboarded: boolean;
-  role?: 'owner' | 'driver';
 }
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (phone: string, otp: string, role?: 'owner' | 'driver') => Promise<boolean>;
+  login: (phone: string, otp: string) => Promise<boolean>;
   logout: () => void;
   completeOnboarding: (profileData: {
     fullName: string;
@@ -27,12 +26,6 @@ interface AuthContextType {
     panNumber: string;
   }) => Promise<boolean>;
   sendOTP: (phone: string) => Promise<boolean>;
-  createDriver: (driverData: {
-    phone: string;
-    fullName: string;
-    licenseNumber: string;
-    documentFile?: File;
-  }) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -75,7 +68,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     });
   };
 
-  const login = async (phone: string, otp: string, role: 'owner' | 'driver' = 'owner'): Promise<boolean> => {
+  const login = async (phone: string, otp: string): Promise<boolean> => {
     // Mock OTP verification - in real app, this would call backend API
     if (otp === '123456') {
       console.log(`Attempting login for phone: ${phone}`);
@@ -96,8 +89,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             fullName: userData.fullName,
             companyName: userData.companyName,
             panNumber: userData.panNumber,
-            isOnboarded: userData.isOnboarded || false,
-            role: userData.role || role
+            isOnboarded: userData.isOnboarded || false
           };
           
           console.log(`Complete user object:`, completeUser);
@@ -108,8 +100,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           const newUser: User = {
             id: Date.now().toString(),
             phone,
-            isOnboarded: false,
-            role
+            isOnboarded: false
           };
           saveUser(newUser);
         }
@@ -119,8 +110,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const newUser: User = {
           id: Date.now().toString(),
           phone,
-          isOnboarded: false,
-          role
+          isOnboarded: false
         };
         saveUser(newUser);
       }
@@ -223,23 +213,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const createDriver = async (driverData: {
-    phone: string;
-    fullName: string;
-    licenseNumber: string;
-    documentFile?: File;
-  }): Promise<boolean> => {
-    try {
-      // Mock driver creation - in real app, this would call backend API
-      console.log('Creating driver:', driverData);
-      // Here you would typically create a driver account and send OTP
-      return true;
-    } catch (error) {
-      console.error('Create driver error:', error);
-      return false;
-    }
-  };
-
   const logout = () => {
     localStorage.removeItem('myfleet_user');
     setUser(null);
@@ -257,8 +230,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       logout,
       completeOnboarding,
       updateProfile,
-      sendOTP,
-      createDriver
+      sendOTP
     }}>
       {children}
     </AuthContext.Provider>

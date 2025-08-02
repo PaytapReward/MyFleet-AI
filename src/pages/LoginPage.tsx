@@ -12,7 +12,6 @@ const LoginPage = () => {
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
-  const [role, setRole] = useState<'owner' | 'driver'>('owner');
   const [isLoading, setIsLoading] = useState(false);
   const { sendOTP, login } = useAuth();
   const { toast } = useToast();
@@ -60,7 +59,7 @@ const LoginPage = () => {
 
     setIsLoading(true);
     try {
-      const success = await login(phone, otp, role);
+      const success = await login(phone, otp);
       if (success) {
         // Navigate to home page after successful login
         navigate('/');
@@ -112,37 +111,6 @@ const LoginPage = () => {
           <CardContent className="space-y-6">
             {step === 'phone' ? (
               <>
-                {/* Role Selection */}
-                <div className="space-y-3">
-                  <Label className="text-sm font-medium">Login As</Label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setRole('owner')}
-                      className={`p-3 border rounded-lg transition-all text-left ${
-                        role === 'owner' 
-                          ? 'border-primary bg-primary/5 text-primary' 
-                          : 'border-border hover:border-primary/50'
-                      }`}
-                    >
-                      <div className="font-medium">Owner Login</div>
-                      <div className="text-xs text-muted-foreground">Fleet owner access</div>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setRole('driver')}
-                      className={`p-3 border rounded-lg transition-all text-left ${
-                        role === 'driver' 
-                          ? 'border-primary bg-primary/5 text-primary' 
-                          : 'border-border hover:border-primary/50'
-                      }`}
-                    >
-                      <div className="font-medium">Driver Login</div>
-                      <div className="text-xs text-muted-foreground">Driver access</div>
-                    </button>
-                  </div>
-                </div>
-                
                 <div className="space-y-2">
                   <Label htmlFor="phone" className="text-sm font-medium">Mobile Number</Label>
                   <div className="flex">

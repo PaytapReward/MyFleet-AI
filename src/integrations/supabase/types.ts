@@ -14,80 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      drivers: {
-        Row: {
-          assigned_vehicles: string[] | null
-          created_at: string
-          document_url: string | null
-          id: string
-          license_number: string
-          owner_id: string
-          profile_id: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          assigned_vehicles?: string[] | null
-          created_at?: string
-          document_url?: string | null
-          id?: string
-          license_number: string
-          owner_id: string
-          profile_id: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          assigned_vehicles?: string[] | null
-          created_at?: string
-          document_url?: string | null
-          id?: string
-          license_number?: string
-          owner_id?: string
-          profile_id?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "drivers_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      profiles: {
-        Row: {
-          created_at: string
-          full_name: string
-          id: string
-          phone: string
-          role: Database["public"]["Enums"]["user_role"]
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          full_name: string
-          id?: string
-          phone: string
-          role?: Database["public"]["Enums"]["user_role"]
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          full_name?: string
-          id?: string
-          phone?: string
-          role?: Database["public"]["Enums"]["user_role"]
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       transactions: {
         Row: {
           amount: number
@@ -150,13 +76,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_user_role: {
-        Args: { user_uuid: string }
-        Returns: Database["public"]["Enums"]["user_role"]
-      }
+      [_ in never]: never
     }
     Enums: {
-      user_role: "owner" | "driver"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -283,8 +206,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      user_role: ["owner", "driver"],
-    },
+    Enums: {},
   },
 } as const

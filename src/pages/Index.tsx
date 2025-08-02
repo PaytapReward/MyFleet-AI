@@ -3,13 +3,11 @@ import FleetOverview from "@/components/FleetOverview";
 import VehicleCard from "@/components/VehicleCard";
 import AddVehicleModal from "@/components/AddVehicleModal";
 import { useVehicles } from "@/contexts/VehicleContext";
-import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
 const Index = () => {
   const { vehicles, isLoading } = useVehicles();
-  const { user } = useAuth();
 
   if (isLoading) {
     return (
@@ -41,18 +39,10 @@ const Index = () => {
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-xl font-semibold text-foreground">
-                {user?.role === 'driver' ? 'Assigned Vehicles' : 'Your Fleet'}
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                {user?.role === 'driver' 
-                  ? `Access to ${vehicles.length} assigned vehicle${vehicles.length !== 1 ? 's' : ''}`
-                  : `Manage up to 25 vehicles (${vehicles.length}/25)`
-                }
-              </p>
+              <h2 className="text-xl font-semibold text-foreground">Your Fleet</h2>
+              <p className="text-sm text-muted-foreground">Manage up to 25 vehicles ({vehicles.length}/25)</p>
             </div>
-            {/* Only show Add Vehicle for owners */}
-            {user?.role === 'owner' && <AddVehicleModal />}
+            <AddVehicleModal />
           </div>
           
           {/* Horizontal Scrolling Vehicle Cards */}
@@ -65,21 +55,14 @@ const Index = () => {
               <div className="w-80 flex-shrink-0 border-2 border-dashed border-border rounded-lg flex items-center justify-center min-h-[400px] bg-muted/30">
                 <div className="text-center p-6">
                   <Plus className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-foreground mb-2">
-                    {user?.role === 'driver' ? 'No Assigned Vehicles' : 'No Vehicles Yet'}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {user?.role === 'driver' 
-                      ? 'Contact your fleet owner to get vehicle access'
-                      : 'Click "Add Vehicle" to get started'
-                    }
-                  </p>
+                  <h3 className="text-lg font-medium text-foreground mb-2">No Vehicles Yet</h3>
+                  <p className="text-sm text-muted-foreground">Click "Add Vehicle" to get started</p>
                 </div>
               </div>
             )}
             
-            {/* Add Vehicle Card - Only show for owners and if under limit */}
-            {user?.role === 'owner' && vehicles.length < 25 && vehicles.length > 0 && (
+            {/* Add Vehicle Card - Always show if under limit */}
+            {vehicles.length < 25 && vehicles.length > 0 && (
               <div className="w-80 flex-shrink-0 border-2 border-dashed border-border rounded-lg flex items-center justify-center min-h-[400px] bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
                 <div className="text-center p-6">
                   <Plus className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
