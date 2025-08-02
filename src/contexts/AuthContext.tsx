@@ -125,8 +125,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return false;
       }
 
-      // Create demo user profile
-      const demoUserId = `demo-${phone.replace(/\D/g, '')}-${role}`;
+      // Generate consistent UUID-like demo user ID based on phone and role
+      const phoneDigits = phone.replace(/\D/g, '');
+      const baseId = phoneDigits.padEnd(12, '0').slice(0, 12);
+      const rolePrefix = role === 'owner' ? '1' : '2';
+      const demoUserId = `${rolePrefix}${baseId}-0000-4000-8000-000000000000`;
+
       const demoUser: User = {
         id: demoUserId,
         phone: phone,
@@ -147,7 +151,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       setUser(demoUser);
       setSession(demoSession);
-      console.log('Demo mode: Login successful for', role);
+      console.log('Demo mode: Login successful for', role, 'with ID:', demoUserId);
       return true;
     }
 
