@@ -2,6 +2,7 @@ import { Bell, Menu, User, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import AddDriverModal from "@/components/AddDriverModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,12 +26,22 @@ const DashboardHeader = () => {
           <div>
             <h1 className="text-xl font-semibold text-foreground">MyFleet AI</h1>
             <p className="text-sm text-muted-foreground">
-              Welcome back, {user?.fullName || 'Fleet Manager'}
+              Welcome back, {user?.fullName || (user?.role === 'driver' ? 'Driver' : 'Fleet Manager')} 
+              {user?.role && (
+                <span className="ml-2 px-2 py-0.5 text-xs bg-primary/10 text-primary rounded-md">
+                  {user.role === 'owner' ? 'Owner' : 'Driver'}
+                </span>
+              )}
             </p>
           </div>
         </div>
         
         <div className="flex items-center space-x-2">
+          {/* Show Assign Driver button only for owners */}
+          {user?.role === 'owner' && (
+            <AddDriverModal />
+          )}
+          
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="h-5 w-5" />
             <span className="absolute -top-1 -right-1 h-2 w-2 bg-destructive rounded-full"></span>
