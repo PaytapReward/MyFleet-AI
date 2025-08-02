@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const loadUserProfile = async (supabaseUser: SupabaseUser) => {
+  const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
     try {
       const { data: profile, error } = await supabase
         .from('profiles')
@@ -83,7 +83,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       return null;
     } catch (error) {
-      console.error('Error loading user profile:', error);
+      console.error('Error fetching user profile:', error);
       return null;
     }
   };
@@ -190,7 +190,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
 
       // Reload user data
-      const updatedUser = await loadUserProfile(session.user);
+      const updatedUser = await fetchUserProfile(session.user);
       if (updatedUser) {
         setUser(updatedUser);
       }
@@ -228,7 +228,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
 
       // Reload user data
-      const updatedUser = await loadUserProfile(session.user);
+      const updatedUser = await fetchUserProfile(session.user);
       if (updatedUser) {
         setUser(updatedUser);
       }
@@ -262,8 +262,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return false;
       }
 
-      // Note: In a real implementation, we would need a separate flow
-      // where the driver verifies their OTP and then we create their profile
       console.log('OTP sent to driver. They need to verify to complete registration.');
       
       return true;
@@ -284,15 +282,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
+    let mounted = true;
+
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        if (!mounted) return;
+        
         setSession(session);
         
         if (session?.user) {
-          // Load user profile
+          // Load user profile with a delay to avoid deadlocks
           setTimeout(async () => {
-            const userProfile = await loadUserProfile(session.user);
+            if (!mounted) return;
+            const userProfile = await fetchUserProfile(session.user);
             setUser(userProfile);
             setIsLoading(false);
           }, 0);
@@ -305,9 +308,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!mounted) return;
+      
       setSession(session);
       if (session?.user) {
-        loadUserProfile(session.user).then((userProfile) => {
+        fetchUserProfile(session.user).then((userProfile) => {
+          if (!mounted) return;
           setUser(userProfile);
           setIsLoading(false);
         });
@@ -316,7 +322,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   return (
