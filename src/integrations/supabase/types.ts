@@ -19,7 +19,6 @@ export type Database = {
           assigned_vehicles: string[] | null
           created_at: string
           document_url: string | null
-          full_name: string
           id: string
           license_number: string
           owner_id: string
@@ -31,7 +30,6 @@ export type Database = {
           assigned_vehicles?: string[] | null
           created_at?: string
           document_url?: string | null
-          full_name?: string
           id?: string
           license_number: string
           owner_id: string
@@ -43,7 +41,6 @@ export type Database = {
           assigned_vehicles?: string[] | null
           created_at?: string
           document_url?: string | null
-          full_name?: string
           id?: string
           license_number?: string
           owner_id?: string
@@ -63,36 +60,27 @@ export type Database = {
       }
       profiles: {
         Row: {
-          company_name: string | null
           created_at: string
           full_name: string
           id: string
-          is_onboarded: boolean | null
-          pan_number: string | null
           phone: string
           role: Database["public"]["Enums"]["user_role"]
           updated_at: string
           user_id: string
         }
         Insert: {
-          company_name?: string | null
           created_at?: string
           full_name: string
           id?: string
-          is_onboarded?: boolean | null
-          pan_number?: string | null
           phone: string
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
           user_id: string
         }
         Update: {
-          company_name?: string | null
           created_at?: string
           full_name?: string
           id?: string
-          is_onboarded?: boolean | null
-          pan_number?: string | null
           phone?: string
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
@@ -154,33 +142,6 @@ export type Database = {
           user_id?: string
           vehicle_id?: string
           vehicle_number?: string
-        }
-        Relationships: []
-      }
-      vehicles: {
-        Row: {
-          created_at: string
-          id: string
-          model: string | null
-          number: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          model?: string | null
-          number: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          model?: string | null
-          number?: string
-          updated_at?: string
-          user_id?: string
         }
         Relationships: []
       }

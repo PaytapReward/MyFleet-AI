@@ -14,7 +14,7 @@ const LoginPage = () => {
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [role, setRole] = useState<'owner' | 'driver'>('owner');
   const [isLoading, setIsLoading] = useState(false);
-  const { sendOTP, login, isDemoMode } = useAuth();
+  const { sendOTP, login } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -30,22 +30,12 @@ const LoginPage = () => {
 
     setIsLoading(true);
     try {
-      // Format phone for international use
-      const formattedPhone = `+91${phone}`;
-      const success = await sendOTP(formattedPhone);
+      const success = await sendOTP(phone);
       if (success) {
         setStep('otp');
         toast({
-          title: isDemoMode ? "Demo Mode Active" : "OTP Sent",
-          description: isDemoMode 
-            ? "Use demo OTP: 123456" 
-            : "Please check your phone for the verification code",
-        });
-      } else {
-        toast({
-          title: "Failed to send OTP",
-          description: "Please try again",
-          variant: "destructive"
+          title: "OTP Sent",
+          description: "Please check your phone for the verification code",
         });
       }
     } catch (error) {
@@ -70,21 +60,14 @@ const LoginPage = () => {
 
     setIsLoading(true);
     try {
-      // Format phone for international use
-      const formattedPhone = `+91${phone}`;
-      const success = await login(formattedPhone, otp, role);
+      const success = await login(phone, otp, role);
       if (success) {
-        toast({
-          title: "Login Successful",
-          description: `Welcome to MyFleet!`
-        });
+        // Navigate to home page after successful login
         navigate('/');
       } else {
         toast({
-          title: "Login Failed",
-          description: role === 'driver' 
-            ? "Driver account not found. Please contact your fleet owner."
-            : "Invalid verification code or login failed",
+          title: "Invalid OTP",
+          description: "Please enter the correct OTP",
           variant: "destructive"
         });
       }
@@ -112,16 +95,6 @@ const LoginPage = () => {
               <p className="text-muted-foreground text-sm">Smart Fleet Management</p>
             </div>
           </div>
-          {isDemoMode && (
-            <div className="bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 rounded-lg p-3 mb-4">
-              <p className="text-orange-700 dark:text-orange-300 text-sm font-medium">
-                🚀 Demo Mode Active
-              </p>
-              <p className="text-orange-600 dark:text-orange-400 text-xs mt-1">
-                Use OTP: <span className="font-mono font-bold">123456</span> for any phone number
-              </p>
-            </div>
-          )}
         </div>
 
         <Card className="w-full border-primary/20 shadow-xl bg-card/95 backdrop-blur-sm">
@@ -207,17 +180,14 @@ const LoginPage = () => {
                   <Input
                     id="otp"
                     type="text"
-                    placeholder={isDemoMode ? "123456" : "Enter OTP"}
+                    placeholder="123456"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     maxLength={6}
                     className="text-center text-lg tracking-widest font-mono"
                   />
                   <p className="text-sm text-muted-foreground text-center">
-                    {isDemoMode 
-                      ? `Demo mode: Use OTP 123456 for +91 ${phone}`
-                      : `Code sent to +91 ${phone}`
-                    }
+                    Code sent to +91 {phone}
                   </p>
                 </div>
                 <Button 
@@ -247,13 +217,11 @@ const LoginPage = () => {
                     </Button>
                   </div>
                 </div>
-                {role === 'driver' && (
-                  <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
-                    <p className="text-xs text-blue-700 dark:text-blue-300 text-center">
-                      <strong>Driver Login:</strong> You can only login if your fleet owner has created your driver account.
-                    </p>
-                  </div>
-                )}
+                <div className="bg-muted/50 p-3 rounded-lg border border-border/50">
+                  <p className="text-xs text-muted-foreground text-center">
+                    <strong>Demo Access:</strong> Use verification code <span className="font-mono font-bold">123456</span>
+                  </p>
+                </div>
               </>
             )}
           </CardContent>
