@@ -13,7 +13,7 @@ const LoginPage = () => {
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [isLoading, setIsLoading] = useState(false);
-  const { sendOTP, login } = useAuth();
+  const { sendOTP, verifyOTP } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -36,6 +36,8 @@ const LoginPage = () => {
           title: "OTP Sent",
           description: "Please check your phone for the verification code",
         });
+      } else {
+        throw new Error('Failed to send OTP');
       }
     } catch (error) {
       toast({
@@ -59,21 +61,21 @@ const LoginPage = () => {
 
     setIsLoading(true);
     try {
-      const success = await login(phone, otp);
+      const success = await verifyOTP(phone, otp);
       if (success) {
+        toast({
+          title: "Login Successful",
+          description: "Welcome to MyFleet AI!",
+        });
         // Navigate to home page after successful login
         navigate('/');
       } else {
-        toast({
-          title: "Invalid OTP",
-          description: "Please enter the correct OTP",
-          variant: "destructive"
-        });
+        throw new Error('Invalid OTP');
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
-        title: "Error",
-        description: "Login failed. Please try again.",
+        title: "Login Failed",
+        description: error.message || "Please check your OTP and try again.",
         variant: "destructive"
       });
     }
@@ -138,7 +140,7 @@ const LoginPage = () => {
                 </Button>
                 <div className="flex items-center justify-center text-xs text-muted-foreground pt-2">
                   <Shield className="h-4 w-4 mr-2" />
-                  <span>Secured with end-to-end encryption</span>
+                  <span>Secured with Supabase authentication</span>
                 </div>
               </>
             ) : (
@@ -184,11 +186,6 @@ const LoginPage = () => {
                       Didn't receive the code? Resend
                     </Button>
                   </div>
-                </div>
-                <div className="bg-muted/50 p-3 rounded-lg border border-border/50">
-                  <p className="text-xs text-muted-foreground text-center">
-                    <strong>Demo Access:</strong> Use verification code <span className="font-mono font-bold">123456</span>
-                  </p>
                 </div>
               </>
             )}

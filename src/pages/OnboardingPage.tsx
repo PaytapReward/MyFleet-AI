@@ -49,15 +49,19 @@ const OnboardingPage = () => {
 
     setIsLoading(true);
     try {
-      await completeOnboarding(formData);
-      toast({
-        title: "Welcome to MyFleet AI!",
-        description: "Your account has been set up successfully",
-      });
-    } catch (error) {
+      const success = await completeOnboarding(formData);
+      if (success) {
+        toast({
+          title: "Welcome to MyFleet AI!",
+          description: "Your account has been set up successfully",
+        });
+      } else {
+        throw new Error('Onboarding failed');
+      }
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to complete onboarding. Please try again.",
+        description: error.message || "Failed to complete onboarding. Please try again.",
         variant: "destructive"
       });
     }

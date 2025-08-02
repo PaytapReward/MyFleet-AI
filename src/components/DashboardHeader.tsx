@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const DashboardHeader = () => {
-  const { user, logout } = useAuth();
+  const { user, profile, logout } = useAuth();
   const navigate = useNavigate();
   
   return (
@@ -25,7 +25,7 @@ const DashboardHeader = () => {
           <div>
             <h1 className="text-xl font-semibold text-foreground">MyFleet AI</h1>
             <p className="text-sm text-muted-foreground">
-              Welcome back, {user?.fullName || 'Fleet Manager'}
+              Welcome back, {profile?.full_name || 'Fleet Manager'}
             </p>
           </div>
         </div>
@@ -46,10 +46,10 @@ const DashboardHeader = () => {
               <DropdownMenuLabel>
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium">{user?.fullName || 'Fleet Manager'}</p>
-                    <p className="text-xs text-muted-foreground">+91 {user?.phone}</p>
-                    {user?.companyName && (
-                      <p className="text-xs text-muted-foreground">{user.companyName}</p>
+                    <p className="text-sm font-medium">{profile?.full_name || 'Fleet Manager'}</p>
+                    <p className="text-xs text-muted-foreground">+91 {profile?.phone}</p>
+                    {profile?.company_name && (
+                      <p className="text-xs text-muted-foreground">{profile.company_name}</p>
                     )}
                   </div>
                   <Button 

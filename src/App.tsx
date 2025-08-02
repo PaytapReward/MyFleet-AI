@@ -18,7 +18,7 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const AppRoutes = () => {
-  const { user, isLoading } = useAuth();
+  const { user, profile, isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -45,7 +45,7 @@ const AppRoutes = () => {
   }
 
   // Logged in but not onboarded
-  if (!user.isOnboarded) {
+  if (!profile?.is_onboarded) {
     return (
       <Routes>
         <Route path="*" element={<OnboardingPage />} />

@@ -21,7 +21,7 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 const SettingsPage = () => {
-  const { user, updateProfile } = useAuth();
+  const { profile, updateProfile } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -29,9 +29,9 @@ const SettingsPage = () => {
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      fullName: user?.fullName ?? "",
-      companyName: user?.companyName ?? "",
-      panNumber: user?.panNumber ?? "",
+      fullName: profile?.full_name ?? "",
+      companyName: profile?.company_name ?? "",
+      panNumber: profile?.pan_number ?? "",
     },
   });
 
@@ -103,7 +103,7 @@ const SettingsPage = () => {
                     <Label htmlFor="phone">Phone Number</Label>
                     <Input
                       id="phone"
-                      value={`+91 ${user?.phone}`}
+                      value={`+91 ${profile?.phone || ''}`}
                       disabled
                       className="bg-muted"
                     />
