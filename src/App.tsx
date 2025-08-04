@@ -7,7 +7,6 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { VehicleProvider } from "@/contexts/VehicleContext";
 import { DriverProvider } from "@/contexts/DriverContext";
 import { ManualTransactionProvider } from "@/contexts/ManualTransactionContext";
-import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
@@ -19,7 +18,7 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const AppRoutes = () => {
-  const { user, profile, isLoading } = useAuth();
+  const { user, isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -46,7 +45,7 @@ const AppRoutes = () => {
   }
 
   // Logged in but not onboarded
-  if (!profile?.is_onboarded) {
+  if (!user.isOnboarded) {
     return (
       <Routes>
         <Route path="*" element={<OnboardingPage />} />
@@ -69,23 +68,21 @@ const AppRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <LanguageProvider>
-      <AuthProvider>
-        <DriverProvider>
-          <VehicleProvider>
-            <ManualTransactionProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <AppRoutes />
-                </BrowserRouter>
-              </TooltipProvider>
-            </ManualTransactionProvider>
-          </VehicleProvider>
-        </DriverProvider>
-      </AuthProvider>
-    </LanguageProvider>
+    <AuthProvider>
+      <DriverProvider>
+        <VehicleProvider>
+          <ManualTransactionProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <AppRoutes />
+              </BrowserRouter>
+            </TooltipProvider>
+          </ManualTransactionProvider>
+        </VehicleProvider>
+      </DriverProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

@@ -17,7 +17,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import AssignDriverModal from "./AssignDriverModal";
 import { useDrivers } from "@/contexts/DriverContext";
-import TranslatedText from "@/components/TranslatedText";
 
 interface VehicleCardProps {
   vehicle: {
@@ -88,15 +87,13 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
           <div className="flex items-center space-x-2">
             <CreditCard className="h-4 w-4 text-primary" />
             <div>
-              <p className="text-sm font-medium">
-                <TranslatedText>PayTap Balance</TranslatedText>
-              </p>
+              <p className="text-sm font-medium">PayTap Balance</p>
               <p className="text-lg font-semibold text-primary">₹{vehicle.payTapBalance}</p>
             </div>
           </div>
           <Button size="sm" variant="default">
             <Plus className="h-3 w-3 mr-1" />
-            <TranslatedText>Add Money</TranslatedText>
+            Add Money
           </Button>
         </div>
 
@@ -112,7 +109,7 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
             </div>
           </div>
           <Button size="sm" variant={vehicle.fastTagLinked ? "secondary" : "warning"}>
-            <TranslatedText>{vehicle.fastTagLinked ? 'Add Balance' : 'Link FASTag'}</TranslatedText>
+            {vehicle.fastTagLinked ? 'Add Balance' : 'Link'}
           </Button>
         </div>
 
@@ -130,7 +127,7 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
             variant="secondary"
             onClick={() => setShowDriverModal(true)}
           >
-            <TranslatedText>{driverName ? 'Change' : 'Assign Driver'}</TranslatedText>
+            {driverName ? 'Change' : 'Assign'}
           </Button>
         </div>
 
@@ -160,7 +157,7 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
             </div>
           </div>
           <Button size="sm" variant={vehicle.gpsLinked ? "success" : "warning"}>
-            <TranslatedText>{vehicle.gpsLinked ? 'Track Vehicle' : 'Add GPS'}</TranslatedText>
+            {vehicle.gpsLinked ? 'Track' : 'Add GPS'}
           </Button>
         </div>
 

@@ -6,7 +6,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useVehicles } from "@/contexts/VehicleContext";
 import { useProfitLoss } from "@/hooks/useProfitLoss";
 import { PnLPeriod } from "@/types/vehicle";
-import TranslatedText from "@/components/TranslatedText";
 
 const FleetOverview = () => {
   const navigate = useNavigate();
@@ -24,9 +23,7 @@ const FleetOverview = () => {
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">
-          <TranslatedText>Fleet Overview</TranslatedText>
-        </h2>
+        <h2 className="text-lg font-semibold">Fleet Overview</h2>
         <Select value={selectedPeriod} onValueChange={(value: PnLPeriod) => setSelectedPeriod(value)}>
           <SelectTrigger className="w-32">
             <SelectValue />
@@ -43,9 +40,7 @@ const FleetOverview = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
       <Card className="shadow-sm hover:shadow-md transition-all duration-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 lg:p-6 lg:pb-2">
-          <CardTitle className="text-xs lg:text-sm font-medium">
-            <TranslatedText>Total Vehicles</TranslatedText>
-          </CardTitle>
+          <CardTitle className="text-xs lg:text-sm font-medium">Total Vehicles</CardTitle>
           <TrendingUp className="h-3 w-3 lg:h-4 lg:w-4 text-primary" />
         </CardHeader>
         <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0">
@@ -56,9 +51,7 @@ const FleetOverview = () => {
 
       <Card className="shadow-sm hover:shadow-md transition-all duration-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 lg:p-6 lg:pb-2">
-          <CardTitle className="text-xs lg:text-sm font-medium">
-            <TranslatedText>PayTap Balance</TranslatedText>
-          </CardTitle>
+          <CardTitle className="text-xs lg:text-sm font-medium">PayTap Balance</CardTitle>
           <TrendingUp className="h-3 w-3 lg:h-4 lg:w-4 text-status-active" />
         </CardHeader>
         <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0">
@@ -69,9 +62,7 @@ const FleetOverview = () => {
 
       <Card className="shadow-sm hover:shadow-md transition-all duration-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 lg:p-6 lg:pb-2">
-          <CardTitle className="text-xs lg:text-sm font-medium">
-            <TranslatedText>Pending Challans</TranslatedText>
-          </CardTitle>
+          <CardTitle className="text-xs lg:text-sm font-medium">Pending Challans</CardTitle>
           <AlertTriangle className="h-3 w-3 lg:h-4 lg:w-4 text-status-urgent" />
         </CardHeader>
         <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0">
@@ -85,9 +76,7 @@ const FleetOverview = () => {
         onClick={() => navigate('/profit-loss')}
       >
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 lg:p-6 lg:pb-2">
-          <CardTitle className="text-xs lg:text-sm font-medium">
-            <TranslatedText>Statement</TranslatedText>
-          </CardTitle>
+          <CardTitle className="text-xs lg:text-sm font-medium">Statement</CardTitle>
           {isProfit ? (
             <TrendingUp className="h-3 w-3 lg:h-4 lg:w-4 text-status-active" />
           ) : (
