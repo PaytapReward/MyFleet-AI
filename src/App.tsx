@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { VehicleProvider } from "@/contexts/VehicleContext";
 import { DriverProvider } from "@/contexts/DriverContext";
 import { ManualTransactionProvider } from "@/contexts/ManualTransactionContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
@@ -68,21 +69,23 @@ const AppRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <DriverProvider>
-        <VehicleProvider>
-          <ManualTransactionProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <AppRoutes />
-              </BrowserRouter>
-            </TooltipProvider>
-          </ManualTransactionProvider>
-        </VehicleProvider>
-      </DriverProvider>
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <DriverProvider>
+          <VehicleProvider>
+            <ManualTransactionProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <AppRoutes />
+                </BrowserRouter>
+              </TooltipProvider>
+            </ManualTransactionProvider>
+          </VehicleProvider>
+        </DriverProvider>
+      </AuthProvider>
+    </LanguageProvider>
   </QueryClientProvider>
 );
 

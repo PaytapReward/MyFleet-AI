@@ -10,6 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import LanguageSelector from "@/components/LanguageSelector";
+import TranslatedText from "@/components/TranslatedText";
 
 const DashboardHeader = () => {
   const { user, profile, logout } = useAuth();
@@ -23,14 +25,17 @@ const DashboardHeader = () => {
             <Menu className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-xl font-semibold text-foreground">MyFleet AI</h1>
+            <h1 className="text-xl font-semibold text-foreground">
+              <TranslatedText>MyFleet AI</TranslatedText>
+            </h1>
             <p className="text-sm text-muted-foreground">
-              Welcome back, {profile?.full_name || 'Fleet Manager'}
+              <TranslatedText>Welcome back</TranslatedText>, {profile?.full_name || 'Fleet Manager'}
             </p>
           </div>
         </div>
         
         <div className="flex items-center space-x-2">
+          <LanguageSelector />
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="h-5 w-5" />
             <span className="absolute -top-1 -right-1 h-2 w-2 bg-destructive rounded-full"></span>
@@ -65,7 +70,7 @@ const DashboardHeader = () => {
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={logout} className="text-destructive">
                 <LogOut className="mr-2 h-4 w-4" />
-                Logout
+                <TranslatedText>Logout</TranslatedText>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
