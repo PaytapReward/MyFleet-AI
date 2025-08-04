@@ -72,25 +72,25 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-lg font-semibold text-foreground">{vehicle.number}</h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 w-6 p-0 hover:bg-primary/10"
-                onClick={() => setShowVehicleDetailsModal(true)}
-              >
-                <Car className="h-4 w-4 text-primary" />
-              </Button>
-            </div>
+            <h3 className="text-lg font-semibold text-foreground">{vehicle.number}</h3>
             <p className="text-sm text-muted-foreground">{vehicle.model}</p>
           </div>
-          {vehicle.challans > 0 && (
-            <Badge variant="destructive" className="flex items-center gap-1">
-              <AlertTriangle className="h-3 w-3" />
-              {vehicle.challans} Challan{vehicle.challans > 1 ? 's' : ''}
-            </Badge>
-          )}
+          <div className="flex items-center gap-2">
+            {vehicle.challans > 0 && (
+              <Badge variant="destructive" className="flex items-center gap-1">
+                <AlertTriangle className="h-3 w-3" />
+                {vehicle.challans} Challan{vehicle.challans > 1 ? 's' : ''}
+              </Badge>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 w-7 p-0 hover:bg-primary/10"
+              onClick={() => setShowVehicleDetailsModal(true)}
+            >
+              <Car className="h-3.5 w-3.5 text-primary" />
+            </Button>
+          </div>
         </CardTitle>
       </CardHeader>
 
