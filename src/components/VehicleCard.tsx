@@ -10,12 +10,14 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  Plus
+  Plus,
+  Car
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import AssignDriverModal from "./AssignDriverModal";
+import VehicleDetailsModal from "./VehicleDetailsModal";
 import { useDrivers } from "@/contexts/DriverContext";
 
 interface VehicleCardProps {
@@ -41,6 +43,7 @@ interface VehicleCardProps {
 const VehicleCard = ({ vehicle }: VehicleCardProps) => {
   const { getDriverById } = useDrivers();
   const [showDriverModal, setShowDriverModal] = useState(false);
+  const [showVehicleDetailsModal, setShowVehicleDetailsModal] = useState(false);
 
   // Get actual driver name from DriverContext
   const actualDriver = vehicle.driver ? getDriverById(vehicle.driver.id) : null;
@@ -69,7 +72,17 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-foreground">{vehicle.number}</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-foreground">{vehicle.number}</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0 hover:bg-primary/10"
+                onClick={() => setShowVehicleDetailsModal(true)}
+              >
+                <Car className="h-4 w-4 text-primary" />
+              </Button>
+            </div>
             <p className="text-sm text-muted-foreground">{vehicle.model}</p>
           </div>
           {vehicle.challans > 0 && (
@@ -207,6 +220,13 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
         vehicleId={vehicle.id}
         vehicleNumber={vehicle.number}
         currentDriverId={vehicle.driver?.id}
+      />
+
+      {/* Vehicle Details Modal */}
+      <VehicleDetailsModal
+        open={showVehicleDetailsModal}
+        setOpen={setShowVehicleDetailsModal}
+        vehicleNumber={vehicle.number}
       />
     </Card>
   );
