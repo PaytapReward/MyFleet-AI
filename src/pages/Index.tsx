@@ -32,9 +32,6 @@ const Index = () => {
       <DashboardHeader />
       
       <main className="container mx-auto px-4 py-6 max-w-7xl">
-        {/* Fleet Overview Stats */}
-        <FleetOverview />
-        
         {/* Vehicle Cards Section */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
@@ -73,6 +70,9 @@ const Index = () => {
             )}
           </div>
         </div>
+        
+        {/* Fleet Overview Stats */}
+        <FleetOverview />
         
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
