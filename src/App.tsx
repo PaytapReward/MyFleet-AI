@@ -13,6 +13,7 @@ import LoginPage from "./pages/LoginPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfitLossPage from "./pages/ProfitLossPage";
+import SupportPage from "./pages/SupportPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -59,6 +60,7 @@ const AppRoutes = () => {
       <Route path="/" element={<Index />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/profit-loss" element={<ProfitLossPage />} />
+      <Route path="/support" element={<SupportPage />} />
       <Route path="/login" element={<Index />} /> {/* Redirect authenticated users to dashboard */}
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />

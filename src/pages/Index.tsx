@@ -5,9 +5,11 @@ import AddVehicleModal from "@/components/AddVehicleModal";
 import { useVehicles } from "@/contexts/VehicleContext";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const { vehicles, isLoading } = useVehicles();
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -91,7 +93,9 @@ const Index = () => {
           <div className="bg-card p-6 rounded-lg shadow-sm border">
             <h3 className="font-medium text-foreground mb-2">Support</h3>
             <p className="text-sm text-muted-foreground mb-4">Need help with your fleet?</p>
-            <Button variant="outline" className="w-full">Contact Support</Button>
+            <Button variant="outline" className="w-full" onClick={() => navigate("/support")}>
+              Contact Support
+            </Button>
           </div>
         </div>
       </main>
