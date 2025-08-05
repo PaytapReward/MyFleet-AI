@@ -14,6 +14,8 @@ import OnboardingPage from "./pages/OnboardingPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfitLossPage from "./pages/ProfitLossPage";
 import SupportPage from "./pages/SupportPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsConditionsPage from "./pages/TermsConditionsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +42,8 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms-conditions" element={<TermsConditionsPage />} />
         <Route path="*" element={<LandingPage />} />
       </Routes>
     );
@@ -48,9 +52,11 @@ const AppRoutes = () => {
   // Logged in but not onboarded
   if (!user.isOnboarded) {
     return (
-      <Routes>
-        <Route path="*" element={<OnboardingPage />} />
-      </Routes>
+    <Routes>
+      <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+      <Route path="/terms-conditions" element={<TermsConditionsPage />} />
+      <Route path="*" element={<OnboardingPage />} />
+    </Routes>
     );
   }
 

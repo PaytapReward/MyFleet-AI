@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -205,8 +206,25 @@ const OnboardingPage = () => {
                 htmlFor="terms" 
                 className="text-sm leading-relaxed cursor-pointer"
               >
-                I agree to the <span className="text-primary underline">Privacy Policy</span> and{' '}
-                <span className="text-primary underline">Terms & Conditions</span> of MyFleet AI
+                I agree to the{' '}
+                <Link 
+                  to="/privacy-policy" 
+                  className="text-primary hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Privacy Policy
+                </Link>
+                {' '}and{' '}
+                <Link 
+                  to="/terms-conditions" 
+                  className="text-primary hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Terms & Conditions
+                </Link>
+                {' '}of MyFleet AI
               </Label>
             </div>
 
