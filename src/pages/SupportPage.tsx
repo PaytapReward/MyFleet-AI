@@ -95,7 +95,7 @@ const SupportPage = () => {
               <CardDescription>Talk to our experts directly</CardDescription>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="font-semibold text-lg mb-2">+91 9876543210</p>
+              <p className="font-semibold text-lg mb-2">+91-9900010964</p>
               <p className="text-sm text-muted-foreground">
                 Monday - Friday: 9 AM - 6 PM<br />
                 Saturday: 10 AM - 4 PM
@@ -110,9 +110,9 @@ const SupportPage = () => {
               <CardDescription>Send us a detailed message</CardDescription>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="font-semibold mb-1">support@myfleetai.com</p>
+              <p className="font-semibold mb-1">support@paytap.co.in</p>
               <p className="text-sm text-muted-foreground mb-2">General inquiries</p>
-              <p className="font-semibold mb-1">billing@myfleetai.com</p>
+              <p className="font-semibold mb-1">billing@paytap.co.in</p>
               <p className="text-sm text-muted-foreground">Billing & payments</p>
             </CardContent>
           </Card>
@@ -120,14 +120,14 @@ const SupportPage = () => {
           <Card>
             <CardHeader className="text-center">
               <MessageCircle className="h-8 w-8 text-primary mx-auto mb-2" />
-              <CardTitle>Live Chat</CardTitle>
-              <CardDescription>Instant messaging support</CardDescription>
+              <CardTitle>WhatsApp Support</CardTitle>
+              <CardDescription>Quick messaging support</CardDescription>
             </CardHeader>
             <CardContent className="text-center">
-              <Button className="w-full mb-2">Start Chat</Button>
+              <Button className="w-full mb-2">Chat on WhatsApp</Button>
               <p className="text-sm text-muted-foreground">
                 Available during business hours<br />
-                Average response: 2 minutes
+                Average response: 5 minutes
               </p>
             </CardContent>
           </Card>
@@ -152,8 +152,8 @@ const SupportPage = () => {
               <div>
                 <h4 className="font-semibold mb-2">Emergency Support</h4>
                 <p className="text-sm text-muted-foreground">24/7 for critical fleet issues</p>
-                <p className="text-sm text-muted-foreground">Call: +91 9876543211</p>
-                <p className="text-sm text-muted-foreground">Email: emergency@myfleetai.com</p>
+                <p className="text-sm text-muted-foreground">Call: +91-9900010964</p>
+                <p className="text-sm text-muted-foreground">Email: emergency@paytap.co.in</p>
               </div>
             </div>
           </CardContent>
