@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Truck, TrendingUp, Users, Smartphone, CheckCircle } from 'lucide-react';
+import Footer from '@/components/Footer';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -126,6 +127,9 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
