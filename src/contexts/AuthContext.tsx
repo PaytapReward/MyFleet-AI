@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 interface User {
   id: string;
   phone: string;
+  email?: string;
   fullName?: string;
   companyName?: string;
   panNumber?: string;
@@ -16,6 +17,7 @@ interface AuthContextType {
   logout: () => void;
   completeOnboarding: (profileData: {
     fullName: string;
+    email: string;
     companyName: string;
     vehicleNumber: string;
     panNumber: string;
@@ -121,6 +123,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const completeOnboarding = async (profileData: {
     fullName: string;
+    email: string;
     companyName: string;
     vehicleNumber: string;
     panNumber: string;
@@ -134,6 +137,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const updatedUser: User = {
         ...user,
         fullName: profileData.fullName,
+        email: profileData.email,
         companyName: profileData.companyName,
         panNumber: profileData.panNumber,
         isOnboarded: true

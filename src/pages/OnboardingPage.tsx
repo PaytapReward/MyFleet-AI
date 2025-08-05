@@ -4,16 +4,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { User, Building2, Car, CreditCard } from 'lucide-react';
+import { User, Building2, Car, CreditCard, Mail } from 'lucide-react';
 
 const OnboardingPage = () => {
   const [formData, setFormData] = useState({
     fullName: '',
+    email: '',
     companyName: '',
     vehicleNumber: '',
     panNumber: ''
   });
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { completeOnboarding } = useAuth();
   const { toast } = useToast();
@@ -24,6 +27,25 @@ const OnboardingPage = () => {
       toast({
         title: "Full Name Required",
         description: "Please enter your full name",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!formData.email.trim()) {
+      toast({
+        title: "Email Required",
+        description: "Please enter your email address",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Valid Email Required",
+        description: "Please enter a valid email address",
         variant: "destructive"
       });
       return;
@@ -42,6 +64,15 @@ const OnboardingPage = () => {
       toast({
         title: "Valid PAN Required",
         description: "Please enter a valid 10-character PAN number",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!termsAccepted) {
+      toast({
+        title: "Terms Acceptance Required",
+        description: "Please accept the Privacy Policy and Terms & Conditions",
         variant: "destructive"
       });
       return;
@@ -93,6 +124,21 @@ const OnboardingPage = () => {
                 placeholder="Enter your full name"
                 value={formData.fullName}
                 onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+              />
+            </div>
+
+            {/* Email */}
+            <div className="space-y-2">
+              <Label htmlFor="email" className="flex items-center">
+                <Mail className="h-4 w-4 mr-2" />
+                Email Address *
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter your email address"
+                value={formData.email}
+                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
               />
             </div>
 
@@ -148,9 +194,25 @@ const OnboardingPage = () => {
               </p>
             </div>
 
+            {/* Terms & Conditions */}
+            <div className="flex items-start space-x-2 mt-6">
+              <Checkbox 
+                id="terms"
+                checked={termsAccepted}
+                onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+              />
+              <Label 
+                htmlFor="terms" 
+                className="text-sm leading-relaxed cursor-pointer"
+              >
+                I agree to the <span className="text-primary underline">Privacy Policy</span> and{' '}
+                <span className="text-primary underline">Terms & Conditions</span> of MyFleet AI
+              </Label>
+            </div>
+
             <Button 
               onClick={handleSubmit}
-              disabled={isLoading}
+              disabled={isLoading || !termsAccepted}
               className="w-full mt-6"
             >
               {isLoading ? 'Setting up...' : 'Complete Setup'}
