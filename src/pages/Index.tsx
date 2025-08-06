@@ -2,7 +2,6 @@ import DashboardHeader from "@/components/DashboardHeader";
 import FleetOverview from "@/components/FleetOverview";
 import VehicleCard from "@/components/VehicleCard";
 import AddVehicleModal from "@/components/AddVehicleModal";
-import Footer from "@/components/Footer";
 import { useVehicles } from "@/contexts/VehicleContext";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -100,8 +99,6 @@ const Index = () => {
           </div>
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 };
