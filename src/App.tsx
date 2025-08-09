@@ -17,6 +17,7 @@ import SupportPage from "./pages/SupportPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsConditionsPage from "./pages/TermsConditionsPage";
 import NotFound from "./pages/NotFound";
+import SubscriptionPage from "./pages/SubscriptionPage";
 
 const queryClient = new QueryClient();
 
@@ -60,7 +61,19 @@ const AppRoutes = () => {
     );
   }
 
-  // Fully authenticated and onboarded
+  // Subscription gate for onboarded users without active plan
+  if (!user.subscribed) {
+    return (
+      <Routes>
+        <Route path="/subscription" element={<SubscriptionPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms-conditions" element={<TermsConditionsPage />} />
+        <Route path="*" element={<SubscriptionPage />} />
+      </Routes>
+    );
+  }
+
+  // Fully authenticated, onboarded, and subscribed
   return (
     <Routes>
       <Route path="/" element={<Index />} />

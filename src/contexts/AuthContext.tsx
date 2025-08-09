@@ -8,6 +8,9 @@ interface User {
   companyName?: string;
   panNumber?: string;
   isOnboarded: boolean;
+  subscribed?: boolean;
+  subscriptionTier?: string | null;
+  subscriptionEnd?: string | null;
 }
 
 interface AuthContextType {
@@ -91,7 +94,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             fullName: userData.fullName,
             companyName: userData.companyName,
             panNumber: userData.panNumber,
-            isOnboarded: userData.isOnboarded || false
+            isOnboarded: userData.isOnboarded || false,
+            subscribed: userData.subscribed ?? false,
+            subscriptionTier: userData.subscriptionTier ?? null,
+            subscriptionEnd: userData.subscriptionEnd ?? null
           };
           
           console.log(`Complete user object:`, completeUser);
@@ -102,7 +108,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           const newUser: User = {
             id: Date.now().toString(),
             phone,
-            isOnboarded: false
+            isOnboarded: false,
+            subscribed: false,
+            subscriptionTier: null,
+            subscriptionEnd: null
           };
           saveUser(newUser);
         }
@@ -112,7 +121,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const newUser: User = {
           id: Date.now().toString(),
           phone,
-          isOnboarded: false
+          isOnboarded: false,
+          subscribed: false,
+          subscriptionTier: null,
+          subscriptionEnd: null
         };
         saveUser(newUser);
       }
