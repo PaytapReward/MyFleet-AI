@@ -34,57 +34,73 @@ const plans = [
 ] as const;
 
 const SubscriptionPage = () => {
-  const { user } = useAuth();
+  const { user, startTrial } = useAuth();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
-  const [refreshing, setRefreshing] = useState(false);
+  
 
   useEffect(() => {
     document.title = "Choose Plan | MyFleet Subscription";
   }, []);
 
-  const handleCheckout = async (plan: typeof plans[number]["id"]) => {
+  const loadCashfreeScript = (): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      if ((window as any).Cashfree) return resolve();
+      const script = document.createElement('script');
+      script.src = 'https://sdk.cashfree.com/js/ui/2.0/cashfree.js';
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error('Failed to load Cashfree SDK'));
+      document.body.appendChild(script);
+    });
+  };
+
+  const handlePaidCheckout = async (plan: 'semiannual' | 'annual') => {
     try {
       setLoadingPlan(plan);
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { plan },
+      const returnUrl = `${window.location.origin}/payment/success`;
+      const { data, error } = await supabase.functions.invoke('cashfree-create-order', {
+        body: {
+          plan,
+          returnUrl,
+          customer: {
+            name: user?.fullName || 'Customer',
+            email: user?.email || undefined,
+            phone: user?.phone || undefined,
+          },
+        },
       });
       if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, "_blank");
-        toast({
-          title: "Opening secure checkout",
-          description: "Complete your payment in the new tab.",
-        });
+      if (data?.payment_session_id) {
+        await loadCashfreeScript();
+        const cashfree = new (window as any).Cashfree({ mode: data.mode || 'sandbox' });
+        await cashfree.checkout({ paymentSessionId: data.payment_session_id, redirectTarget: '_self' });
+      } else if (data?.payment_link) {
+        window.location.href = data.payment_link;
       } else {
-        toast({ title: "Checkout unavailable", description: "Please try again shortly." });
+        toast({ title: 'Unable to start payment', description: 'Please try again.' });
       }
-    } catch (err: any) {
-      console.error("Checkout error", err);
-      toast({
-        title: "Stripe not configured yet",
-        description: "Please add Stripe secrets to enable checkout.",
-      });
+    } catch (err) {
+      console.error('Cashfree checkout error', err);
+      toast({ title: 'Payment gateway not configured', description: 'Please set Cashfree credentials.' });
     } finally {
       setLoadingPlan(null);
     }
   };
 
-  const handleRefreshStatus = async () => {
-    try {
-      setRefreshing(true);
-      const { data, error } = await supabase.functions.invoke("check-subscription");
-      if (error) throw error;
-      if (data?.subscribed) {
-        toast({ title: "Subscription active", description: "Reloading your access..." });
-        setTimeout(() => window.location.replace("/"), 800);
-      } else {
-        toast({ title: "No active plan found", description: "Please choose a plan to continue." });
+  const handleCheckout = async (plan: typeof plans[number]['id']) => {
+    if (plan === 'trial') {
+      try {
+        setLoadingPlan(plan);
+        await startTrial();
+        toast({ title: 'Trial started', description: 'Welcome! Redirecting to your dashboard...' });
+        setTimeout(() => window.location.replace('/'), 400);
+      } catch (e) {
+        toast({ title: 'Could not start trial', description: 'Please try again.' });
+      } finally {
+        setLoadingPlan(null);
       }
-    } catch (err: any) {
-      console.error("Status error", err);
-      toast({ title: "Unable to verify subscription", description: "Please try again." });
-    } finally {
-      setRefreshing(false);
+    } else {
+      await handlePaidCheckout(plan);
     }
   };
 
@@ -143,17 +159,6 @@ const SubscriptionPage = () => {
           ))}
         </div>
 
-        <div className="mt-10 p-4 rounded-md border border-input bg-card">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h2 className="text-base font-semibold">Already subscribed?</h2>
-              <p className="text-sm text-muted-foreground">Verify your subscription and continue to dashboard.</p>
-            </div>
-            <Button variant="secondary" onClick={handleRefreshStatus} disabled={refreshing}>
-              {refreshing ? "Checking..." : "Refresh Subscription Status"}
-            </Button>
-          </div>
-        </div>
       </section>
 
       <section className="container mx-auto px-4 pb-16">

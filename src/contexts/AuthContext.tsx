@@ -31,6 +31,8 @@ interface AuthContextType {
     panNumber: string;
   }) => Promise<boolean>;
   sendOTP: (phone: string) => Promise<boolean>;
+  startTrial: () => Promise<void>;
+  setPaidSubscription: (tier: 'semiannual' | 'annual') => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -55,7 +57,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const loadUser = () => {
     const storedUser = localStorage.getItem('myfleet_user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      try {
+        const parsed: User = JSON.parse(storedUser);
+        const normalized = validateAndNormalizeUser(parsed);
+        if (JSON.stringify(parsed) !== JSON.stringify(normalized)) {
+          localStorage.setItem('myfleet_user', JSON.stringify(normalized));
+        }
+        setUser(normalized);
+      } catch (e) {
+        console.error('Failed to parse stored user', e);
+        setUser(null);
+      }
     }
     setIsLoading(false);
   };
@@ -101,7 +113,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           };
           
           console.log(`Complete user object:`, completeUser);
-          saveUser(completeUser);
+          saveUser(validateAndNormalizeUser(completeUser));
         } catch (error) {
           console.error(`Error parsing user data for ${phone}:`, error);
           // If data is corrupted, treat as new user
@@ -234,6 +246,50 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser(null);
   };
 
+  const isSubscriptionActive = (u: User) => {
+    if (!u.subscribed) return false;
+    if (!u.subscriptionEnd) return true;
+    return new Date(u.subscriptionEnd) > new Date();
+  };
+
+  const validateAndNormalizeUser = (u: User): User => {
+    const active = isSubscriptionActive(u);
+    return {
+      ...u,
+      subscribed: active,
+      subscriptionTier: active ? (u.subscriptionTier ?? null) : null,
+      subscriptionEnd: active ? (u.subscriptionEnd ?? null) : null,
+    };
+  };
+
+  const startTrial = async (): Promise<void> => {
+    if (!user) throw new Error('No user');
+    const end = new Date();
+    end.setDate(end.getDate() + 30);
+    const updated: User = {
+      ...user,
+      subscribed: true,
+      subscriptionTier: 'trial',
+      subscriptionEnd: end.toISOString(),
+    };
+    localStorage.setItem(`user_${user.phone}`, JSON.stringify(updated));
+    saveUser(updated);
+  };
+
+  const setPaidSubscription = async (tier: 'semiannual' | 'annual'): Promise<void> => {
+    if (!user) throw new Error('No user');
+    const end = new Date();
+    end.setMonth(end.getMonth() + (tier === 'semiannual' ? 6 : 12));
+    const updated: User = {
+      ...user,
+      subscribed: true,
+      subscriptionTier: tier,
+      subscriptionEnd: end.toISOString(),
+    };
+    localStorage.setItem(`user_${user.phone}`, JSON.stringify(updated));
+    saveUser(updated);
+  };
+
   useEffect(() => {
     loadUser();
   }, []);
@@ -246,7 +302,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       logout,
       completeOnboarding,
       updateProfile,
-      sendOTP
+      sendOTP,
+      startTrial,
+      setPaidSubscription
     }}>
       {children}
     </AuthContext.Provider>

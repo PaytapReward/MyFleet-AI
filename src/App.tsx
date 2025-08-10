@@ -18,11 +18,13 @@ import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsConditionsPage from "./pages/TermsConditionsPage";
 import NotFound from "./pages/NotFound";
 import SubscriptionPage from "./pages/SubscriptionPage";
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 
 const queryClient = new QueryClient();
 
 const AppRoutes = () => {
   const { user, isLoading } = useAuth();
+  const isActiveSub = user?.subscribed && (!user?.subscriptionEnd || new Date(user.subscriptionEnd) > new Date());
 
   if (isLoading) {
     return (
@@ -62,10 +64,11 @@ const AppRoutes = () => {
   }
 
   // Subscription gate for onboarded users without active plan
-  if (!user.subscribed) {
+  if (!isActiveSub) {
     return (
       <Routes>
         <Route path="/subscription" element={<SubscriptionPage />} />
+        <Route path="/payment/success" element={<PaymentSuccessPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/terms-conditions" element={<TermsConditionsPage />} />
         <Route path="*" element={<SubscriptionPage />} />
