@@ -1,4 +1,4 @@
-import DashboardHeader from "@/components/DashboardHeader";
+
 import FleetOverview from "@/components/FleetOverview";
 import VehicleCard from "@/components/VehicleCard";
 import AddVehicleModal from "@/components/AddVehicleModal";
@@ -14,7 +14,6 @@ const Index = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <DashboardHeader />
         <main className="container mx-auto px-4 py-6 max-w-7xl">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
@@ -31,7 +30,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardHeader />
+      
       
       <main className="container mx-auto px-4 py-6 max-w-7xl">
         {/* Vehicle Cards Section */}

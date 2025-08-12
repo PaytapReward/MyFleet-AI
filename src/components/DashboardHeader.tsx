@@ -1,5 +1,6 @@
-import { Bell, Menu, User, LogOut, Settings } from "lucide-react";
+import { Bell, User, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
@@ -19,9 +20,7 @@ const DashboardHeader = () => {
     <header className="bg-card border-b border-border px-4 py-3 shadow-sm">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <Button variant="ghost" size="icon" className="md:hidden">
-            <Menu className="h-5 w-5" />
-          </Button>
+          <SidebarTrigger />
           <div>
             <h1 className="text-xl font-semibold text-foreground">MyFleet AI</h1>
             <p className="text-sm text-muted-foreground">

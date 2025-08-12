@@ -19,6 +19,7 @@ import TermsConditionsPage from "./pages/TermsConditionsPage";
 import NotFound from "./pages/NotFound";
 import SubscriptionPage from "./pages/SubscriptionPage";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import AppLayout from "./components/AppLayout";
 
 const queryClient = new QueryClient();
 
@@ -79,10 +80,12 @@ const AppRoutes = () => {
   // Fully authenticated, onboarded, and subscribed
   return (
     <Routes>
-      <Route path="/" element={<Index />} />
-      <Route path="/settings" element={<SettingsPage />} />
-      <Route path="/profit-loss" element={<ProfitLossPage />} />
-      <Route path="/support" element={<SupportPage />} />
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<Index />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/profit-loss" element={<ProfitLossPage />} />
+        <Route path="/support" element={<SupportPage />} />
+      </Route>
       <Route path="/login" element={<Index />} /> {/* Redirect authenticated users to dashboard */}
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
