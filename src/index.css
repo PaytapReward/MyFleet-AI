@@ -167,6 +167,10 @@ All colors MUST be HSL.
     @apply min-h-[44px] min-w-[44px];
   }
 
+  /* Safe area helpers */
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+  .pt-safe { padding-top: env(safe-area-inset-top); }
+
   /* Smooth transitions for mobile */
   * {
     -webkit-tap-highlight-color: transparent;

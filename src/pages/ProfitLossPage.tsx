@@ -6,6 +6,8 @@ import { AddTransactionHero } from '@/components/AddTransactionHero';
 import { TransactionFilters } from '@/components/TransactionFilters';
 import { ProfitLossSummary } from '@/components/ProfitLossSummary';
 import { TransactionTable } from '@/components/TransactionTable';
+import { TransactionListMobile } from '@/components/TransactionListMobile';
+import { MobileFilterBar } from '@/components/MobileFilterBar';
 import { useTransactions } from '@/hooks/useTransactions';
 import { TransactionFilters as ITransactionFilters } from '@/types/transaction';
 import { useNavigate } from 'react-router-dom';
@@ -37,11 +39,18 @@ const ProfitLossPage = () => {
       
       {/* Main Content */}
       <div className="container mx-auto px-4 py-6">
-        {/* Filters */}
-        <TransactionFilters 
-          onFiltersChange={setFilters}
-          initialFilters={filters}
-        />
+        {/* Mobile Filter Bar */}
+        <div className="md:hidden">
+          <MobileFilterBar initialFilters={filters} onFiltersChange={setFilters} />
+        </div>
+
+        {/* Desktop Filters */}
+        <div className="hidden md:block">
+          <TransactionFilters 
+            onFiltersChange={setFilters}
+            initialFilters={filters}
+          />
+        </div>
         
         {/* Add Transaction Hero */}
         <AddTransactionHero />
@@ -49,11 +58,21 @@ const ProfitLossPage = () => {
         {/* Summary Cards */}
         <ProfitLossSummary data={profitLossData} />
         
-        {/* Transaction Table */}
-        <TransactionTable 
-          transactions={profitLossData.transactions}
-          isLoading={isLoading}
-        />
+        {/* Mobile Transaction List */}
+        <div className="md:hidden">
+          <TransactionListMobile 
+            transactions={profitLossData.transactions}
+            isLoading={isLoading}
+          />
+        </div>
+        
+        {/* Desktop Transaction Table */}
+        <div className="hidden md:block overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+          <TransactionTable 
+            transactions={profitLossData.transactions}
+            isLoading={isLoading}
+          />
+        </div>
       </div>
     </div>
   );

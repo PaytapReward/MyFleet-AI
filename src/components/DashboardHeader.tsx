@@ -17,7 +17,7 @@ const DashboardHeader = () => {
   const navigate = useNavigate();
   
   return (
-    <header className="bg-card border-b border-border px-4 py-3 shadow-sm">
+    <header className="sticky top-0 z-40 bg-card/80 supports-[backdrop-filter]:bg-card/80 backdrop-blur border-b border-border px-3 py-2 md:px-4 md:py-3 shadow-sm">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <SidebarTrigger />
