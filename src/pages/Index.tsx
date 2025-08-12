@@ -7,12 +7,31 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "@/components/ui/carousel";
+import { useEffect, useState } from "react";
 
 const Index = () => {
   const { vehicles, isLoading } = useVehicles();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const [api, setApi] = useState<CarouselApi | null>(null);
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!api) return;
+    const onSelect = () => {
+      setCurrent(api.selectedScrollSnap());
+      setCount(api.scrollSnapList().length);
+    };
+    onSelect();
+    api.on("select", onSelect);
+    api.on("reInit", onSelect);
+    return () => {
+      api.off("select", onSelect);
+      api.off("reInit", onSelect);
+    };
+  }, [api]);
 
   if (isLoading) {
     return (
@@ -54,7 +73,7 @@ const Index = () => {
             <>
               {isMobile ? (
                 <div className="relative">
-                  <Carousel opts={{ loop: true }}>
+                  <Carousel setApi={setApi} opts={{ loop: true, align: "start" }} className="pb-8">
                     <CarouselContent>
                       {vehicles.map((vehicle) => (
                         <CarouselItem key={vehicle.id}>
@@ -62,9 +81,29 @@ const Index = () => {
                         </CarouselItem>
                       ))}
                     </CarouselContent>
-                    <CarouselPrevious className="left-2 top-1/2 -translate-y-1/2" />
-                    <CarouselNext className="right-2 top-1/2 -translate-y-1/2" />
+                    <CarouselPrevious
+                      className="left-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-md border-border"
+                      aria-label="Previous vehicle"
+                    />
+                    <CarouselNext
+                      className="right-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-md border-border"
+                      aria-label="Next vehicle"
+                    />
                   </Carousel>
+                  {count > 1 && (
+                    <div className="mt-3 flex items-center justify-center gap-2" aria-label={`Slide ${current + 1} of ${count}`}>
+                      {Array.from({ length: count }).map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={() => api?.scrollTo(i)}
+                          className="h-2.5 w-2.5 rounded-full bg-muted-foreground/30 data-[active=true]:bg-foreground transition-colors"
+                          data-active={i === current}
+                          aria-label={`Go to vehicle ${i + 1}`}
+                          aria-current={i === current ? "true" : undefined}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="flex flex-col gap-4 md:flex-row md:space-x-4 md:overflow-x-auto pb-4 scrollbar-hide mobile-scroll">
