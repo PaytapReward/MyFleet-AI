@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Truck, CreditCard, Wallet, Receipt, Calculator, Shield, Clock, PieChart, Banknote } from 'lucide-react';
+import Footer from '@/components/Footer';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -152,8 +153,11 @@ const LandingPage = () => {
             <div className="text-sm">Payment Success Rate</div>
           </div>
         </div>
+        </div>
+        <div className="relative z-10">
+          <Footer />
+        </div>
       </div>
-    </div>
   );
 };
 
