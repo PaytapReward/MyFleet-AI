@@ -1,0 +1,22 @@
+{
+  "app": { "name": "MyFleet AI" },
+  "auth": { "login": "Login", "logout": "Logout" },
+  "roles": { "fleetManager": "Fleet Manager" },
+  "header": { "welcomeBack": "Welcome back, {{name}}" },
+  "nav": {
+    "dashboard": "Dashboard",
+    "profitLoss": "Profit & Loss",
+    "settings": "Settings",
+    "support": "Support"
+  },
+  "fleet": {
+    "overview": "Fleet Overview",
+    "totalVehicles": "Total Vehicles",
+    "fuelBalance": "Fuel Balance",
+    "pendingChallans": "Pending Challans",
+    "statement": "Statement",
+    "profit": "Profit",
+    "loss": "Loss"
+  },
+  "footer": { "rights": "All rights reserved." }
+}

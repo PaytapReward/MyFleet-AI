@@ -1,0 +1,22 @@
+{
+  "app": { "name": "ಮೈಫ್ಲೀಟ್ AI" },
+  "auth": { "login": "ಲಾಗಿನ್", "logout": "ಲಾಗೌಟ್" },
+  "roles": { "fleetManager": "ಫ್ಲೀಟ್ ಮ್ಯಾನೇಜರ್" },
+  "header": { "welcomeBack": "ಮತ್ತೆ ಸ್ವಾಗತ, {{name}}" },
+  "nav": {
+    "dashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
+    "profitLoss": "ಲಾಭ ಮತ್ತು ನಷ್ಟ",
+    "settings": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+    "support": "ಸಹಾಯ"
+  },
+  "fleet": {
+    "overview": "ಫ್ಲೀಟ್ ಅವಲೋಕನ",
+    "totalVehicles": "ಒಟ್ಟು ವಾಹನಗಳು",
+    "fuelBalance": "ಇಂಧನ ಶೇಷ",
+    "pendingChallans": "ಬಾಕಿ ಚಾಲನ್‌ಗಳು",
+    "statement": "ಸ್ಟೇಟ್‌ಮೆಂಟ್",
+    "profit": "ಲಾಭ",
+    "loss": "ನಷ್ಟ"
+  },
+  "footer": { "rights": "ಎಲ್ಲ ಹಕ್ಕುಗಳು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ." }
+}

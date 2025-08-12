@@ -9,6 +9,7 @@ import { PnLPeriod } from "@/types/vehicle";
 
 const FleetOverview = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { vehicles } = useVehicles();
   const [selectedPeriod, setSelectedPeriod] = useState<PnLPeriod>('today');
   
@@ -23,7 +24,7 @@ const FleetOverview = () => {
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Fleet Overview</h2>
+        <h2 className="text-lg font-semibold">{t('fleet.overview')}</h2>
         <Select value={selectedPeriod} onValueChange={(value: PnLPeriod) => setSelectedPeriod(value)}>
           <SelectTrigger className="w-32">
             <SelectValue />
@@ -40,7 +41,7 @@ const FleetOverview = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
       <Card className="shadow-sm hover:shadow-md transition-all duration-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 lg:p-6 lg:pb-2">
-          <CardTitle className="text-xs lg:text-sm font-medium">Total Vehicles</CardTitle>
+          <CardTitle className="text-xs lg:text-sm font-medium">{t('fleet.totalVehicles')}</CardTitle>
           <TrendingUp className="h-3 w-3 lg:h-4 lg:w-4 text-primary" />
         </CardHeader>
         <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0">
@@ -51,7 +52,7 @@ const FleetOverview = () => {
 
       <Card className="shadow-sm hover:shadow-md transition-all duration-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 lg:p-6 lg:pb-2">
-          <CardTitle className="text-xs lg:text-sm font-medium">Fuel Balance</CardTitle>
+          <CardTitle className="text-xs lg:text-sm font-medium">{t('fleet.fuelBalance')}</CardTitle>
           <TrendingUp className="h-3 w-3 lg:h-4 lg:w-4 text-status-active" />
         </CardHeader>
         <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0">
@@ -62,7 +63,7 @@ const FleetOverview = () => {
 
       <Card className="shadow-sm hover:shadow-md transition-all duration-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 lg:p-6 lg:pb-2">
-          <CardTitle className="text-xs lg:text-sm font-medium">Pending Challans</CardTitle>
+          <CardTitle className="text-xs lg:text-sm font-medium">{t('fleet.pendingChallans')}</CardTitle>
           <AlertTriangle className="h-3 w-3 lg:h-4 lg:w-4 text-status-urgent" />
         </CardHeader>
         <CardContent className="p-3 pt-0 lg:p-6 lg:pt-0">
@@ -76,7 +77,7 @@ const FleetOverview = () => {
         onClick={() => navigate('/profit-loss')}
       >
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 lg:p-6 lg:pb-2">
-          <CardTitle className="text-xs lg:text-sm font-medium">Statement</CardTitle>
+          <CardTitle className="text-xs lg:text-sm font-medium">{t('fleet.statement')}</CardTitle>
           {isProfit ? (
             <TrendingUp className="h-3 w-3 lg:h-4 lg:w-4 text-status-active" />
           ) : (
@@ -90,7 +91,7 @@ const FleetOverview = () => {
             ₹{Math.abs(netPnL).toLocaleString()}
           </div>
           <p className="text-[10px] lg:text-xs text-muted-foreground">
-            {selectedPeriod.charAt(0).toUpperCase() + selectedPeriod.slice(1)} {isProfit ? 'profit' : 'loss'}
+            {selectedPeriod.charAt(0).toUpperCase() + selectedPeriod.slice(1)} {t(isProfit ? 'fleet.profit' : 'fleet.loss')}
           </p>
         </CardContent>
       </Card>

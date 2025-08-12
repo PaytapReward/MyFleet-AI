@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Truck, Mail, Phone, MapPin, Instagram, Twitter, Linkedin, Facebook } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
+  const { t } = useTranslation();
   return (
     <footer className="bg-card border-t mt-12">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -12,7 +14,7 @@ const Footer = () => {
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <Truck className="h-4 w-4 text-primary-foreground" />
               </div>
-              <span className="text-lg font-bold text-foreground">MyFleet AI</span>
+              <span className="text-lg font-bold text-foreground">{t('app.name')}</span>
             </div>
             <p className="text-sm text-muted-foreground">
               Smart fleet management solutions powered by AI. Streamline your operations, reduce costs, and maximize efficiency.
@@ -39,22 +41,22 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Dashboard
+                  {t('nav.dashboard')}
                 </Link>
               </li>
               <li>
                 <Link to="/profit-loss" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Profit & Loss
+                  {t('nav.profitLoss')}
                 </Link>
               </li>
               <li>
                 <Link to="/settings" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Settings
+                  {t('nav.settings')}
                 </Link>
               </li>
               <li>
                 <Link to="/support" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Support
+                  {t('nav.support')}
                 </Link>
               </li>
             </ul>
@@ -103,7 +105,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t mt-8 pt-6 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="text-sm text-muted-foreground">
-            © 2024 MyFleet AI. All rights reserved.
+            © 2024 {t('app.name')}. {t('footer.rights')}
           </div>
           <div className="flex space-x-6">
             <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">

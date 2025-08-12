@@ -1,7 +1,9 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Truck, CreditCard, Wallet, Receipt, Calculator, Shield, Clock, PieChart, Banknote } from 'lucide-react';
 import Footer from '@/components/Footer';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -25,8 +27,8 @@ const LandingPage = () => {
               <Truck className="h-5 w-5 lg:h-6 lg:w-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-lg lg:text-2xl font-bold text-foreground">MyFleet AI</h1>
-              <p className="text-muted-foreground text-xs lg:text-sm">Smart Fleet Payments</p>
+              <h1 className="text-lg lg:text-2xl font-bold text-foreground">{t('app.name')}</h1>
+              <p className="text-muted-foreground text-xs lg:text-sm">{t('landing.tagline')}</p>
             </div>
           </div>
           
@@ -37,14 +39,14 @@ const LandingPage = () => {
               variant="outline"
               className="text-sm lg:text-base px-4 lg:px-6"
             >
-              Login
+              {t('auth.login')}
             </Button>
             <nav aria-label="Language selector" className="flex items-center gap-2 pt-1">
               <Button
                 variant="ghost"
                 size="sm"
                 className="h-8 px-2"
-                onClick={() => navigate({ pathname: '/', search: '?lang=en' })}
+                onClick={() => { i18n.changeLanguage('en'); navigate({ pathname: '/', search: '?lang=en' }); }}
               >
                 English
               </Button>
@@ -52,7 +54,7 @@ const LandingPage = () => {
                 variant="ghost"
                 size="sm"
                 className="h-8 px-2"
-                onClick={() => navigate({ pathname: '/', search: '?lang=hi' })}
+                onClick={() => { i18n.changeLanguage('hi'); navigate({ pathname: '/', search: '?lang=hi' }); }}
               >
                 हिंदी
               </Button>
@@ -60,7 +62,7 @@ const LandingPage = () => {
                 variant="ghost"
                 size="sm"
                 className="h-8 px-2"
-                onClick={() => navigate({ pathname: '/', search: '?lang=kn' })}
+                onClick={() => { i18n.changeLanguage('kn'); navigate({ pathname: '/', search: '?lang=kn' }); }}
               >
                 ಕನ್ನಡ
               </Button>
@@ -74,11 +76,11 @@ const LandingPage = () => {
 
         {/* Main Headline */}
         <h2 className="text-4xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-          Simplify Your
+          {t('landing.headline1')}
           <br />
-          <span className="text-primary">Fleet Payments</span>
+          <span className="text-primary">{t('landing.headline2')}</span>
           <br />
-          with Smart AI
+          {t('landing.headline3')}
         </h2>
 
         {/* Subheadline */}
@@ -93,7 +95,7 @@ const LandingPage = () => {
             size="lg"
             className="text-lg px-8 py-6 h-auto font-semibold shadow-lg"
           >
-            Start Free Trial
+            {t('landing.cta')}
           </Button>
         </div>
 
@@ -104,8 +106,8 @@ const LandingPage = () => {
               <CreditCard className="h-4 w-4 text-primary" />
             </div>
             <div>
-              <h3 className="font-semibold text-foreground mb-1">Instant Payments</h3>
-              <p className="text-muted-foreground text-sm">Process payments instantly with secure digital wallets and cards</p>
+              <h3 className="font-semibold text-foreground mb-1">{t('landing.instantPayments')}</h3>
+              <p className="text-muted-foreground text-sm">{t('landing.instantPaymentsDesc')}</p>
             </div>
           </div>
 
@@ -114,8 +116,8 @@ const LandingPage = () => {
               <Receipt className="h-4 w-4 text-accent" />
             </div>
             <div>
-              <h3 className="font-semibold text-foreground mb-1">Smart Invoicing</h3>
-              <p className="text-muted-foreground text-sm">Generate and send automated invoices with trip details</p>
+              <h3 className="font-semibold text-foreground mb-1">{t('landing.smartInvoicing')}</h3>
+              <p className="text-muted-foreground text-sm">{t('landing.smartInvoicingDesc')}</p>
             </div>
           </div>
 
@@ -124,8 +126,8 @@ const LandingPage = () => {
               <Calculator className="h-4 w-4 text-primary" />
             </div>
             <div>
-              <h3 className="font-semibold text-foreground mb-1">Expense Tracking</h3>
-              <p className="text-muted-foreground text-sm">Track fuel, maintenance, and operational costs automatically</p>
+              <h3 className="font-semibold text-foreground mb-1">{t('landing.expenseTracking')}</h3>
+              <p className="text-muted-foreground text-sm">{t('landing.expenseTrackingDesc')}</p>
             </div>
           </div>
 
@@ -134,8 +136,8 @@ const LandingPage = () => {
               <Shield className="h-4 w-4 text-accent" />
             </div>
             <div>
-              <h3 className="font-semibold text-foreground mb-1">Secure Transactions</h3>
-              <p className="text-muted-foreground text-sm">Bank-grade security with end-to-end encryption</p>
+              <h3 className="font-semibold text-foreground mb-1">{t('landing.secureTransactions')}</h3>
+              <p className="text-muted-foreground text-sm">{t('landing.secureTransactionsDesc')}</p>
             </div>
           </div>
         </div>
@@ -144,41 +146,41 @@ const LandingPage = () => {
         <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-6 mb-12 border border-border/30">
           <div className="flex items-center justify-center mb-4">
             <PieChart className="h-8 w-8 text-primary mr-3" />
-            <h3 className="text-2xl font-bold text-foreground">Real-time Financial Analytics</h3>
+            <h3 className="text-2xl font-bold text-foreground">{t('landing.analyticsTitle')}</h3>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div className="flex flex-col items-center">
-              <Wallet className="h-6 w-6 text-primary mb-2" />
-              <div className="text-sm text-muted-foreground">Digital Wallet</div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+              <div className="flex flex-col items-center">
+                <Wallet className="h-6 w-6 text-primary mb-2" />
+                <div className="text-sm text-muted-foreground">{t('landing.wallet')}</div>
+              </div>
+              <div className="flex flex-col items-center">
+                <Banknote className="h-6 w-6 text-accent mb-2" />
+                <div className="text-sm text-muted-foreground">{t('landing.cash')}</div>
+              </div>
+              <div className="flex flex-col items-center">
+                <Clock className="h-6 w-6 text-primary mb-2" />
+                <div className="text-sm text-muted-foreground">{t('landing.updates')}</div>
+              </div>
+              <div className="flex flex-col items-center">
+                <Receipt className="h-6 w-6 text-accent mb-2" />
+                <div className="text-sm text-muted-foreground">{t('landing.reports')}</div>
+              </div>
             </div>
-            <div className="flex flex-col items-center">
-              <Banknote className="h-6 w-6 text-accent mb-2" />
-              <div className="text-sm text-muted-foreground">Cash Management</div>
-            </div>
-            <div className="flex flex-col items-center">
-              <Clock className="h-6 w-6 text-primary mb-2" />
-              <div className="text-sm text-muted-foreground">Real-time Updates</div>
-            </div>
-            <div className="flex flex-col items-center">
-              <Receipt className="h-6 w-6 text-accent mb-2" />
-              <div className="text-sm text-muted-foreground">Auto Reports</div>
-            </div>
-          </div>
         </div>
 
         {/* Trust Indicators */}
         <div className="flex items-center justify-center lg:justify-start space-x-6 text-muted-foreground">
           <div className="text-center">
             <div className="text-2xl font-bold text-foreground">₹50Cr+</div>
-            <div className="text-sm">Payments Processed</div>
+            <div className="text-sm">{t('landing.paymentsProcessed')}</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-foreground">5K+</div>
-            <div className="text-sm">Active Fleet Operators</div>
+            <div className="text-sm">{t('landing.activeOperators')}</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-foreground">99.9%</div>
-            <div className="text-sm">Payment Success Rate</div>
+            <div className="text-sm">{t('landing.successRate')}</div>
           </div>
         </div>
         </div>

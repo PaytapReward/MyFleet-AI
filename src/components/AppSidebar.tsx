@@ -1,5 +1,6 @@
 import { Home, BarChart3, Settings, LifeBuoy } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Sidebar,
   SidebarContent,
@@ -20,6 +21,7 @@ const items = [
 ];
 
 export default function AppSidebar() {
+  const { t } = useTranslation();
   const { state, isMobile, setOpenMobile } = useSidebar();
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
@@ -27,6 +29,12 @@ export default function AppSidebar() {
     isActive ? "bg-muted text-primary font-medium" : "hover:bg-muted/50";
   const handleNavClick = () => {
     if (isMobile) setOpenMobile(false);
+  };
+  const labelMap: Record<string, string> = {
+    Dashboard: t("nav.dashboard"),
+    "Profit & Loss": t("nav.profitLoss"),
+    Settings: t("nav.settings"),
+    Support: t("nav.support"),
   };
 
   return (
@@ -41,7 +49,7 @@ export default function AppSidebar() {
                   <SidebarMenuButton asChild isActive={isActive(item.url)}>
                     <NavLink to={item.url} end className={getNavCls} onClick={handleNavClick}>
                       <item.icon className="mr-2 h-4 w-4" />
-                      {state !== "collapsed" && <span>{item.title}</span>}
+                      {state !== "collapsed" && <span>{labelMap[item.title]}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,16 +16,16 @@ import {
 const DashboardHeader = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  
+  const { t } = useTranslation();
   return (
     <header className="sticky top-0 z-40 bg-card/80 supports-[backdrop-filter]:bg-card/80 backdrop-blur border-b border-border px-3 py-2 md:px-4 md:py-3 shadow-sm">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <SidebarTrigger />
           <div>
-            <h1 className="text-xl font-semibold text-foreground">MyFleet AI</h1>
+            <h1 className="text-xl font-semibold text-foreground">{t('app.name')}</h1>
             <p className="text-sm text-muted-foreground">
-              Welcome back, {user?.fullName || 'Fleet Manager'}
+              {t('header.welcomeBack', { name: user?.fullName || t('roles.fleetManager') })}
             </p>
           </div>
         </div>
@@ -64,7 +65,7 @@ const DashboardHeader = () => {
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={logout} className="text-destructive">
                 <LogOut className="mr-2 h-4 w-4" />
-                Logout
+                {t('auth.logout')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
