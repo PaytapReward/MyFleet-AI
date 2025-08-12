@@ -31,13 +31,41 @@ const LandingPage = () => {
           </div>
           
           {/* Login Button */}
-          <Button
-            onClick={() => navigate('/login')}
-            variant="outline"
-            className="text-sm lg:text-base px-4 lg:px-6"
-          >
-            Login
-          </Button>
+          <div className="flex flex-col items-end gap-1">
+            <Button
+              onClick={() => navigate('/login')}
+              variant="outline"
+              className="text-sm lg:text-base px-4 lg:px-6"
+            >
+              Login
+            </Button>
+            <nav aria-label="Language selector" className="flex items-center gap-2 pt-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 px-2"
+                onClick={() => navigate({ pathname: '/', search: '?lang=en' })}
+              >
+                English
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 px-2"
+                onClick={() => navigate({ pathname: '/', search: '?lang=hi' })}
+              >
+                हिंदी
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 px-2"
+                onClick={() => navigate({ pathname: '/', search: '?lang=kn' })}
+              >
+                ಕನ್ನಡ
+              </Button>
+            </nav>
+          </div>
         </div>
       </header>
       
