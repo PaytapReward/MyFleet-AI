@@ -100,7 +100,7 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
           <div className="flex items-center space-x-2">
             <CreditCard className="h-4 w-4 text-primary" />
             <div>
-              <p className="text-sm font-medium">PayTap Balance</p>
+              <p className="text-sm font-medium">Fuel Balance</p>
               <p className="text-lg font-semibold text-primary">₹{vehicle.payTapBalance}</p>
             </div>
           </div>
