@@ -7,6 +7,15 @@ import { useTranslation } from 'react-i18next';
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const lang = searchParams.get('lang');
+    if (lang && ['en','hi','kn'].includes(lang)) {
+      i18n.changeLanguage(lang);
+    }
+  }, [searchParams, i18n]);
 
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">

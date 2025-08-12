@@ -18,5 +18,28 @@
     "profit": "Profit",
     "loss": "Loss"
   },
+  "landing": {
+    "tagline": "Smart Fleet Payments",
+    "headline1": "Simplify Your",
+    "headline2": "Fleet Payments",
+    "headline3": "with Smart AI",
+    "cta": "Start Free Trial",
+    "instantPayments": "Instant Payments",
+    "instantPaymentsDesc": "Process payments instantly with secure digital wallets and cards",
+    "smartInvoicing": "Smart Invoicing",
+    "smartInvoicingDesc": "Generate and send automated invoices with trip details",
+    "expenseTracking": "Expense Tracking",
+    "expenseTrackingDesc": "Track fuel, maintenance, and operational costs automatically",
+    "secureTransactions": "Secure Transactions",
+    "secureTransactionsDesc": "Bank-grade security with end-to-end encryption",
+    "analyticsTitle": "Real-time Financial Analytics",
+    "wallet": "Digital Wallet",
+    "cash": "Cash Management",
+    "updates": "Real-time Updates",
+    "reports": "Auto Reports",
+    "paymentsProcessed": "Payments Processed",
+    "activeOperators": "Active Fleet Operators",
+    "successRate": "Payment Success Rate"
+  },
   "footer": { "rights": "All rights reserved." }
 }

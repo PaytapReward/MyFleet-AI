@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useVehicles } from "@/contexts/VehicleContext";
 import { useProfitLoss } from "@/hooks/useProfitLoss";
 import { PnLPeriod } from "@/types/vehicle";
+import { useTranslation } from "react-i18next";
 
 const FleetOverview = () => {
   const navigate = useNavigate();

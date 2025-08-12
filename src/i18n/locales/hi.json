@@ -18,5 +18,28 @@
     "profit": "लाभ",
     "loss": "हानि"
   },
+  "landing": {
+    "tagline": "स्मार्ट फ्लीट पेमेंट्स",
+    "headline1": "सरल बनाएं",
+    "headline2": "फ्लीट भुगतान",
+    "headline3": "स्मार्ट एआई के साथ",
+    "cta": "फ्री ट्रायल शुरू करें",
+    "instantPayments": "तुरंत भुगतान",
+    "instantPaymentsDesc": "सुरक्षित डिजिटल वॉलेट और कार्ड के साथ तुरंत भुगतान करें",
+    "smartInvoicing": "स्मार्ट इनवॉइसिंग",
+    "smartInvoicingDesc": "ट्रिप विवरण के साथ स्वचालित इनवॉइस बनाएँ और भेजें",
+    "expenseTracking": "खर्च ट्रैकिंग",
+    "expenseTrackingDesc": "ईंधन, मेंटेनेंस और संचालन लागत स्वतः ट्रैक करें",
+    "secureTransactions": "सुरक्षित लेन-देन",
+    "secureTransactionsDesc": "एंड-टू-एंड एन्क्रिप्शन के साथ बैंक-ग्रेड सुरक्षा",
+    "analyticsTitle": "रीयल-टाइम वित्तीय एनालिटिक्स",
+    "wallet": "डिजिटल वॉलेट",
+    "cash": "कैश प्रबंधन",
+    "updates": "रीयल-टाइम अपडेट",
+    "reports": "ऑटो रिपोर्ट्स",
+    "paymentsProcessed": "प्रोसेस किए गए भुगतान",
+    "activeOperators": "सक्रिय फ्लीट ऑपरेटर्स",
+    "successRate": "भुगतान सफलता दर"
+  },
   "footer": { "rights": "सर्वाधिकार सुरक्षित।" }
 }
