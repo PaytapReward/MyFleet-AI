@@ -6,10 +6,13 @@ import { useVehicles } from "@/contexts/VehicleContext";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 
 const Index = () => {
   const { vehicles, isLoading } = useVehicles();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   if (isLoading) {
     return (
@@ -46,33 +49,51 @@ const Index = () => {
             <AddVehicleModal />
           </div>
           
-          {/* Horizontal Scrolling Vehicle Cards */}
-          <div className="flex flex-col gap-4 md:flex-row md:space-x-4 md:overflow-x-auto pb-4 scrollbar-hide mobile-scroll">
-            {vehicles.length > 0 ? (
-              vehicles.map((vehicle) => (
-                <VehicleCard key={vehicle.id} vehicle={vehicle} />
-              ))
-            ) : (
-              <div className="w-full md:w-80 md:flex-shrink-0 border-2 border-dashed border-border rounded-lg flex items-center justify-center min-h-[400px] bg-muted/30">
-                <div className="text-center p-6">
-                  <Plus className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-foreground mb-2">No Vehicles Yet</h3>
-                  <p className="text-sm text-muted-foreground">Click \"Add Vehicle\" to get started</p>
+          {/* Vehicles - mobile carousel or desktop list */}
+          {vehicles.length > 0 ? (
+            <>
+              {isMobile ? (
+                <div className="relative">
+                  <Carousel opts={{ loop: true }}>
+                    <CarouselContent>
+                      {vehicles.map((vehicle) => (
+                        <CarouselItem key={vehicle.id}>
+                          <VehicleCard vehicle={vehicle} />
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    <CarouselPrevious className="left-2 top-1/2 -translate-y-1/2" />
+                    <CarouselNext className="right-2 top-1/2 -translate-y-1/2" />
+                  </Carousel>
                 </div>
-              </div>
-            )}
-            
-            {/* Add Vehicle Card - Always show if under limit */}
-            {vehicles.length < 25 && vehicles.length > 0 && (
-              <div className="hidden md:flex md:w-80 md:flex-shrink-0 border-2 border-dashed border-border rounded-lg items-center justify-center min-h-[400px] bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
-                <div className="text-center p-6">
-                  <Plus className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-foreground mb-2">Add New Vehicle</h3>
-                  <p className="text-sm text-muted-foreground">Expand your fleet management</p>
+              ) : (
+                <div className="flex flex-col gap-4 md:flex-row md:space-x-4 md:overflow-x-auto pb-4 scrollbar-hide mobile-scroll">
+                  {vehicles.map((vehicle) => (
+                    <VehicleCard key={vehicle.id} vehicle={vehicle} />
+                  ))}
+
+                  {/* Add Vehicle Card - Desktop only */}
+                  {vehicles.length < 25 && (
+                    <div className="hidden md:flex md:w-80 md:flex-shrink-0 border-2 border-dashed border-border rounded-lg items-center justify-center min-h-[400px] bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
+                      <div className="text-center p-6">
+                        <Plus className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                        <h3 className="text-lg font-medium text-foreground mb-2">Add New Vehicle</h3>
+                        <p className="text-sm text-muted-foreground">Expand your fleet management</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
+              )}
+            </>
+          ) : (
+            <div className="w-full md:w-80 md:flex-shrink-0 border-2 border-dashed border-border rounded-lg flex items-center justify-center min-h-[400px] bg-muted/30">
+              <div className="text-center p-6">
+                <Plus className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-foreground mb-2">No Vehicles Yet</h3>
+                <p className="text-sm text-muted-foreground">Click "Add Vehicle" to get started</p>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
         
       </main>
