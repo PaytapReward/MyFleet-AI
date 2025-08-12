@@ -21,9 +21,7 @@ interface AuthContextType {
   completeOnboarding: (profileData: {
     fullName: string;
     email: string;
-    companyName: string;
     vehicleNumber: string;
-    panNumber: string;
   }) => Promise<boolean>;
   updateProfile: (profileData: {
     fullName: string;
@@ -148,9 +146,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const completeOnboarding = async (profileData: {
     fullName: string;
     email: string;
-    companyName: string;
     vehicleNumber: string;
-    panNumber: string;
   }): Promise<boolean> => {
     try {
       if (!user) {
@@ -162,8 +158,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         ...user,
         fullName: profileData.fullName,
         email: profileData.email,
-        companyName: profileData.companyName,
-        panNumber: profileData.panNumber,
         isOnboarded: true
       };
       

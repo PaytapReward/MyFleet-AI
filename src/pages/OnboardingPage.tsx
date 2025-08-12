@@ -7,15 +7,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { User, Building2, Car, CreditCard, Mail } from 'lucide-react';
+import { User, Car, Mail } from 'lucide-react';
 
 const OnboardingPage = () => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
-    companyName: '',
-    vehicleNumber: '',
-    panNumber: ''
+    vehicleNumber: ''
   });
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -61,14 +59,6 @@ const OnboardingPage = () => {
       return;
     }
 
-    if (!formData.panNumber.trim() || formData.panNumber.length !== 10) {
-      toast({
-        title: "Valid PAN Required",
-        description: "Please enter a valid 10-character PAN number",
-        variant: "destructive"
-      });
-      return;
-    }
 
     if (!termsAccepted) {
       toast({
@@ -143,20 +133,6 @@ const OnboardingPage = () => {
               />
             </div>
 
-            {/* Company Name */}
-            <div className="space-y-2">
-              <Label htmlFor="companyName" className="flex items-center">
-                <Building2 className="h-4 w-4 mr-2" />
-                Company Name (Optional)
-              </Label>
-              <Input
-                id="companyName"
-                type="text"
-                placeholder="Enter your company name"
-                value={formData.companyName}
-                onChange={(e) => setFormData(prev => ({ ...prev, companyName: e.target.value }))}
-              />
-            </div>
 
             {/* Primary Vehicle Number */}
             <div className="space-y-2">
@@ -173,27 +149,6 @@ const OnboardingPage = () => {
               />
             </div>
 
-            {/* PAN Number */}
-            <div className="space-y-2">
-              <Label htmlFor="panNumber" className="flex items-center">
-                <CreditCard className="h-4 w-4 mr-2" />
-                PAN Card Number *
-              </Label>
-              <Input
-                id="panNumber"
-                type="text"
-                placeholder="ABCDE1234F"
-                value={formData.panNumber}
-                onChange={(e) => setFormData(prev => ({ 
-                  ...prev, 
-                  panNumber: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10)
-                }))}
-                maxLength={10}
-              />
-              <p className="text-xs text-muted-foreground">
-                Required for compliance and tax purposes
-              </p>
-            </div>
 
             {/* Terms & Conditions */}
             <div className="flex items-start space-x-2 mt-6">
