@@ -75,28 +75,6 @@ const Index = () => {
         {/* Fleet Overview Stats */}
         <FleetOverview />
         
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-card p-6 rounded-lg shadow-sm border">
-            <h3 className="font-medium text-foreground mb-2">Bulk Actions</h3>
-            <p className="text-sm text-muted-foreground mb-4">Manage multiple vehicles at once</p>
-            <Button variant="outline" className="w-full">View All Challans</Button>
-          </div>
-          
-          <div className="bg-card p-6 rounded-lg shadow-sm border">
-            <h3 className="font-medium text-foreground mb-2">Reports</h3>
-            <p className="text-sm text-muted-foreground mb-4">Track fleet performance</p>
-            <Button variant="outline" className="w-full">Generate Report</Button>
-          </div>
-          
-          <div className="bg-card p-6 rounded-lg shadow-sm border">
-            <h3 className="font-medium text-foreground mb-2">Support</h3>
-            <p className="text-sm text-muted-foreground mb-4">Need help with your fleet?</p>
-            <Button variant="outline" className="w-full" onClick={() => navigate("/support")}>
-              Contact Support
-            </Button>
-          </div>
-        </div>
       </main>
     </div>
   );
