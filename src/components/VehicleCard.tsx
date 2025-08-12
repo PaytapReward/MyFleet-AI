@@ -6,10 +6,6 @@ import {
   Wrench, 
   MapPin, 
   AlertTriangle, 
-  FileText,
-  CheckCircle,
-  XCircle,
-  Clock,
   Plus,
   Car
 } from "lucide-react";
@@ -49,23 +45,6 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
   const actualDriver = vehicle.driver ? getDriverById(vehicle.driver.id) : null;
   const driverName = actualDriver?.name || vehicle.driver?.name || null;
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'uploaded': return 'bg-status-active text-white';
-      case 'expired': return 'bg-status-urgent text-white';
-      case 'missing': return 'bg-status-pending text-white';
-      default: return 'bg-status-neutral text-white';
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'uploaded': return <CheckCircle className="h-3 w-3" />;
-      case 'expired': return <XCircle className="h-3 w-3" />;
-      case 'missing': return <Clock className="h-3 w-3" />;
-      default: return <Clock className="h-3 w-3" />;
-    }
-  };
 
   return (
     <Card className="w-80 mobile-card flex-shrink-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-card to-muted/30 touch-target">
@@ -174,43 +153,6 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
           </Button>
         </div>
 
-        {/* Documents */}
-        <div className="space-y-2">
-          <div className="flex items-center space-x-2 mb-2">
-            <FileText className="h-4 w-4 text-primary" />
-            <p className="text-sm font-medium">Documents</p>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-2">
-            <div className="flex items-center justify-between p-2 bg-muted rounded">
-              <span className="text-xs">Pollution</span>
-              <Badge className={`text-xs ${getStatusColor(vehicle.documents.pollution.status)}`}>
-                {getStatusIcon(vehicle.documents.pollution.status)}
-              </Badge>
-            </div>
-            
-            <div className="flex items-center justify-between p-2 bg-muted rounded">
-              <span className="text-xs">Registration</span>
-              <Badge className={`text-xs ${getStatusColor(vehicle.documents.registration.status)}`}>
-                {getStatusIcon(vehicle.documents.registration.status)}
-              </Badge>
-            </div>
-            
-            <div className="flex items-center justify-between p-2 bg-muted rounded">
-              <span className="text-xs">Insurance</span>
-              <Badge className={`text-xs ${getStatusColor(vehicle.documents.insurance.status)}`}>
-                {getStatusIcon(vehicle.documents.insurance.status)}
-              </Badge>
-            </div>
-            
-            <div className="flex items-center justify-between p-2 bg-muted rounded">
-              <span className="text-xs">License</span>
-              <Badge className={`text-xs ${getStatusColor(vehicle.documents.license.status)}`}>
-                {getStatusIcon(vehicle.documents.license.status)}
-              </Badge>
-            </div>
-          </div>
-        </div>
       </CardContent>
 
       {/* Driver Assignment Modal */}
