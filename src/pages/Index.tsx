@@ -33,8 +33,11 @@ const Index = () => {
       
       
       <main className="container mx-auto px-4 py-6 max-w-7xl">
+        {/* Fleet Overview Stats - moved to top */}
+        <FleetOverview />
+        
         {/* Vehicle Cards Section */}
-        <div className="mb-6">
+        <div className="mt-6">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-xl font-semibold text-foreground">Your Fleet</h2>
@@ -54,7 +57,7 @@ const Index = () => {
                 <div className="text-center p-6">
                   <Plus className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-foreground mb-2">No Vehicles Yet</h3>
-                  <p className="text-sm text-muted-foreground">Click "Add Vehicle" to get started</p>
+                  <p className="text-sm text-muted-foreground">Click \"Add Vehicle\" to get started</p>
                 </div>
               </div>
             )}
@@ -71,9 +74,6 @@ const Index = () => {
             )}
           </div>
         </div>
-        
-        {/* Fleet Overview Stats */}
-        <FleetOverview />
         
       </main>
     </div>
