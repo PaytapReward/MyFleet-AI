@@ -40,20 +40,20 @@ const Index = () => {
         <div className="mt-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-xl font-semibold text-foreground">Your Fleet</h2>
-              <p className="text-sm text-muted-foreground">Manage up to 25 vehicles ({vehicles.length}/25)</p>
+              <h2 className="text-lg md:text-xl font-semibold text-foreground">Your Fleet</h2>
+              <p className="hidden sm:block text-sm text-muted-foreground">Manage up to 25 vehicles ({vehicles.length}/25)</p>
             </div>
             <AddVehicleModal />
           </div>
           
           {/* Horizontal Scrolling Vehicle Cards */}
-          <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide mobile-scroll">
+          <div className="flex flex-col gap-4 md:flex-row md:space-x-4 md:overflow-x-auto pb-4 scrollbar-hide mobile-scroll">
             {vehicles.length > 0 ? (
               vehicles.map((vehicle) => (
                 <VehicleCard key={vehicle.id} vehicle={vehicle} />
               ))
             ) : (
-              <div className="w-80 flex-shrink-0 border-2 border-dashed border-border rounded-lg flex items-center justify-center min-h-[400px] bg-muted/30">
+              <div className="w-full md:w-80 md:flex-shrink-0 border-2 border-dashed border-border rounded-lg flex items-center justify-center min-h-[400px] bg-muted/30">
                 <div className="text-center p-6">
                   <Plus className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-foreground mb-2">No Vehicles Yet</h3>
@@ -64,7 +64,7 @@ const Index = () => {
             
             {/* Add Vehicle Card - Always show if under limit */}
             {vehicles.length < 25 && vehicles.length > 0 && (
-              <div className="w-80 flex-shrink-0 border-2 border-dashed border-border rounded-lg flex items-center justify-center min-h-[400px] bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
+              <div className="hidden md:flex md:w-80 md:flex-shrink-0 border-2 border-dashed border-border rounded-lg items-center justify-center min-h-[400px] bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
                 <div className="text-center p-6">
                   <Plus className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-foreground mb-2">Add New Vehicle</h3>

@@ -47,7 +47,7 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
 
 
   return (
-    <Card className="w-80 mobile-card flex-shrink-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-card to-muted/30 touch-target">
+    <Card className="w-full md:w-80 mobile-card md:flex-shrink-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-card to-muted/30 touch-target">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
           <div>

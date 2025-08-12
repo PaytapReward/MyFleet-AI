@@ -148,17 +148,18 @@ All colors MUST be HSL.
   /* Mobile-first touch interactions */
   @media (max-width: 768px) {
     .mobile-card {
-      min-width: 280px;
-      max-width: 320px;
+      width: 100%;
+      min-width: 100%;
+      max-width: 100%;
     }
     
     .mobile-scroll {
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
+      scroll-snap-type: none;
+      overflow-x: hidden;
     }
     
     .mobile-scroll > * {
-      scroll-snap-align: start;
+      scroll-snap-align: none;
     }
   }
 

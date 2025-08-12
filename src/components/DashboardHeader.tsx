@@ -23,8 +23,8 @@ const DashboardHeader = () => {
         <div className="flex items-center space-x-3">
           <SidebarTrigger />
           <div>
-            <h1 className="text-xl font-semibold text-foreground">{t('app.name')}</h1>
-            <p className="text-sm text-muted-foreground">
+            <h1 className="text-base md:text-xl font-semibold text-foreground">{t('app.name')}</h1>
+            <p className="hidden sm:block text-sm text-muted-foreground">
               {t('header.welcomeBack', { name: user?.fullName || t('roles.fleetManager') })}
             </p>
           </div>
