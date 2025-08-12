@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import AssignDriverModal from "./AssignDriverModal";
 import VehicleDetailsModal from "./VehicleDetailsModal";
 import { useDrivers } from "@/contexts/DriverContext";
@@ -73,86 +74,157 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-4">
-        {/* PayTap Tag */}
-        <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-          <div className="flex items-center space-x-2">
-            <CreditCard className="h-4 w-4 text-primary" />
-            <div>
-              <p className="text-sm font-medium">Fuel Balance</p>
+      <CardContent className="md:space-y-4">
+        {/* Mobile: 3x2 grid of squares */}
+        <div className="grid grid-cols-3 gap-2 md:hidden">
+          <AspectRatio ratio={1}>
+            <div className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between">
+              <div className="flex items-center gap-2">
+                <CreditCard className="h-4 w-4 text-primary" />
+                <p className="text-sm font-medium">Fuel</p>
+              </div>
               <p className="text-lg font-semibold text-primary">₹{vehicle.payTapBalance}</p>
             </div>
-          </div>
-          <Button size="sm" variant="default">
-            <Plus className="h-3 w-3 mr-1" />
-            Add Money
-          </Button>
-        </div>
+          </AspectRatio>
 
-        {/* FASTag */}
-        <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-          <div className="flex items-center space-x-2">
-            <LinkIcon className="h-4 w-4 text-primary" />
-            <div>
-              <p className="text-sm font-medium">FASTag</p>
+          <AspectRatio ratio={1}>
+            <div className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between">
+              <div className="flex items-center gap-2">
+                <LinkIcon className="h-4 w-4 text-primary" />
+                <p className="text-sm font-medium">FASTag</p>
+              </div>
               <p className={`text-sm ${vehicle.fastTagLinked ? 'text-status-active' : 'text-status-urgent'}`}>
                 {vehicle.fastTagLinked ? 'Linked' : 'Not Linked'}
               </p>
             </div>
-          </div>
-          <Button size="sm" variant={vehicle.fastTagLinked ? "secondary" : "warning"}>
-            {vehicle.fastTagLinked ? 'Add Balance' : 'Link'}
-          </Button>
-        </div>
+          </AspectRatio>
 
-        {/* Driver Assignment */}
-        <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-          <div className="flex items-center space-x-2">
-            <User className="h-4 w-4 text-primary" />
-            <div>
-              <p className="text-sm font-medium">Driver</p>
+          <AspectRatio ratio={1}>
+            <div className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between">
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4 text-primary" />
+                <p className="text-sm font-medium">Driver</p>
+              </div>
               <p className="text-sm text-foreground">{driverName || 'Not Assigned'}</p>
             </div>
-          </div>
-          <Button 
-            size="sm" 
-            variant="secondary"
-            onClick={() => setShowDriverModal(true)}
-          >
-            {driverName ? 'Change' : 'Assign'}
-          </Button>
-        </div>
+          </AspectRatio>
 
-        {/* Maintenance */}
-        <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-          <div className="flex items-center space-x-2">
-            <Wrench className="h-4 w-4 text-primary" />
-            <div>
-              <p className="text-sm font-medium">Last Service</p>
+          <AspectRatio ratio={1}>
+            <div className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between">
+              <div className="flex items-center gap-2">
+                <Wrench className="h-4 w-4 text-primary" />
+                <p className="text-sm font-medium">Service</p>
+              </div>
               <p className="text-sm text-foreground">{vehicle.lastService}</p>
             </div>
-          </div>
-          <Button size="sm" variant="secondary">
-            Schedule Next
-          </Button>
-        </div>
+          </AspectRatio>
 
-        {/* GPS Device */}
-        <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-          <div className="flex items-center space-x-2">
-            <MapPin className="h-4 w-4 text-primary" />
-            <div>
-              <p className="text-sm font-medium">GPS Device</p>
+          <AspectRatio ratio={1}>
+            <div className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-primary" />
+                <p className="text-sm font-medium">GPS</p>
+              </div>
               <p className={`text-sm ${vehicle.gpsLinked ? 'text-status-active' : 'text-status-urgent'}`}>
                 {vehicle.gpsLinked ? 'Active' : 'Not Linked'}
               </p>
             </div>
-          </div>
-          <Button size="sm" variant={vehicle.gpsLinked ? "success" : "warning"}>
-            {vehicle.gpsLinked ? 'Track' : 'Add GPS'}
-          </Button>
+          </AspectRatio>
+
+          <AspectRatio ratio={1}>
+            <div className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-primary" />
+                <p className="text-sm font-medium">Challans</p>
+              </div>
+              <p className={`text-sm ${vehicle.challans > 0 ? 'text-status-urgent' : 'text-muted-foreground'}`}>
+                {vehicle.challans}
+              </p>
+            </div>
+          </AspectRatio>
         </div>
 
+        {/* Desktop/Tablet: keep existing layout */}
+        <div className="hidden md:block space-y-4">
+          {/* PayTap Tag */}
+          <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+            <div className="flex items-center space-x-2">
+              <CreditCard className="h-4 w-4 text-primary" />
+              <div>
+                <p className="text-sm font-medium">Fuel Balance</p>
+                <p className="text-lg font-semibold text-primary">₹{vehicle.payTapBalance}</p>
+              </div>
+            </div>
+            <Button size="sm" variant="default">
+              <Plus className="h-3 w-3 mr-1" />
+              Add Money
+            </Button>
+          </div>
+
+          {/* FASTag */}
+          <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+            <div className="flex items-center space-x-2">
+              <LinkIcon className="h-4 w-4 text-primary" />
+              <div>
+                <p className="text-sm font-medium">FASTag</p>
+                <p className={`text-sm ${vehicle.fastTagLinked ? 'text-status-active' : 'text-status-urgent'}`}>
+                  {vehicle.fastTagLinked ? 'Linked' : 'Not Linked'}
+                </p>
+              </div>
+            </div>
+            <Button size="sm" variant={vehicle.fastTagLinked ? "secondary" : "warning"}>
+              {vehicle.fastTagLinked ? 'Add Balance' : 'Link'}
+            </Button>
+          </div>
+
+          {/* Driver Assignment */}
+          <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+            <div className="flex items-center space-x-2">
+              <User className="h-4 w-4 text-primary" />
+              <div>
+                <p className="text-sm font-medium">Driver</p>
+                <p className="text-sm text-foreground">{driverName || 'Not Assigned'}</p>
+              </div>
+            </div>
+            <Button 
+              size="sm" 
+              variant="secondary"
+              onClick={() => setShowDriverModal(true)}
+            >
+              {driverName ? 'Change' : 'Assign'}
+            </Button>
+          </div>
+
+          {/* Maintenance */}
+          <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+            <div className="flex items-center space-x-2">
+              <Wrench className="h-4 w-4 text-primary" />
+              <div>
+                <p className="text-sm font-medium">Last Service</p>
+                <p className="text-sm text-foreground">{vehicle.lastService}</p>
+              </div>
+            </div>
+            <Button size="sm" variant="secondary">
+              Schedule Next
+            </Button>
+          </div>
+
+          {/* GPS Device */}
+          <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+            <div className="flex items-center space-x-2">
+              <MapPin className="h-4 w-4 text-primary" />
+              <div>
+                <p className="text-sm font-medium">GPS Device</p>
+                <p className={`text-sm ${vehicle.gpsLinked ? 'text-status-active' : 'text-status-urgent'}`}>
+                  {vehicle.gpsLinked ? 'Active' : 'Not Linked'}
+                </p>
+              </div>
+            </div>
+            <Button size="sm" variant={vehicle.gpsLinked ? "success" : "warning"}>
+              {vehicle.gpsLinked ? 'Track' : 'Add GPS'}
+            </Button>
+          </div>
+        </div>
       </CardContent>
 
       {/* Driver Assignment Modal */}
