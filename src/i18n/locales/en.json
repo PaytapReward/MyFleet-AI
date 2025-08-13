@@ -10,7 +10,7 @@
     "support": "Support"
   },
   "fleet": {
-    "overview": "Fleet Overview",
+    "overview": "Vehicle Dashboard",
     "totalVehicles": "Total Vehicles",
     "fuelBalance": "Fuel Balance",
     "pendingChallans": "Pending Challans",
