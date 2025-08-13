@@ -17,6 +17,7 @@ import AssignDriverModal from "./AssignDriverModal";
 import VehicleDetailsModal from "./VehicleDetailsModal";
 import FuelModal from "./FuelModal";
 import FastagModal from "./FastagModal";
+import DriverModal from "./DriverModal";
 import { useDrivers } from "@/contexts/DriverContext";
 
 interface VehicleCardProps {
@@ -41,10 +42,11 @@ interface VehicleCardProps {
 
 const VehicleCard = ({ vehicle }: VehicleCardProps) => {
   const { getDriverById } = useDrivers();
-  const [showDriverModal, setShowDriverModal] = useState(false);
+  const [showAssignDriverModal, setShowAssignDriverModal] = useState(false);
   const [showVehicleDetailsModal, setShowVehicleDetailsModal] = useState(false);
   const [showFuelModal, setShowFuelModal] = useState(false);
   const [showFastagModal, setShowFastagModal] = useState(false);
+  const [showDriverModal, setShowDriverModal] = useState(false);
 
   // Get actual driver name from DriverContext
   const actualDriver = vehicle.driver ? getDriverById(vehicle.driver.id) : null;
@@ -110,7 +112,10 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
           </AspectRatio>
 
           <AspectRatio ratio={1}>
-            <div className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between">
+            <div 
+              className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between cursor-pointer hover:bg-muted/80 transition-colors"
+              onClick={() => setShowDriverModal(true)}
+            >
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4 text-primary" />
                 <p className="text-sm font-medium">Driver</p>
@@ -194,7 +199,10 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
           </div>
 
           {/* Driver Assignment */}
-          <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+          <div 
+            className="flex items-center justify-between p-3 bg-muted rounded-lg cursor-pointer hover:bg-muted/80 transition-colors"
+            onClick={() => setShowDriverModal(true)}
+          >
             <div className="flex items-center space-x-2">
               <User className="h-4 w-4 text-primary" />
               <div>
@@ -205,9 +213,12 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
             <Button 
               size="sm" 
               variant="secondary"
-              onClick={() => setShowDriverModal(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDriverModal(true);
+              }}
             >
-              {driverName ? 'Change' : 'Assign'}
+              {driverName ? 'Manage' : 'Add Driver'}
             </Button>
           </div>
 
@@ -245,11 +256,19 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
 
       {/* Driver Assignment Modal */}
       <AssignDriverModal
+        open={showAssignDriverModal}
+        setOpen={setShowAssignDriverModal}
+        vehicleId={vehicle.id}
+        vehicleNumber={vehicle.number}
+        currentDriverId={vehicle.driver?.id}
+      />
+
+      {/* Driver Modal */}
+      <DriverModal
         open={showDriverModal}
         setOpen={setShowDriverModal}
         vehicleId={vehicle.id}
         vehicleNumber={vehicle.number}
-        currentDriverId={vehicle.driver?.id}
       />
 
       {/* Vehicle Details Modal */}
