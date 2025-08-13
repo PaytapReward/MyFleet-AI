@@ -1,6 +1,12 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Truck, CreditCard, Wallet, Receipt, Calculator, Shield, Clock, PieChart, Banknote } from 'lucide-react';
+import { Truck, CreditCard, Wallet, Receipt, Calculator, Shield, Clock, PieChart, Banknote, ChevronDown, Languages } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Footer from '@/components/Footer';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -42,35 +48,40 @@ const LandingPage = () => {
           </div>
 
           
-          {/* Login Button and Language Selector */}
+          {/* Language Dropdown and Login Button */}
           <div className="flex items-center gap-4">
-            {/* Language Selector */}
-            <nav aria-label="Language selector" className="hidden lg:flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 px-2"
-                onClick={() => { i18n.changeLanguage('en'); navigate({ pathname: '/', search: '?lang=en' }); }}
-              >
-                EN
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 px-2"
-                onClick={() => { i18n.changeLanguage('hi'); navigate({ pathname: '/', search: '?lang=hi' }); }}
-              >
-                हि
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 px-2"
-                onClick={() => { i18n.changeLanguage('kn'); navigate({ pathname: '/', search: '?lang=kn' }); }}
-              >
-                ಕ
-              </Button>
-            </nav>
+            {/* Language Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 px-3 gap-1">
+                  <Languages className="h-4 w-4" />
+                  <span className="hidden sm:inline">
+                    {i18n.language === 'hi' ? 'हि' : i18n.language === 'kn' ? 'ಕ' : 'EN'}
+                  </span>
+                  <ChevronDown className="h-3 w-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-32 bg-background border border-border shadow-lg z-50">
+                <DropdownMenuItem 
+                  onClick={() => { i18n.changeLanguage('en'); navigate({ pathname: '/', search: '?lang=en' }); }}
+                  className="cursor-pointer"
+                >
+                  English (EN)
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => { i18n.changeLanguage('hi'); navigate({ pathname: '/', search: '?lang=hi' }); }}
+                  className="cursor-pointer"
+                >
+                  हिंदी (हि)
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => { i18n.changeLanguage('kn'); navigate({ pathname: '/', search: '?lang=kn' }); }}
+                  className="cursor-pointer"
+                >
+                  ಕನ್ನಡ (ಕ)
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* Login Button */}
             <Button
