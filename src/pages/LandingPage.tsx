@@ -41,21 +41,6 @@ const LandingPage = () => {
             </div>
           </div>
 
-          {/* Navigation Menu */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-foreground hover:text-primary transition-colors font-medium">
-              Features
-            </a>
-            <a href="#analytics" className="text-foreground hover:text-primary transition-colors font-medium">
-              Analytics
-            </a>
-            <a href="#pricing" className="text-foreground hover:text-primary transition-colors font-medium">
-              Pricing
-            </a>
-            <a href="#contact" className="text-foreground hover:text-primary transition-colors font-medium">
-              Contact
-            </a>
-          </nav>
           
           {/* Login Button and Language Selector */}
           <div className="flex items-center gap-4">
