@@ -19,6 +19,7 @@ import FuelModal from "./FuelModal";
 import FastagModal from "./FastagModal";
 import DriverModal from "./DriverModal";
 import { ServiceModal } from "./ServiceModal";
+import { ChallanModal } from "./ChallanModal";
 import { useDrivers } from "@/contexts/DriverContext";
 
 interface VehicleCardProps {
@@ -49,6 +50,7 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
   const [showFastagModal, setShowFastagModal] = useState(false);
   const [showDriverModal, setShowDriverModal] = useState(false);
   const [showServiceModal, setShowServiceModal] = useState(false);
+  const [showChallanModal, setShowChallanModal] = useState(false);
 
   // Get actual driver name from DriverContext
   const actualDriver = vehicle.driver ? getDriverById(vehicle.driver.id) : null;
@@ -152,7 +154,10 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
           </AspectRatio>
 
           <AspectRatio ratio={1}>
-            <div className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between">
+            <div 
+              className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between cursor-pointer hover:bg-muted/80 transition-colors"
+              onClick={() => setShowChallanModal(true)}
+            >
               <div className="flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 text-primary" />
                 <p className="text-sm font-medium">Challans</p>
@@ -251,6 +256,32 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
             </Button>
           </div>
 
+          {/* Challans */}
+          <div 
+            className="flex items-center justify-between p-3 bg-muted rounded-lg cursor-pointer hover:bg-muted/80 transition-colors"
+            onClick={() => setShowChallanModal(true)}
+          >
+            <div className="flex items-center space-x-2">
+              <AlertTriangle className="h-4 w-4 text-primary" />
+              <div>
+                <p className="text-sm font-medium">Challans</p>
+                <p className={`text-sm ${vehicle.challans > 0 ? 'text-status-urgent' : 'text-muted-foreground'}`}>
+                  {vehicle.challans} {vehicle.challans === 1 ? 'Challan' : 'Challans'}
+                </p>
+              </div>
+            </div>
+            <Button 
+              size="sm" 
+              variant={vehicle.challans > 0 ? "destructive" : "secondary"}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowChallanModal(true);
+              }}
+            >
+              {vehicle.challans > 0 ? 'Pay Now' : 'View'}
+            </Button>
+          </div>
+
           {/* GPS Device */}
           <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
             <div className="flex items-center space-x-2">
@@ -318,6 +349,14 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
           number: vehicle.number,
           lastService: vehicle.lastService
         }}
+      />
+
+      {/* Challan Modal */}
+      <ChallanModal
+        open={showChallanModal}
+        setOpen={setShowChallanModal}
+        vehicleNumber={vehicle.number}
+        challanCount={vehicle.challans}
       />
     </Card>
   );
