@@ -86,87 +86,63 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
 
       <CardContent className="md:space-y-4">
         {/* Mobile: 3x2 grid of squares */}
-        <div className="grid grid-cols-3 gap-2 md:hidden">
-          <AspectRatio ratio={1}>
-            <div 
-              className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between cursor-pointer hover:bg-muted/80 transition-colors"
-              onClick={() => setShowFuelModal(true)}
-            >
-              <div className="flex items-center gap-2">
-                <CreditCard className="h-4 w-4 text-primary" />
-                <p className="text-sm font-medium">Fuel</p>
-              </div>
-              <p className="text-lg font-semibold text-primary">₹{vehicle.payTapBalance}</p>
-            </div>
-          </AspectRatio>
+        <div className="grid grid-cols-3 gap-3 md:hidden">
+          <div 
+            className="min-h-[90px] p-2.5 bg-muted rounded-lg flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/80 transition-colors"
+            onClick={() => setShowFuelModal(true)}
+          >
+            <CreditCard className="h-4 w-4 text-primary mb-1" />
+            <p className="text-xs font-medium text-muted-foreground mb-1">Fuel</p>
+            <p className="text-sm font-semibold text-primary">₹{vehicle.payTapBalance}</p>
+          </div>
 
-          <AspectRatio ratio={1}>
-            <div 
-              className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between cursor-pointer hover:bg-muted/80 transition-colors"
-              onClick={() => setShowFastagModal(true)}
-            >
-              <div className="flex items-center gap-2">
-                <LinkIcon className="h-4 w-4 text-primary" />
-                <p className="text-sm font-medium">FASTag</p>
-              </div>
-              <p className={`text-sm ${vehicle.fastTagLinked ? 'text-status-active' : 'text-status-urgent'}`}>
-                {vehicle.fastTagLinked ? 'Linked' : 'Not Linked'}
-              </p>
-            </div>
-          </AspectRatio>
+          <div 
+            className="min-h-[90px] p-2.5 bg-muted rounded-lg flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/80 transition-colors"
+            onClick={() => setShowFastagModal(true)}
+          >
+            <LinkIcon className="h-4 w-4 text-primary mb-1" />
+            <p className="text-xs font-medium text-muted-foreground mb-1">FASTag</p>
+            <p className={`text-xs ${vehicle.fastTagLinked ? 'text-status-active' : 'text-status-urgent'}`}>
+              {vehicle.fastTagLinked ? 'Linked' : 'Not Linked'}
+            </p>
+          </div>
 
-          <AspectRatio ratio={1}>
-            <div 
-              className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between cursor-pointer hover:bg-muted/80 transition-colors"
-              onClick={() => setShowDriverModal(true)}
-            >
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-primary" />
-                <p className="text-sm font-medium">Driver</p>
-              </div>
-              <p className="text-sm text-foreground">{driverName || 'Not Assigned'}</p>
-            </div>
-          </AspectRatio>
+          <div 
+            className="min-h-[90px] p-2.5 bg-muted rounded-lg flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/80 transition-colors"
+            onClick={() => setShowDriverModal(true)}
+          >
+            <User className="h-4 w-4 text-primary mb-1" />
+            <p className="text-xs font-medium text-muted-foreground mb-1">Driver</p>
+            <p className="text-xs text-foreground truncate w-full">{driverName || 'Not Assigned'}</p>
+          </div>
 
-          <AspectRatio ratio={1}>
-            <div 
-              className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between cursor-pointer hover:bg-muted/80 transition-colors"
-              onClick={() => setShowServiceModal(true)}
-            >
-              <div className="flex items-center gap-2">
-                <Wrench className="h-4 w-4 text-primary" />
-                <p className="text-sm font-medium">Service</p>
-              </div>
-              <p className="text-sm text-foreground">{vehicle.lastService}</p>
-            </div>
-          </AspectRatio>
+          <div 
+            className="min-h-[90px] p-2.5 bg-muted rounded-lg flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/80 transition-colors"
+            onClick={() => setShowServiceModal(true)}
+          >
+            <Wrench className="h-4 w-4 text-primary mb-1" />
+            <p className="text-xs font-medium text-muted-foreground mb-1">Service</p>
+            <p className="text-xs text-foreground truncate w-full">{vehicle.lastService}</p>
+          </div>
 
-          <AspectRatio ratio={1}>
-            <div className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between">
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-primary" />
-                <p className="text-sm font-medium">GPS</p>
-              </div>
-              <p className={`text-sm ${vehicle.gpsLinked ? 'text-status-active' : 'text-status-urgent'}`}>
-                {vehicle.gpsLinked ? 'Active' : 'Not Linked'}
-              </p>
-            </div>
-          </AspectRatio>
+          <div className="min-h-[90px] p-2.5 bg-muted rounded-lg flex flex-col items-center justify-center text-center">
+            <MapPin className="h-4 w-4 text-primary mb-1" />
+            <p className="text-xs font-medium text-muted-foreground mb-1">GPS</p>
+            <p className={`text-xs ${vehicle.gpsLinked ? 'text-status-active' : 'text-status-urgent'}`}>
+              {vehicle.gpsLinked ? 'Active' : 'Not Linked'}
+            </p>
+          </div>
 
-          <AspectRatio ratio={1}>
-            <div 
-              className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between cursor-pointer hover:bg-muted/80 transition-colors"
-              onClick={() => setShowChallanModal(true)}
-            >
-              <div className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-primary" />
-                <p className="text-sm font-medium">Challans</p>
-              </div>
-              <p className={`text-sm ${vehicle.challans > 0 ? 'text-status-urgent' : 'text-muted-foreground'}`}>
-                {vehicle.challans}
-              </p>
-            </div>
-          </AspectRatio>
+          <div 
+            className="min-h-[90px] p-2.5 bg-muted rounded-lg flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/80 transition-colors"
+            onClick={() => setShowChallanModal(true)}
+          >
+            <AlertTriangle className="h-4 w-4 text-primary mb-1" />
+            <p className="text-xs font-medium text-muted-foreground mb-1">Fines</p>
+            <p className={`text-xs ${vehicle.challans > 0 ? 'text-status-urgent' : 'text-muted-foreground'}`}>
+              {vehicle.challans}
+            </p>
+          </div>
         </div>
 
         {/* Desktop/Tablet: keep existing layout */}
