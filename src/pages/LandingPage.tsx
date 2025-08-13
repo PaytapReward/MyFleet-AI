@@ -27,8 +27,8 @@ const LandingPage = () => {
         <div className="absolute top-40 right-60 w-20 h-20 rounded-full bg-accent/5"></div>
       </div>
 
-      {/* Header with Logo and Login */}
-      <header className="relative z-10 w-full p-6 lg:p-8 border-b border-border/20">
+      {/* Navigation Header */}
+      <header className="relative z-10 w-full p-6 lg:p-8 border-b border-border/20 bg-background/95 backdrop-blur-md">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
@@ -40,24 +40,34 @@ const LandingPage = () => {
               <p className="text-muted-foreground text-xs lg:text-sm">{t('landing.tagline')}</p>
             </div>
           </div>
+
+          {/* Navigation Menu */}
+          <nav className="hidden md:flex items-center space-x-8">
+            <a href="#features" className="text-foreground hover:text-primary transition-colors font-medium">
+              Features
+            </a>
+            <a href="#analytics" className="text-foreground hover:text-primary transition-colors font-medium">
+              Analytics
+            </a>
+            <a href="#pricing" className="text-foreground hover:text-primary transition-colors font-medium">
+              Pricing
+            </a>
+            <a href="#contact" className="text-foreground hover:text-primary transition-colors font-medium">
+              Contact
+            </a>
+          </nav>
           
-          {/* Login Button */}
-          <div className="flex flex-col items-end gap-1">
-            <Button
-              onClick={() => navigate('/login')}
-              variant="outline"
-              className="text-sm lg:text-base px-4 lg:px-6"
-            >
-              {t('auth.login')}
-            </Button>
-            <nav aria-label="Language selector" className="flex items-center gap-2 pt-1">
+          {/* Login Button and Language Selector */}
+          <div className="flex items-center gap-4">
+            {/* Language Selector */}
+            <nav aria-label="Language selector" className="hidden lg:flex items-center gap-2">
               <Button
                 variant="ghost"
                 size="sm"
                 className="h-8 px-2"
                 onClick={() => { i18n.changeLanguage('en'); navigate({ pathname: '/', search: '?lang=en' }); }}
               >
-                English
+                EN
               </Button>
               <Button
                 variant="ghost"
@@ -65,7 +75,7 @@ const LandingPage = () => {
                 className="h-8 px-2"
                 onClick={() => { i18n.changeLanguage('hi'); navigate({ pathname: '/', search: '?lang=hi' }); }}
               >
-                हिंदी
+                हि
               </Button>
               <Button
                 variant="ghost"
@@ -73,9 +83,18 @@ const LandingPage = () => {
                 className="h-8 px-2"
                 onClick={() => { i18n.changeLanguage('kn'); navigate({ pathname: '/', search: '?lang=kn' }); }}
               >
-                ಕನ್ನಡ
+                ಕ
               </Button>
             </nav>
+
+            {/* Login Button */}
+            <Button
+              onClick={() => navigate('/login')}
+              variant="outline"
+              className="text-sm lg:text-base px-4 lg:px-6"
+            >
+              {t('auth.login')}
+            </Button>
           </div>
         </div>
       </header>
