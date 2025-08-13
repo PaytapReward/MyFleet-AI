@@ -68,7 +68,7 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
               className="h-7 w-7 p-0 hover:bg-primary/10"
               onClick={() => setShowVehicleDetailsModal(true)}
             >
-              <Car className="h-3.5 w-3.5 text-primary" />
+              <Car className="h-5 w-5 text-primary" />
             </Button>
           </div>
         </CardTitle>
