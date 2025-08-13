@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Vehicle, AddVehicleFormData } from '@/types/vehicle';
 import { useAuth } from './AuthContext';
+import { fetchVehicleDetails } from '@/services/vehicleApi';
 
 interface VehicleContextType {
   vehicles: Vehicle[];
-  addVehicle: (vehicleData: AddVehicleFormData) => void;
+  addVehicle: (vehicleData: AddVehicleFormData) => Promise<void>;
   removeVehicle: (vehicleId: string) => void;
   updateVehicle: (vehicleId: string, updates: Partial<Vehicle>) => void;
   assignDriverToVehicle: (vehicleId: string, driverId: string) => void;
@@ -47,15 +48,22 @@ export const VehicleProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, [vehicles, user]);
 
-  const addVehicle = (vehicleData: AddVehicleFormData) => {
+  const addVehicle = async (vehicleData: AddVehicleFormData) => {
     if (!user) return;
+
+    // Fetch vehicle details from API
+    const apiResponse = await fetchVehicleDetails(vehicleData.number);
+    
+    if (!apiResponse.success) {
+      throw new Error(apiResponse.error || 'Failed to fetch vehicle details');
+    }
 
     const newVehicle: Vehicle = {
       id: Date.now().toString(),
       number: vehicleData.number,
-      model: vehicleData.model,
-      payTapBalance: 0, // Default balance, will be updated when PayTap is synced
-      fastTagLinked: vehicleData.payTapActivationCode ? true : false,
+      model: apiResponse.model,
+      payTapBalance: 0,
+      fastTagLinked: false,
       driver: null,
       lastService: "Not scheduled",
       gpsLinked: false,

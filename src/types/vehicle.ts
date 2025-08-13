@@ -28,6 +28,4 @@ export type PnLPeriod = 'today' | 'weekly' | 'monthly' | 'yearly';
 
 export interface AddVehicleFormData {
   number: string;
-  model: string;
-  payTapActivationCode: string;
 }

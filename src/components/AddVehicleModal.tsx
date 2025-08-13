@@ -11,9 +11,7 @@ import { AddVehicleFormData } from "@/types/vehicle";
 const AddVehicleModal = () => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<AddVehicleFormData>({
-    number: "",
-    model: "",
-    payTapActivationCode: ""
+    number: ""
   });
   const [isLoading, setIsLoading] = useState(false);
   
@@ -35,14 +33,6 @@ const AddVehicleModal = () => {
         return;
       }
 
-      if (!formData.model.trim()) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Vehicle model is required"
-        });
-        return;
-      }
 
       // Check for duplicate vehicle number
       const isDuplicate = vehicles.some(vehicle => 
@@ -68,7 +58,7 @@ const AddVehicleModal = () => {
         return;
       }
 
-      addVehicle(formData);
+      await addVehicle(formData);
       
       toast({
         title: "Success",
@@ -76,7 +66,7 @@ const AddVehicleModal = () => {
       });
 
       // Reset form and close modal
-      setFormData({ number: "", model: "", payTapActivationCode: "" });
+      setFormData({ number: "" });
       setOpen(false);
     } catch (error) {
       toast({
@@ -111,27 +101,9 @@ const AddVehicleModal = () => {
               onChange={(e) => setFormData(prev => ({ ...prev, number: e.target.value }))}
               className="uppercase"
             />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="model">Vehicle Model</Label>
-            <Input
-              id="model"
-              placeholder="e.g., Maruti Swift"
-              value={formData.model}
-              onChange={(e) => setFormData(prev => ({ ...prev, model: e.target.value }))}
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="activationCode">Link PayTap Tag (Activation Code)</Label>
-            <Input
-              id="activationCode"
-              type="text"
-              placeholder="e.g., PAY123456789"
-              value={formData.payTapActivationCode}
-              onChange={(e) => setFormData(prev => ({ ...prev, payTapActivationCode: e.target.value }))}
-            />
+            <p className="text-sm text-muted-foreground">
+              Vehicle details will be fetched automatically from the registry
+            </p>
           </div>
 
           <div className="flex gap-2 pt-4">
@@ -144,7 +116,7 @@ const AddVehicleModal = () => {
               Cancel
             </Button>
             <Button type="submit" disabled={isLoading} className="flex-1">
-              {isLoading ? "Adding..." : "Add Vehicle"}
+              {isLoading ? "Fetching Details..." : "Add Vehicle"}
             </Button>
           </div>
         </form>
