@@ -123,35 +123,35 @@ const DriverModal = ({ open, setOpen, vehicleId, vehicleNumber }: DriverModalPro
       setOpen(isOpen);
       if (!isOpen) resetForm();
     }}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto mx-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <User className="h-5 w-5 text-primary" />
-            Driver Management - {vehicleNumber}
+          <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <User className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+            <span className="truncate">Driver Management - {vehicleNumber}</span>
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Existing Drivers */}
           {userDrivers.length > 0 && (
             <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Your Drivers</CardTitle>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base sm:text-lg">Your Drivers</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
+              <CardContent className="pt-0">
+                <div className="space-y-2 sm:space-y-3">
                   {userDrivers.map((driver) => (
                     <div
                       key={driver.id}
-                      className="flex items-center justify-between p-3 bg-muted rounded-lg"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-muted rounded-lg gap-3 sm:gap-0"
                     >
                       <div className="flex items-center gap-3">
                         <div className="p-2 rounded-full bg-primary/20">
                           <User className="h-4 w-4 text-primary" />
                         </div>
                         <div>
-                          <p className="font-medium">{driver.name}</p>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <p className="font-medium text-sm sm:text-base">{driver.name}</p>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
                             {driver.phone && (
                               <span className="flex items-center gap-1">
                                 <Phone className="h-3 w-3" />
@@ -161,13 +161,13 @@ const DriverModal = ({ open, setOpen, vehicleId, vehicleNumber }: DriverModalPro
                             {driver.licenseNumber && (
                               <span className="flex items-center gap-1">
                                 <FileText className="h-3 w-3" />
-                                {driver.licenseNumber}
+                                <span className="truncate max-w-[120px] sm:max-w-none">{driver.licenseNumber}</span>
                               </span>
                             )}
                           </div>
                         </div>
                       </div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-xs sm:text-sm text-muted-foreground text-center sm:text-right">
                         {driver.assignedVehicles.length > 0 
                           ? `Assigned to ${driver.assignedVehicles.length} vehicle(s)`
                           : "Available"
@@ -182,63 +182,67 @@ const DriverModal = ({ open, setOpen, vehicleId, vehicleNumber }: DriverModalPro
 
           {/* Add New Driver */}
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base sm:text-lg flex items-center gap-2">
                 <Plus className="h-4 w-4" />
                 Add New Driver
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <CardContent className="pt-0">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="grid grid-cols-1 gap-3 sm:gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Driver Name *</Label>
+                    <Label htmlFor="name" className="text-sm">Driver Name *</Label>
                     <Input
                       id="name"
                       placeholder="Enter driver's full name"
                       value={formData.name}
                       onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                      className="text-sm"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Label htmlFor="phone" className="text-sm">Phone Number *</Label>
                     <Input
                       id="phone"
                       type="tel"
                       placeholder="e.g., +91 9876543210"
                       value={formData.phone}
                       onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                      className="text-sm"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-3 sm:gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="license">License Number (Optional)</Label>
+                    <Label htmlFor="license" className="text-sm">License Number (Optional)</Label>
                     <Input
                       id="license"
                       placeholder="e.g., DL1420110012345"
                       value={formData.licenseNumber}
                       onChange={(e) => setFormData(prev => ({ ...prev, licenseNumber: e.target.value }))}
+                      className="text-sm"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="dob">Date of Birth (Optional)</Label>
+                    <Label htmlFor="dob" className="text-sm">Date of Birth (Optional)</Label>
                     <Input
                       id="dob"
                       type="date"
                       value={formData.dateOfBirth}
                       onChange={(e) => setFormData(prev => ({ ...prev, dateOfBirth: e.target.value }))}
+                      className="text-sm"
                     />
                   </div>
                 </div>
 
                 {/* File Upload */}
                 <div className="space-y-2">
-                  <Label htmlFor="license-upload">Upload Driving License (Optional)</Label>
-                  <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6">
+                  <Label htmlFor="license-upload" className="text-sm">Upload Driving License (Optional)</Label>
+                  <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4 sm:p-6">
                     <input
                       type="file"
                       id="license-upload"
@@ -250,9 +254,9 @@ const DriverModal = ({ open, setOpen, vehicleId, vehicleNumber }: DriverModalPro
                       htmlFor="license-upload"
                       className="cursor-pointer flex flex-col items-center gap-2"
                     >
-                      <Upload className="h-8 w-8 text-muted-foreground" />
+                      <Upload className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground" />
                       <div className="text-center">
-                        <p className="text-sm font-medium">
+                        <p className="text-xs sm:text-sm font-medium">
                           {licenseFile ? licenseFile.name : "Click to upload license"}
                         </p>
                         <p className="text-xs text-muted-foreground">
@@ -263,14 +267,15 @@ const DriverModal = ({ open, setOpen, vehicleId, vehicleNumber }: DriverModalPro
                     
                     {licenseFile && (
                       <div className="mt-3 flex items-center justify-between p-2 bg-muted rounded">
-                        <div className="flex items-center gap-2">
-                          <FileText className="h-4 w-4" />
-                          <span className="text-sm">{licenseFile.name}</span>
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          <FileText className="h-4 w-4 flex-shrink-0" />
+                          <span className="text-xs sm:text-sm truncate">{licenseFile.name}</span>
                         </div>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => setLicenseFile(null)}
+                          className="flex-shrink-0"
                         >
                           Remove
                         </Button>
@@ -280,7 +285,7 @@ const DriverModal = ({ open, setOpen, vehicleId, vehicleNumber }: DriverModalPro
                 </div>
 
                 <Button 
-                  className="w-full" 
+                  className="w-full text-sm" 
                   onClick={handleCreateDriver}
                   disabled={isLoading || !formData.name || !formData.phone}
                 >
