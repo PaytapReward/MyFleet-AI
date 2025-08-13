@@ -15,6 +15,8 @@ import { Badge } from "@/components/ui/badge";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import AssignDriverModal from "./AssignDriverModal";
 import VehicleDetailsModal from "./VehicleDetailsModal";
+import FuelModal from "./FuelModal";
+import FastagModal from "./FastagModal";
 import { useDrivers } from "@/contexts/DriverContext";
 
 interface VehicleCardProps {
@@ -41,6 +43,8 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
   const { getDriverById } = useDrivers();
   const [showDriverModal, setShowDriverModal] = useState(false);
   const [showVehicleDetailsModal, setShowVehicleDetailsModal] = useState(false);
+  const [showFuelModal, setShowFuelModal] = useState(false);
+  const [showFastagModal, setShowFastagModal] = useState(false);
 
   // Get actual driver name from DriverContext
   const actualDriver = vehicle.driver ? getDriverById(vehicle.driver.id) : null;
@@ -78,7 +82,10 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
         {/* Mobile: 3x2 grid of squares */}
         <div className="grid grid-cols-3 gap-2 md:hidden">
           <AspectRatio ratio={1}>
-            <div className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between">
+            <div 
+              className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between cursor-pointer hover:bg-muted/80 transition-colors"
+              onClick={() => setShowFuelModal(true)}
+            >
               <div className="flex items-center gap-2">
                 <CreditCard className="h-4 w-4 text-primary" />
                 <p className="text-sm font-medium">Fuel</p>
@@ -88,7 +95,10 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
           </AspectRatio>
 
           <AspectRatio ratio={1}>
-            <div className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between">
+            <div 
+              className="p-3 bg-muted rounded-lg h-full flex flex-col items-start justify-between cursor-pointer hover:bg-muted/80 transition-colors"
+              onClick={() => setShowFastagModal(true)}
+            >
               <div className="flex items-center gap-2">
                 <LinkIcon className="h-4 w-4 text-primary" />
                 <p className="text-sm font-medium">FASTag</p>
@@ -147,7 +157,10 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
         {/* Desktop/Tablet: keep existing layout */}
         <div className="hidden md:block space-y-4">
           {/* PayTap Tag */}
-          <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+          <div 
+            className="flex items-center justify-between p-3 bg-muted rounded-lg cursor-pointer hover:bg-muted/80 transition-colors"
+            onClick={() => setShowFuelModal(true)}
+          >
             <div className="flex items-center space-x-2">
               <CreditCard className="h-4 w-4 text-primary" />
               <div>
@@ -162,7 +175,10 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
           </div>
 
           {/* FASTag */}
-          <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+          <div 
+            className="flex items-center justify-between p-3 bg-muted rounded-lg cursor-pointer hover:bg-muted/80 transition-colors"
+            onClick={() => setShowFastagModal(true)}
+          >
             <div className="flex items-center space-x-2">
               <LinkIcon className="h-4 w-4 text-primary" />
               <div>
@@ -220,7 +236,7 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
                 </p>
               </div>
             </div>
-            <Button size="sm" variant={vehicle.gpsLinked ? "success" : "warning"}>
+            <Button size="sm" variant={vehicle.gpsLinked ? "secondary" : "destructive"}>
               {vehicle.gpsLinked ? 'Track' : 'Add GPS'}
             </Button>
           </div>
@@ -241,6 +257,22 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
         open={showVehicleDetailsModal}
         setOpen={setShowVehicleDetailsModal}
         vehicleNumber={vehicle.number}
+      />
+
+      {/* Fuel Modal */}
+      <FuelModal
+        open={showFuelModal}
+        setOpen={setShowFuelModal}
+        vehicleNumber={vehicle.number}
+        currentBalance={vehicle.payTapBalance}
+      />
+
+      {/* FASTag Modal */}
+      <FastagModal
+        open={showFastagModal}
+        setOpen={setShowFastagModal}
+        vehicleNumber={vehicle.number}
+        isLinked={vehicle.fastTagLinked}
       />
     </Card>
   );
