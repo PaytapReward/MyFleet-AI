@@ -65,36 +65,48 @@ export type Database = {
         Row: {
           company_name: string | null
           created_at: string
-          full_name: string
+          email: string | null
+          full_name: string | null
           id: string
           is_onboarded: boolean | null
           pan_number: string | null
           phone: string
           role: Database["public"]["Enums"]["user_role"]
+          subscribed: boolean
+          subscription_end: string | null
+          subscription_tier: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           company_name?: string | null
           created_at?: string
-          full_name: string
+          email?: string | null
+          full_name?: string | null
           id?: string
           is_onboarded?: boolean | null
           pan_number?: string | null
           phone: string
           role?: Database["public"]["Enums"]["user_role"]
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           company_name?: string | null
           created_at?: string
-          full_name?: string
+          email?: string | null
+          full_name?: string | null
           id?: string
           is_onboarded?: boolean | null
           pan_number?: string | null
           phone?: string
           role?: Database["public"]["Enums"]["user_role"]
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
           updated_at?: string
           user_id?: string
         }

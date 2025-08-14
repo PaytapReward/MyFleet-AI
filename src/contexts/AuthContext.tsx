@@ -137,6 +137,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             .insert({
               user_id: data.user.id,
               phone: phone,
+              full_name: 'New User',
               is_onboarded: false,
             });
 
