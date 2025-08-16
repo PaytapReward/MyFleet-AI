@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Plus, Upload, FileText, Phone, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useDrivers } from "@/contexts/DriverContext";
+import { useVehicles } from "@/contexts/VehicleContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { AddDriverFormData } from "@/types/driver";
 
@@ -24,7 +25,8 @@ interface DriverModalProps {
 
 const DriverModal = ({ open, setOpen, vehicleId, vehicleNumber }: DriverModalProps) => {
   const { user } = useAuth();
-  const { addDriver, getDriversByUser } = useDrivers();
+  const { addDriver, getDriversByUser, assignDriverToVehicle } = useDrivers();
+  const { updateVehicle } = useVehicles();
   const { toast } = useToast();
   
   const [isLoading, setIsLoading] = useState(false);
@@ -37,6 +39,30 @@ const DriverModal = ({ open, setOpen, vehicleId, vehicleNumber }: DriverModalPro
   });
 
   const userDrivers = user ? getDriversByUser(user.id) : [];
+
+  const handleAssignDriver = (driverId: string, driverName: string) => {
+    if (!vehicleId) return;
+    
+    try {
+      // Update driver context
+      assignDriverToVehicle(driverId, vehicleId);
+      // Update vehicle context
+      updateVehicle(vehicleId, { driver: { id: driverId, name: driverName } });
+      
+      toast({
+        title: "Driver Assigned",
+        description: `${driverName} has been assigned to ${vehicleNumber} for today`,
+      });
+      
+      setOpen(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to assign driver. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -167,11 +193,22 @@ const DriverModal = ({ open, setOpen, vehicleId, vehicleNumber }: DriverModalPro
                           </div>
                         </div>
                       </div>
-                      <div className="text-xs sm:text-sm text-muted-foreground text-center sm:text-right">
-                        {driver.assignedVehicles.length > 0 
-                          ? `Assigned to ${driver.assignedVehicles.length} vehicle(s)`
-                          : "Available"
-                        }
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                        <div className="text-xs sm:text-sm text-muted-foreground text-center sm:text-right">
+                          {driver.assignedVehicles.length > 0 
+                            ? `Assigned to ${driver.assignedVehicles.length} vehicle(s)`
+                            : "Available"
+                          }
+                        </div>
+                        {driver.assignedVehicles.length === 0 && vehicleId && (
+                          <Button
+                            size="sm"
+                            onClick={() => handleAssignDriver(driver.id, driver.name)}
+                            className="text-xs h-7"
+                          >
+                            Assign for Today
+                          </Button>
+                        )}
                       </div>
                     </div>
                   ))}
