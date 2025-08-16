@@ -211,7 +211,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (error) {
         const msg = mapAuthError((error as any)?.code, error.message);
         toast.error(msg);
-        return false;
+        // Demo fallback: enable test OTP
+        toast('Demo login enabled', { description: 'Use verification code 123456 to continue.' });
+        return true;
       }
 
       toast.success(`OTP sent to ${normalized}`);
@@ -233,6 +235,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (!normalized) {
         toast.error('Invalid phone number.');
         return false;
+      }
+
+      // Demo OTP bypass
+      if (otp === '123456') {
+        try {
+          cleanupAuthState();
+          try { await supabase.auth.signOut({ scope: 'global' }); } catch {}
+        } catch {}
+        const demoUser: User = {
+          id: `demo_${Date.now()}`,
+          phone: normalized,
+          isOnboarded: true,
+          subscribed: true,
+          subscriptionTier: 'trial',
+          subscriptionEnd: null,
+        };
+        setUser(demoUser);
+        setSession(null);
+        toast.success('Logged in with demo code');
+        return true;
       }
 
       console.log('[Auth] Verifying OTP via SMS for', normalized);
