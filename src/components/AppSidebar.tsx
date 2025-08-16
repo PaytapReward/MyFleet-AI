@@ -1,4 +1,4 @@
-import { Home, BarChart3, Settings, LifeBuoy } from "lucide-react";
+import { Home, BarChart3, Settings, LifeBuoy, Users } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -16,6 +16,7 @@ import {
 const items = [
   { title: "Dashboard", url: "/", icon: Home },
   { title: "Profit & Loss", url: "/profit-loss", icon: BarChart3 },
+  { title: "Manage Operators", url: "/manage-operators", icon: Users },
   { title: "Settings", url: "/settings", icon: Settings },
   { title: "Support", url: "/support", icon: LifeBuoy },
 ];
@@ -33,6 +34,7 @@ export default function AppSidebar() {
   const labelMap: Record<string, string> = {
     Dashboard: t("nav.dashboard"),
     "Profit & Loss": t("nav.profitLoss"),
+    "Manage Operators": t("nav.manageOperators"),
     Settings: t("nav.settings"),
     Support: t("nav.support"),
   };

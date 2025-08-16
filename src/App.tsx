@@ -13,6 +13,7 @@ import LoginPage from "./pages/LoginPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfitLossPage from "./pages/ProfitLossPage";
+import ManageOperatorsPage from "./pages/ManageOperatorsPage";
 import SupportPage from "./pages/SupportPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsConditionsPage from "./pages/TermsConditionsPage";
@@ -84,6 +85,7 @@ const AppRoutes = () => {
         <Route path="/" element={<Index />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/profit-loss" element={<ProfitLossPage />} />
+        <Route path="/manage-operators" element={<ManageOperatorsPage />} />
         <Route path="/support" element={<SupportPage />} />
       </Route>
       <Route path="/login" element={<Index />} /> {/* Redirect authenticated users to dashboard */}
