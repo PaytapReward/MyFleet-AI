@@ -19,11 +19,13 @@ import {
 import { useTrips } from "@/contexts/TripContext";
 import { useTranslation } from "react-i18next";
 import { Trip, TripStatus } from "@/types/trip";
+import { CreateTripModal } from "@/components/CreateTripModal";
 
 const TripManagerPage = () => {
   const { t } = useTranslation();
   const { trips, analytics, isLoading } = useTrips();
   const [activeTab, setActiveTab] = useState("overview");
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const getStatusColor = (status: TripStatus) => {
     switch (status) {
@@ -68,7 +70,10 @@ const TripManagerPage = () => {
           <h1 className="text-2xl lg:text-3xl font-bold">Trip Manager</h1>
           <p className="text-muted-foreground">Manage all your trips, track earnings, and analyze performance</p>
         </div>
-        <Button className="flex items-center gap-2">
+        <Button 
+          className="flex items-center gap-2"
+          onClick={() => setShowCreateModal(true)}
+        >
           <Plus className="h-4 w-4" />
           Create Trip
         </Button>
@@ -461,6 +466,11 @@ const TripManagerPage = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      <CreateTripModal 
+        open={showCreateModal} 
+        onOpenChange={setShowCreateModal} 
+      />
     </div>
   );
 };
