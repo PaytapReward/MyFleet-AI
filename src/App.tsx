@@ -21,6 +21,7 @@ import TermsConditionsPage from "./pages/TermsConditionsPage";
 import NotFound from "./pages/NotFound";
 import SubscriptionPage from "./pages/SubscriptionPage";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import ManageOperatorsPage from "./pages/ManageOperatorsPage";
 import AppLayout from "./components/AppLayout";
 
 const queryClient = new QueryClient();
@@ -87,6 +88,7 @@ const AppRoutes = () => {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/profit-loss" element={<ProfitLossPage />} />
         <Route path="/trip-manager" element={<TripManagerPage />} />
+        <Route path="/manage-operators" element={<ManageOperatorsPage />} />
         <Route path="/support" element={<SupportPage />} />
       </Route>
       <Route path="/login" element={<Index />} /> {/* Redirect authenticated users to dashboard */}
