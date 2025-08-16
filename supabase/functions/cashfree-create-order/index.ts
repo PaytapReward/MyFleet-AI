@@ -40,7 +40,7 @@ serve(async (req: Request) => {
     }
 
     const baseUrl = getBaseUrl(ENV);
-    const amount = plan === "semiannual" ? 600 : 1200; // INR
+    const amount = plan === "semiannual" ? 12000 : 24000; // INR
 
     const orderId = `mf_${crypto.randomUUID().replace(/-/g, "").slice(0, 20)}`;
 

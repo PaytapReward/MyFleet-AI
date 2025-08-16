@@ -18,7 +18,7 @@ const plans = [
   {
     id: "semiannual",
     name: "6 Months Plan",
-    price: "₹600 / 6 months",
+    price: "₹12000 / 6 months",
     description: "Save more with a semi-annual plan.",
     cta: "Choose 6 Months",
     badge: "Popular",
@@ -26,7 +26,7 @@ const plans = [
   {
     id: "annual",
     name: "Annual Plan",
-    price: "₹1200 / year",
+    price: "₹24000 / year",
     description: "Best value for growing fleets.",
     cta: "Choose Annual",
     badge: "Best value",
