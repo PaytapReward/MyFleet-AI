@@ -4,7 +4,7 @@ import {
   Link as LinkIcon, 
   User, 
   Wrench, 
-  MapPin, 
+  Shield, 
   AlertTriangle, 
   Plus,
   Car
@@ -55,6 +55,10 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
   // Get actual driver name from DriverContext
   const actualDriver = vehicle.driver ? getDriverById(vehicle.driver.id) : null;
   const driverName = actualDriver?.name || vehicle.driver?.name || null;
+
+  // Get insurance status
+  const insuranceStatus = vehicle.documents.insurance.status;
+  const isInsuranceActive = insuranceStatus === 'uploaded';
 
 
   return (
@@ -126,10 +130,10 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
           </div>
 
           <div className="min-h-[90px] p-2.5 bg-muted rounded-lg flex flex-col items-center justify-center text-center">
-            <MapPin className="h-4 w-4 text-primary mb-1" />
-            <p className="text-xs font-medium text-muted-foreground mb-1">GPS</p>
-            <p className={`text-xs ${vehicle.gpsLinked ? 'text-status-active' : 'text-status-urgent'}`}>
-              {vehicle.gpsLinked ? 'Active' : 'Not Linked'}
+            <Shield className="h-4 w-4 text-primary mb-1" />
+            <p className="text-xs font-medium text-muted-foreground mb-1">Insurance</p>
+            <p className={`text-xs ${isInsuranceActive ? 'text-status-active' : 'text-status-urgent'}`}>
+              {isInsuranceActive ? 'Active' : 'Inactive'}
             </p>
           </div>
 
@@ -258,19 +262,24 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
             </Button>
           </div>
 
-          {/* GPS Device */}
+          {/* Insurance Status */}
           <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
             <div className="flex items-center space-x-2">
-              <MapPin className="h-4 w-4 text-primary" />
+              <Shield className="h-4 w-4 text-primary" />
               <div>
-                <p className="text-sm font-medium">GPS Device</p>
-                <p className={`text-sm ${vehicle.gpsLinked ? 'text-status-active' : 'text-status-urgent'}`}>
-                  {vehicle.gpsLinked ? 'Active' : 'Not Linked'}
+                <p className="text-sm font-medium">Insurance</p>
+                <p className={`text-sm ${isInsuranceActive ? 'text-status-active' : 'text-status-urgent'}`}>
+                  {isInsuranceActive ? 'Active' : 'Inactive'}
+                  {vehicle.documents.insurance.expiryDate && (
+                    <span className="text-xs text-muted-foreground ml-1">
+                      (Expires: {new Date(vehicle.documents.insurance.expiryDate).toLocaleDateString()})
+                    </span>
+                  )}
                 </p>
               </div>
             </div>
-            <Button size="sm" variant={vehicle.gpsLinked ? "secondary" : "destructive"}>
-              {vehicle.gpsLinked ? 'Track' : 'Add GPS'}
+            <Button size="sm" variant={isInsuranceActive ? "secondary" : "destructive"}>
+              {isInsuranceActive ? 'View' : 'Renew'}
             </Button>
           </div>
         </div>
