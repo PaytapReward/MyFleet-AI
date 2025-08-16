@@ -1,4 +1,4 @@
-import { Home, BarChart3, Settings, LifeBuoy, Users } from "lucide-react";
+import { Home, BarChart3, Settings, LifeBuoy, Users, Car, ChevronRight } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -10,15 +10,27 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
   useSidebar,
 } from "@/components/ui/sidebar";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
-const items = [
+const mainItems = [
   { title: "Dashboard", url: "/", icon: Home },
   { title: "Profit & Loss", url: "/profit-loss", icon: BarChart3 },
-  { title: "Manage Operators", url: "/manage-operators", icon: Users },
   { title: "Settings", url: "/settings", icon: Settings },
   { title: "Support", url: "/support", icon: LifeBuoy },
+];
+
+const operatorsItems = [
+  { title: "Vehicle Operators", url: "/manage-operators" },
+  { title: "Trip Manager", url: "/trip-manager" },
 ];
 
 export default function AppSidebar() {
@@ -31,13 +43,18 @@ export default function AppSidebar() {
   const handleNavClick = () => {
     if (isMobile) setOpenMobile(false);
   };
+  
   const labelMap: Record<string, string> = {
     Dashboard: t("nav.dashboard"),
     "Profit & Loss": t("nav.profitLoss"),
-    "Manage Operators": t("nav.manageOperators"),
+    "Vehicle Operators": t("nav.manageOperators"),
+    "Trip Manager": t("nav.tripManager"),
     Settings: t("nav.settings"),
     Support: t("nav.support"),
   };
+
+  // Check if any operators section should be expanded
+  const isOperatorsExpanded = operatorsItems.some(item => isActive(item.url));
 
   return (
     <Sidebar collapsible="icon" className="border-r">
@@ -46,7 +63,8 @@ export default function AppSidebar() {
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {/* Main navigation items */}
+              {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={isActive(item.url)}>
                     <NavLink to={item.url} end className={getNavCls} onClick={handleNavClick}>
@@ -56,6 +74,39 @@ export default function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              
+              {/* Vehicle Operators with sub-menu */}
+              <Collapsible defaultOpen={isOperatorsExpanded}>
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton className="group/collapsible">
+                      <Users className="mr-2 h-4 w-4" />
+                      {state !== "collapsed" && (
+                        <>
+                          <span>{t("nav.manageOperators")}</span>
+                          <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                        </>
+                      )}
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  {state !== "collapsed" && (
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        {operatorsItems.map((item) => (
+                          <SidebarMenuSubItem key={item.title}>
+                            <SidebarMenuSubButton asChild isActive={isActive(item.url)}>
+                              <NavLink to={item.url} className={getNavCls} onClick={handleNavClick}>
+                                {item.title === "Trip Manager" && <Car className="mr-2 h-4 w-4" />}
+                                <span>{labelMap[item.title]}</span>
+                              </NavLink>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        ))}
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  )}
+                </SidebarMenuItem>
+              </Collapsible>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
