@@ -6,7 +6,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "profitLoss": "Profit & Loss",
-    "manageOperators": "Manage Operators",
+    "tripManager": "Trip Manager",
     "settings": "Settings",
     "support": "Support"
   },
