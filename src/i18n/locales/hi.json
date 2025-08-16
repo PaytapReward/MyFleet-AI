@@ -13,11 +13,18 @@
   "fleet": {
     "overview": "वाहन डैशबोर्ड",
     "totalVehicles": "कुल वाहन",
-    "fuelBalance": "ईंधन बैलेंस",
+    "accountBalance": "खाता बैलेंस",
     "pendingChallans": "लंबित चालान",
+    "fastagDashboard": "फास्टैग डैशबोर्ड",
     "statement": "स्टेटमेंट",
+    "tripManager": "ट्रिप मैनेजर",
     "profit": "लाभ",
-    "loss": "हानि"
+    "loss": "हानि",
+    "fastagBalances": "फास्टैग बैलेंस",
+    "linkedVehicles": "लिंक किए गए वाहन",
+    "totalBalance": "कुल बैलेंस",
+    "addMoney": "पैसे जोड़ें",
+    "viewTransactions": "लेन-देन देखें"
   },
   "landing": {
     "tagline": "स्मार्ट फ्लीट पेमेंट्स",

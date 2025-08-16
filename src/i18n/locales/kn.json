@@ -13,11 +13,18 @@
   "fleet": {
     "overview": "ವಾಹನ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
     "totalVehicles": "ಒಟ್ಟು ವಾಹನಗಳು",
-    "fuelBalance": "ಇಂಧನ ಶೇಷ",
-    "pendingChallans": "ಬಾಕಿ ಚಾಲನ್‌ಗಳು",
+    "accountBalance": "ಖಾತೆ ಬ್ಯಾಲೆನ್ಸ್",
+    "pendingChallans": "ಬಾಕಿ ಚಲ್ಲಾನ್‌ಗಳು",
+    "fastagDashboard": "ಫಾಸ್‌ಟ್ಯಾಗ್ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
     "statement": "ಸ್ಟೇಟ್‌ಮೆಂಟ್",
+    "tripManager": "ಟ್ರಿಪ್ ಮ್ಯಾನೇಜರ್",
     "profit": "ಲಾಭ",
-    "loss": "ನಷ್ಟ"
+    "loss": "ನಷ್ಟ",
+    "fastagBalances": "ಫಾಸ್‌ಟ್ಯಾಗ್ ಬ್ಯಾಲೆನ್ಸ್‌ಗಳು",
+    "linkedVehicles": "ಲಿಂಕ್ ಮಾಡಿದ ವಾಹನಗಳು",
+    "totalBalance": "ಒಟ್ಟು ಬ್ಯಾಲೆನ್ಸ್",
+    "addMoney": "ಹಣವನ್ನು ಸೇರಿಸಿ",
+    "viewTransactions": "ವಹಿವಾಟುಗಳನ್ನು ವೀಕ್ಷಿಸಿ"
   },
   "landing": {
     "tagline": "ಸ್ಮಾರ್ಟ್ ಫ್ಲೀಟ್ ಪೇಮೆಂಟ್ಸ್",

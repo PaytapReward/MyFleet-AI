@@ -13,11 +13,18 @@
   "fleet": {
     "overview": "Vehicle Dashboard",
     "totalVehicles": "Total Vehicles",
-    "fuelBalance": "Fuel Balance",
+    "accountBalance": "Account Balance",
     "pendingChallans": "Pending Challans",
+    "fastagDashboard": "FASTag Dashboard",
     "statement": "Statement",
+    "tripManager": "Trip Manager",
     "profit": "Profit",
-    "loss": "Loss"
+    "loss": "Loss",
+    "fastagBalances": "FASTag Balances",
+    "linkedVehicles": "Linked Vehicles",
+    "totalBalance": "Total Balance",
+    "addMoney": "Add Money",
+    "viewTransactions": "View Transactions"
   },
   "landing": {
     "tagline": "Smart Fleet Payments",
