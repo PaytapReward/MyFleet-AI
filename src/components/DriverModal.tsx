@@ -88,7 +88,7 @@ const DriverModal = ({ open, setOpen, vehicleId, vehicleNumber }: DriverModalPro
       }
 
       // Create new driver
-      const newDriver = await addDriver({
+      const newDriver = addDriver({
         ...formData,
         licenseNumber: formData.licenseNumber || `DL${Date.now()}` // Generate if not provided
       });

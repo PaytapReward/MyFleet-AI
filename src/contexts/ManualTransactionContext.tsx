@@ -1,14 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Transaction, TransactionType, PaymentMethod } from '@/types/transaction';
-import { useAuth } from './AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { Transaction } from '@/types/transaction';
 
 interface ManualTransactionContextType {
   manualTransactions: Transaction[];
-  addManualTransaction: (transaction: Omit<Transaction, 'id'>) => Promise<void>;
-  removeManualTransaction: (id: string) => Promise<void>;
-  updateManualTransaction: (id: string, transaction: Partial<Transaction>) => Promise<void>;
+  addManualTransaction: (transaction: Omit<Transaction, 'id'>) => void;
+  removeManualTransaction: (id: string) => void;
+  updateManualTransaction: (id: string, transaction: Partial<Transaction>) => void;
 }
 
 const ManualTransactionContext = createContext<ManualTransactionContextType | undefined>(undefined);
@@ -22,231 +19,43 @@ export const useManualTransactions = () => {
 };
 
 export const ManualTransactionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
-  const { toast } = useToast();
   const [manualTransactions, setManualTransactions] = useState<Transaction[]>([]);
 
-  // Load transactions from Supabase when user changes
+  // Load manual transactions from localStorage on mount
   useEffect(() => {
-    if (user) {
-      loadTransactions();
-    } else {
-      setManualTransactions([]);
-    }
-  }, [user]);
-
-  const loadTransactions = async () => {
-    if (!user) return;
-    
-    try {
-      // First, try to migrate from localStorage
-      await migrateFromLocalStorage();
-      
-      const { data, error } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('is_manual', true)
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      
-      // Transform Supabase data to Transaction interface
-      const transformedTransactions: Transaction[] = data?.map(tx => ({
-        id: tx.id,
-        date: tx.date,
-        vehicleId: tx.vehicle_id,
-        vehicleNumber: tx.vehicle_number,
-        type: (tx.type === 'income' ? 'manual_income' : 'manual_expense') as TransactionType,
-        amount: Number(tx.amount),
-        description: tx.description,
-        reference: tx.reference || '',
-        category: tx.category as 'income' | 'expense',
-        paymentMethod: (tx.payment_method || 'cash') as PaymentMethod,
-        isManual: tx.is_manual || false,
-        location: tx.location || ''
-      })) || [];
-      
-      setManualTransactions(transformedTransactions);
-    } catch (error) {
-      console.error('Error loading transactions:', error);
-      toast({
-        title: "Error loading transactions",
-        description: "Failed to load your transactions. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const migrateFromLocalStorage = async () => {
-    if (!user) return;
-    
-    const storedTransactions = localStorage.getItem('manualTransactions');
-    
-    if (storedTransactions) {
+    const stored = localStorage.getItem('manualTransactions');
+    if (stored) {
       try {
-        const localTransactions: Transaction[] = JSON.parse(storedTransactions);
-        
-        // Check if we already have transactions in Supabase
-        const { data: existingTransactions } = await supabase
-          .from('transactions')
-          .select('id')
-          .eq('user_id', user.id);
-        
-        if (!existingTransactions?.length && localTransactions.length > 0) {
-          // Migrate transactions to Supabase
-          const transactionsToInsert = localTransactions.map(tx => ({
-            date: tx.date,
-            vehicle_id: tx.vehicleId,
-            vehicle_number: tx.vehicleNumber,
-            type: tx.type,
-            amount: tx.amount,
-            description: tx.description,
-            reference: tx.reference,
-            category: tx.category,
-            payment_method: tx.paymentMethod,
-            is_manual: true,
-            location: tx.location,
-            user_id: user.id
-          }));
-          
-          const { error } = await supabase
-            .from('transactions')
-            .insert(transactionsToInsert);
-          
-          if (!error) {
-            localStorage.removeItem('manualTransactions');
-            toast({
-              title: "Data migrated",
-              description: "Your transactions have been migrated to the cloud.",
-            });
-          }
-        }
+        const parsed = JSON.parse(stored);
+        setManualTransactions(parsed);
       } catch (error) {
-        console.error('Error migrating transactions:', error);
+        console.error('Error loading manual transactions:', error);
       }
     }
+  }, []);
+
+  // Save to localStorage whenever manual transactions change
+  useEffect(() => {
+    localStorage.setItem('manualTransactions', JSON.stringify(manualTransactions));
+  }, [manualTransactions]);
+
+  const addManualTransaction = (transaction: Omit<Transaction, 'id'>) => {
+    const newTransaction: Transaction = {
+      ...transaction,
+      id: `manual-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      isManual: true
+    };
+    setManualTransactions(prev => [newTransaction, ...prev]);
   };
 
-  const addManualTransaction = async (transaction: Omit<Transaction, 'id'>) => {
-    if (!user) return;
-    
-    try {
-      const { data, error } = await supabase
-        .from('transactions')
-        .insert({
-          date: transaction.date,
-          vehicle_id: transaction.vehicleId,
-          vehicle_number: transaction.vehicleNumber,
-          type: transaction.type,
-          amount: transaction.amount,
-          description: transaction.description,
-          reference: transaction.reference,
-          category: transaction.category,
-          payment_method: transaction.paymentMethod,
-          is_manual: true,
-          location: transaction.location,
-          user_id: user.id
-        })
-        .select()
-        .single();
-      
-      if (error) throw error;
-      
-      const newTransaction: Transaction = {
-        id: data.id,
-        date: data.date,
-        vehicleId: data.vehicle_id,
-        vehicleNumber: data.vehicle_number,
-        type: (data.type === 'income' ? 'manual_income' : 'manual_expense') as TransactionType,
-        amount: Number(data.amount),
-        description: data.description,
-        reference: data.reference || '',
-        category: data.category as 'income' | 'expense',
-        paymentMethod: (data.payment_method || 'cash') as PaymentMethod,
-        isManual: true,
-        location: data.location || ''
-      };
-      
-      setManualTransactions(prev => [newTransaction, ...prev]);
-      
-      toast({
-        title: "Transaction added",
-        description: "Manual transaction has been saved.",
-      });
-    } catch (error) {
-      console.error('Error adding transaction:', error);
-      toast({
-        title: "Error adding transaction",
-        description: "Failed to add transaction. Please try again.",
-        variant: "destructive"
-      });
-    }
+  const removeManualTransaction = (id: string) => {
+    setManualTransactions(prev => prev.filter(t => t.id !== id));
   };
 
-  const removeManualTransaction = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from('transactions')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user?.id);
-      
-      if (error) throw error;
-      
-      setManualTransactions(prev => prev.filter(t => t.id !== id));
-      
-      toast({
-        title: "Transaction deleted",
-        description: "Transaction has been removed.",
-      });
-    } catch (error) {
-      console.error('Error removing transaction:', error);
-      toast({
-        title: "Error removing transaction",
-        description: "Failed to remove transaction. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const updateManualTransaction = async (id: string, updates: Partial<Transaction>) => {
-    try {
-      const { error } = await supabase
-        .from('transactions')
-        .update({
-          date: updates.date,
-          vehicle_id: updates.vehicleId,
-          vehicle_number: updates.vehicleNumber,
-          type: updates.type,
-          amount: updates.amount,
-          description: updates.description,
-          reference: updates.reference,
-          category: updates.category,
-          payment_method: updates.paymentMethod,
-          location: updates.location
-        })
-        .eq('id', id)
-        .eq('user_id', user?.id);
-      
-      if (error) throw error;
-      
-      setManualTransactions(prev => 
-        prev.map(t => t.id === id ? { ...t, ...updates } : t)
-      );
-      
-      toast({
-        title: "Transaction updated",
-        description: "Transaction has been updated.",
-      });
-    } catch (error) {
-      console.error('Error updating transaction:', error);
-      toast({
-        title: "Error updating transaction",
-        description: "Failed to update transaction. Please try again.",
-        variant: "destructive"
-      });
-    }
+  const updateManualTransaction = (id: string, updates: Partial<Transaction>) => {
+    setManualTransactions(prev => 
+      prev.map(t => t.id === id ? { ...t, ...updates } : t)
+    );
   };
 
   return (

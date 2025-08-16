@@ -1,9 +1,4 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { toast } from "sonner";
-import { supabase } from '@/integrations/supabase/client';
-import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
-import { cleanupAuthState } from '@/utils/authCleanup';
-
 
 interface User {
   id: string;
@@ -54,475 +49,243 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Normalize a phone number to E.164. Defaults to +91 if 10-digit local number.
-  const normalizePhoneE164 = (raw: string): string | null => {
-    if (!raw) return null;
-    const trimmed = raw.trim();
-    const digits = trimmed.replace(/[^\d+]/g, '');
-
-    if (digits.startsWith('+')) {
-      // Basic length sanity check for E.164
-      if (digits.length < 8 || digits.length > 16) return null;
-      return digits;
-    }
-
-    // If starts with country code without +
-    if (digits.length >= 11 && digits.length <= 15) {
-      return `+${digits}`;
-    }
-
-    // Handle common Indian 10-digit numbers (strip leading zeros)
-    const ten = digits.replace(/^0+/, '');
-    if (ten.length === 10) {
-      return `+91${ten}`;
-    }
-
-    return null;
-  };
-
-  const mapAuthError = (code?: string, message?: string): string => {
-    switch (code) {
-      case 'phone_provider_disabled':
-        return 'Phone login is disabled. Please try email login.';
-      case 'phone_signups_disabled':
-        return 'Phone signups are disabled. Contact support.';
-      case 'invalid_phone_number':
-      case 'invalid_phone':
-        return 'Invalid phone number. Check country code and format.';
-      case 'otp_expired':
-        return 'Verification code expired. Please request a new one.';
-      case 'otp_invalid':
-        return 'Incorrect verification code. Please try again.';
-      case 'sms_send_failed':
-        return 'Failed to send SMS. Please try again later.';
-      default:
-        if (message && message.includes('Unsupported phone provider')) {
-          return 'Phone provider is not configured. Please try again shortly.';
+  // Mock user storage - in real app, this would be secure storage
+  const loadUser = () => {
+    const storedUser = localStorage.getItem('myfleet_user');
+    if (storedUser) {
+      try {
+        const parsed: User = JSON.parse(storedUser);
+        const normalized = validateAndNormalizeUser(parsed);
+        if (JSON.stringify(parsed) !== JSON.stringify(normalized)) {
+          localStorage.setItem('myfleet_user', JSON.stringify(normalized));
         }
-        return message || 'Something went wrong. Please try again.';
-    }
-  };
-
-
-  // Helper function to transform Supabase user + profile to our User type
-  const transformToUser = (supabaseUser: SupabaseUser, profile?: any): User => {
-    return {
-      id: supabaseUser.id,
-      phone: profile?.phone || supabaseUser.phone || '',
-      email: supabaseUser.email || profile?.email || '',
-      fullName: profile?.full_name || '',
-      companyName: profile?.company_name || '',
-      panNumber: profile?.pan_number || '',
-      isOnboarded: profile?.is_onboarded || false,
-      subscribed: profile?.subscribed || false,
-      subscriptionTier: profile?.subscription_tier,
-      subscriptionEnd: profile?.subscription_end,
-    };
-  };
-
-  // Load user profile from Supabase
-  const loadUserProfile = async (supabaseUser: SupabaseUser) => {
-    try {
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', supabaseUser.id)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        throw error;
+        setUser(normalized);
+      } catch (e) {
+        console.error('Failed to parse stored user', e);
+        setUser(null);
       }
-
-      const userData = transformToUser(supabaseUser, profile);
-      setUser(userData);
-      return userData;
-    } catch (error) {
-      console.error('Error loading user profile:', error);
-      toast.error('Failed to load user profile');
-      return null;
     }
+    setIsLoading(false);
   };
 
-  // Migrate from localStorage if needed
-  const migrateFromLocalStorage = async (supabaseUser: SupabaseUser) => {
-    try {
-      const existingData = localStorage.getItem('myfleet_user');
-      if (existingData) {
-        const parsedData = JSON.parse(existingData);
-        
-        // Create or update profile with migrated data
-        const { error } = await supabase
-          .from('profiles')
-          .upsert({
-            user_id: supabaseUser.id,
-            phone: parsedData.phone || supabaseUser.phone || '',
-            full_name: parsedData.fullName || '',
-            email: supabaseUser.email || parsedData.email || '',
-            company_name: parsedData.companyName || '',
-            pan_number: parsedData.panNumber || '',
-            is_onboarded: parsedData.isOnboarded || false,
-            subscribed: parsedData.subscribed || false,
-            subscription_tier: parsedData.subscriptionTier,
-            subscription_end: parsedData.subscriptionEnd,
-          });
-
-        if (error) {
-          console.error('Error migrating user data:', error);
-        } else {
-          // Clear old localStorage data after successful migration
-          localStorage.removeItem('myfleet_user');
-          toast.success('Account data migrated successfully');
-        }
-      }
-    } catch (error) {
-      console.error('Error during migration:', error);
-    }
+  const saveUser = (userData: User) => {
+    localStorage.setItem('myfleet_user', JSON.stringify(userData));
+    setUser(userData);
   };
 
-  // Send OTP to phone number
   const sendOTP = async (phone: string): Promise<boolean> => {
-    try {
-      setIsLoading(true);
-
-      // Clean up existing auth state to avoid limbo
-      cleanupAuthState();
-      try {
-        await supabase.auth.signOut({ scope: 'global' });
-      } catch {}
-
-      const normalized = normalizePhoneE164(phone);
-      if (!normalized) {
-        toast.error('Please enter a valid phone number with country code.');
-        return false;
-      }
-
-      console.log('[Auth] Sending OTP via SMS to', normalized);
-      const { error } = await supabase.auth.signInWithOtp({
-        phone: normalized,
-        options: {
-          channel: 'sms',
-          shouldCreateUser: true,
-        },
-      });
-
-      if (error) {
-        const msg = mapAuthError((error as any)?.code, error.message);
-        toast.error(msg);
-        // Demo fallback: enable test OTP
-        toast('Demo login enabled', { description: 'Use verification code 123456 to continue.' });
-        return true;
-      }
-
-      toast.success(`OTP sent to ${normalized}`);
-      return true;
-    } catch (error: any) {
-      toast.error(mapAuthError((error as any)?.code, error?.message || 'Failed to send OTP.'));
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
+    // Mock OTP sending - in real app, this would call backend API
+    console.log(`Sending OTP to ${phone}`);
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(true), 1000);
+    });
   };
 
-  // Login with phone and OTP
   const login = async (phone: string, otp: string): Promise<boolean> => {
-    try {
-      setIsLoading(true);
-
-      const normalized = normalizePhoneE164(phone);
-      if (!normalized) {
-        toast.error('Invalid phone number.');
-        return false;
-      }
-
-      // Demo OTP bypass
-      if (otp === '123456') {
+    // Mock OTP verification - in real app, this would call backend API
+    if (otp === '123456') {
+      console.log(`Attempting login for phone: ${phone}`);
+      
+      // Check if user exists (mock check)
+      const existingUserData = localStorage.getItem(`user_${phone}`);
+      console.log(`Existing user data for ${phone}:`, existingUserData);
+      
+      if (existingUserData) {
         try {
-          cleanupAuthState();
-          try { await supabase.auth.signOut({ scope: 'global' }); } catch {}
-        } catch {}
-        const demoUser: User = {
-          id: `demo_${Date.now()}`,
-          phone: normalized,
-          isOnboarded: true,
-          subscribed: true,
-          subscriptionTier: 'trial',
-          subscriptionEnd: null,
+          const userData = JSON.parse(existingUserData);
+          console.log(`Parsed user data:`, userData);
+          
+          // Ensure the user object has all required properties
+          const completeUser: User = {
+            id: userData.id || Date.now().toString(),
+            phone: userData.phone || phone,
+            fullName: userData.fullName,
+            companyName: userData.companyName,
+            panNumber: userData.panNumber,
+            isOnboarded: userData.isOnboarded || false,
+            subscribed: userData.subscribed ?? false,
+            subscriptionTier: userData.subscriptionTier ?? null,
+            subscriptionEnd: userData.subscriptionEnd ?? null
+          };
+          
+          console.log(`Complete user object:`, completeUser);
+          saveUser(validateAndNormalizeUser(completeUser));
+        } catch (error) {
+          console.error(`Error parsing user data for ${phone}:`, error);
+          // If data is corrupted, treat as new user
+          const newUser: User = {
+            id: Date.now().toString(),
+            phone,
+            isOnboarded: false,
+            subscribed: false,
+            subscriptionTier: null,
+            subscriptionEnd: null
+          };
+          saveUser(newUser);
+        }
+      } else {
+        console.log(`No existing user found for ${phone}, creating new user`);
+        // New user - create minimal profile
+        const newUser: User = {
+          id: Date.now().toString(),
+          phone,
+          isOnboarded: false,
+          subscribed: false,
+          subscriptionTier: null,
+          subscriptionEnd: null
         };
-        setUser(demoUser);
-        setSession(null);
-        toast.success('Logged in with demo code');
-        return true;
+        saveUser(newUser);
       }
-
-      console.log('[Auth] Verifying OTP via SMS for', normalized);
-      const { data, error } = await supabase.auth.verifyOtp({
-        phone: normalized,
-        token: otp,
-        type: 'sms',
-      });
-
-      if (error) {
-        const msg = mapAuthError((error as any)?.code, error.message);
-        toast.error(msg);
-        return false;
-      }
-
-      if (data.user) {
-        // Migrate localStorage data if this is first Supabase login
-        await migrateFromLocalStorage(data.user);
-
-        // Load or create user profile
-        await loadUserProfile(data.user);
-        toast.success('Login successful!');
-        return true;
-      }
-
-      return false;
-    } catch (error: any) {
-      toast.error(mapAuthError((error as any)?.code, error?.message || 'Login failed.'));
-      return false;
-    } finally {
-      setIsLoading(false);
+      return true;
     }
+    return false;
   };
 
-  // Logout
-  const logout = async () => {
-    try {
-      // Clean up auth state first
-      cleanupAuthState();
-      try {
-        await supabase.auth.signOut({ scope: 'global' });
-      } catch {}
-      setUser(null);
-      setSession(null);
-      toast.success('Logged out successfully');
-      // Force reload to clear any stale state
-      if (typeof window !== 'undefined') {
-        window.location.href = '/login';
-      }
-    } catch (error) {
-      console.error('Error logging out:', error);
-      setUser(null);
-      setSession(null);
-    }
-  };
-
-  // Complete onboarding
   const completeOnboarding = async (profileData: {
     fullName: string;
     email: string;
     vehicleNumber: string;
   }): Promise<boolean> => {
     try {
-      setIsLoading(true);
-      
-      if (!user || !session?.user) {
-        toast.error('No user found. Please login again.');
+      if (!user) {
+        console.error('No user found during onboarding');
         return false;
       }
       
-      const { error } = await supabase
-        .from('profiles')
-        .upsert({
-          user_id: session.user.id,
-          full_name: profileData.fullName,
-          email: profileData.email,
-          is_onboarded: true,
-          phone: user.phone,
-        });
-      
-      if (error) {
-        toast.error('Failed to complete setup');
-        return false;
-      }
-      
-      const updatedUser = {
+      const updatedUser: User = {
         ...user,
         fullName: profileData.fullName,
         email: profileData.email,
-        isOnboarded: true,
+        isOnboarded: true
       };
       
-      setUser(updatedUser);
-      toast.success('Profile setup completed successfully!');
+      console.log(`Completing onboarding for user:`, updatedUser);
+      
+      // Save to phone-specific storage
+      localStorage.setItem(`user_${user.phone}`, JSON.stringify(updatedUser));
+      console.log(`Saved user data to user_${user.phone}`);
+      
+      // Save to current user storage
+      saveUser(updatedUser);
+      
+      // Create initial vehicle from onboarding data
+      const initialVehicle = {
+        id: Date.now().toString(),
+        number: profileData.vehicleNumber,
+        model: "Not specified",
+        payTapBalance: 0,
+        fastTagLinked: false,
+        driver: null,
+        lastService: "Not scheduled",
+        gpsLinked: false,
+        challans: 0,
+        documents: {
+          pollution: { status: 'missing' as const },
+          registration: { status: 'missing' as const },
+          insurance: { status: 'missing' as const },
+          license: { status: 'missing' as const }
+        },
+        userId: user.id
+      };
+      
+      // Save initial vehicle to localStorage
+      localStorage.setItem(`vehicles_${user.id}`, JSON.stringify([initialVehicle]));
+      console.log(`Saved initial vehicle for user ${user.id}:`, initialVehicle);
       
       return true;
     } catch (error) {
-      toast.error('Failed to complete setup. Please try again.');
+      console.error('Onboarding failed:', error);
       return false;
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  // Update user profile
   const updateProfile = async (profileData: {
     fullName: string;
     companyName: string;
     panNumber: string;
   }): Promise<boolean> => {
     try {
-      setIsLoading(true);
-      
-      if (!user || !session?.user) {
-        toast.error('No user found. Please login again.');
+      if (!user) {
+        console.error('No user found during profile update');
         return false;
       }
       
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          full_name: profileData.fullName,
-          company_name: profileData.companyName,
-          pan_number: profileData.panNumber,
-        })
-        .eq('user_id', session.user.id);
-      
-      if (error) {
-        toast.error('Failed to update profile');
-        return false;
-      }
-      
-      const updatedUser = { 
-        ...user, 
+      const updatedUser: User = {
+        ...user,
         fullName: profileData.fullName,
         companyName: profileData.companyName,
         panNumber: profileData.panNumber,
       };
-      setUser(updatedUser);
-      toast.success('Profile updated successfully!');
+      
+      console.log(`Updating profile for user:`, updatedUser);
+      
+      // Save to phone-specific storage
+      localStorage.setItem(`user_${user.phone}`, JSON.stringify(updatedUser));
+      console.log(`Updated user data in user_${user.phone}`);
+      
+      // Save to current user storage
+      saveUser(updatedUser);
       
       return true;
     } catch (error) {
-      toast.error('Failed to update profile. Please try again.');
+      console.error('Profile update failed:', error);
       return false;
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  // Start trial subscription
+  const logout = () => {
+    localStorage.removeItem('myfleet_user');
+    setUser(null);
+  };
+
+  const isSubscriptionActive = (u: User) => {
+    if (!u.subscribed) return false;
+    if (!u.subscriptionEnd) return true;
+    return new Date(u.subscriptionEnd) > new Date();
+  };
+
+  const validateAndNormalizeUser = (u: User): User => {
+    const active = isSubscriptionActive(u);
+    return {
+      ...u,
+      subscribed: active,
+      subscriptionTier: active ? (u.subscriptionTier ?? null) : null,
+      subscriptionEnd: active ? (u.subscriptionEnd ?? null) : null,
+    };
+  };
+
   const startTrial = async (): Promise<void> => {
-    try {
-      setIsLoading(true);
-      
-      if (!user || !session?.user) {
-        throw new Error('No user found. Please login again.');
-      }
-      
-      const end = new Date();
-      end.setDate(end.getDate() + 30);
-      
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          subscribed: true,
-          subscription_tier: 'trial',
-          subscription_end: end.toISOString(),
-        })
-        .eq('user_id', session.user.id);
-      
-      if (error) {
-        throw error;
-      }
-      
-      const updatedUser = {
-        ...user,
-        subscribed: true,
-        subscriptionTier: 'trial',
-        subscriptionEnd: end.toISOString(),
-      };
-      
-      setUser(updatedUser);
-      toast.success('Trial started successfully!');
-    } catch (error) {
-      toast.error('Failed to start trial. Please try again.');
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
+    if (!user) throw new Error('No user');
+    const end = new Date();
+    end.setDate(end.getDate() + 30);
+    const updated: User = {
+      ...user,
+      subscribed: true,
+      subscriptionTier: 'trial',
+      subscriptionEnd: end.toISOString(),
+    };
+    localStorage.setItem(`user_${user.phone}`, JSON.stringify(updated));
+    saveUser(updated);
   };
 
-  // Set paid subscription
   const setPaidSubscription = async (tier: 'semiannual' | 'annual'): Promise<void> => {
-    try {
-      setIsLoading(true);
-      
-      if (!user || !session?.user) {
-        throw new Error('No user found. Please login again.');
-      }
-      
-      const end = new Date();
-      end.setMonth(end.getMonth() + (tier === 'semiannual' ? 6 : 12));
-      
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          subscribed: true,
-          subscription_tier: tier,
-          subscription_end: end.toISOString(),
-        })
-        .eq('user_id', session.user.id);
-      
-      if (error) {
-        throw error;
-      }
-      
-      const updatedUser = {
-        ...user,
-        subscribed: true,
-        subscriptionTier: tier,
-        subscriptionEnd: end.toISOString(),
-      };
-      
-      setUser(updatedUser);
-      toast.success('Subscription activated successfully!');
-    } catch (error) {
-      toast.error('Failed to activate subscription. Please try again.');
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
+    if (!user) throw new Error('No user');
+    const end = new Date();
+    end.setMonth(end.getMonth() + (tier === 'semiannual' ? 6 : 12));
+    const updated: User = {
+      ...user,
+      subscribed: true,
+      subscriptionTier: tier,
+      subscriptionEnd: end.toISOString(),
+    };
+    localStorage.setItem(`user_${user.phone}`, JSON.stringify(updated));
+    saveUser(updated);
   };
 
-  // Initialize auth state and listen for changes
   useEffect(() => {
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        
-        if (session?.user) {
-          // Defer data loading to prevent deadlocks
-          setTimeout(async () => {
-            await loadUserProfile(session.user);
-          }, 0);
-        } else {
-          setUser(null);
-        }
-        
-        setIsLoading(false);
-      }
-    );
-
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      
-      if (session?.user) {
-        setTimeout(async () => {
-          await loadUserProfile(session.user);
-        }, 0);
-      } else {
-        setIsLoading(false);
-      }
-    });
-
-    return () => subscription.unsubscribe();
+    loadUser();
   }, []);
 
   return (
