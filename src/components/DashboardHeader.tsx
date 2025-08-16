@@ -18,31 +18,31 @@ const DashboardHeader = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   return (
-    <header className="sticky top-0 z-40 bg-card/80 supports-[backdrop-filter]:bg-card/80 backdrop-blur border-b border-border px-3 py-2 md:px-4 md:py-3 shadow-sm">
+    <header className="sticky top-0 z-40 glass-effect border-b border-border/50 px-6 py-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <SidebarTrigger />
+        <div className="flex items-center space-x-4">
+          <SidebarTrigger className="apple-button" />
           <div>
-            <h1 className="text-base md:text-xl font-semibold text-foreground">{t('app.name')}</h1>
-            <p className="hidden sm:block text-sm text-muted-foreground">
+            <h1 className="text-xl font-bold text-foreground tracking-tight">{t('app.name')}</h1>
+            <p className="hidden sm:block text-sm text-muted-foreground font-medium">
               {t('header.welcomeBack', { name: user?.fullName || t('roles.fleetManager') })}
             </p>
           </div>
         </div>
         
-        <div className="flex items-center space-x-2">
-          <Button variant="ghost" size="icon" className="relative">
+        <div className="flex items-center space-x-3">
+          <Button variant="ghost" size="icon" className="relative apple-button rounded-xl h-11 w-11">
             <Bell className="h-5 w-5" />
-            <span className="absolute -top-1 -right-1 h-2 w-2 bg-destructive rounded-full"></span>
+            <span className="absolute -top-1 -right-1 h-3 w-3 bg-destructive rounded-full animate-pulse"></span>
           </Button>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="apple-button rounded-xl h-11 w-11">
                 <User className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-64 rounded-2xl apple-shadow glass-effect border-border/50">
               <DropdownMenuLabel>
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col space-y-1">

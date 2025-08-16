@@ -2,62 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* Apple-Inspired Design System - Monochrome + Blue Accent
+All colors MUST be HSL. Implementing clean, minimal Apple aesthetics.
 */
 
 @layer base {
   :root {
-    /* Fleet Management Brand Colors */
+    /* Apple-Inspired Core Colors */
     --background: 0 0% 100%;
-    --foreground: 215 25% 27%;
+    --foreground: 0 0% 9%;
 
+    /* Cards with subtle elevation */
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 27%;
+    --card-foreground: 0 0% 9%;
 
+    /* Overlays and popovers */
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 27%;
+    --popover-foreground: 0 0% 9%;
 
-    /* Professional Fleet Blue */
-    --primary: 214 84% 56%;
+    /* Apple Blue Primary */
+    --primary: 211 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 214 84% 51%;
+    --primary-hover: 211 100% 45%;
 
-    /* Clean Secondary */
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 215 25% 27%;
+    /* Soft Gray Secondary */
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
 
-    /* Subtle Backgrounds */
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    /* Muted Backgrounds */
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
-    /* Success Green for Status */
-    --accent: 142 71% 45%;
+    /* Green Accent for Success */
+    --accent: 142 76% 36%;
     --accent-foreground: 0 0% 100%;
 
-    /* Alert Colors */
+    /* System Colors */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
+    --warning: 32 95% 44%;
     --warning-foreground: 0 0% 100%;
 
-    /* Borders and Inputs */
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 214 84% 56%;
+    /* Subtle Borders */
+    --border: 0 0% 89%;
+    --input: 0 0% 89%;
+    --ring: 211 100% 50%;
 
-    /* Fleet Status Colors */
-    --status-active: 142 71% 45%;
-    --status-pending: 38 92% 50%;
+    /* Status Colors */
+    --status-active: 142 76% 36%;
+    --status-pending: 32 95% 44%;
     --status-urgent: 0 84% 60%;
-    --status-neutral: 215 16% 65%;
+    --status-neutral: 0 0% 62%;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(214 84% 56%), hsl(214 84% 51%));
-    --gradient-success: linear-gradient(135deg, hsl(142 71% 45%), hsl(142 71% 40%));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 40% 98%));
+    /* Apple-style Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(211 100% 50%), hsl(211 100% 45%));
+    --gradient-success: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 31%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(0 0% 98%));
+    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.1));
 
-    --radius: 0.5rem;
+    /* Apple-style Border Radius */
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -77,41 +81,43 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Dark mode with Apple-inspired colors */
+    --background: 0 0% 7%;
+    --foreground: 0 0% 98%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 9%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 211 100% 50%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 142 76% 36%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 211 100% 50%;
+    
+    --sidebar-background: 0 0% 7%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 211 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 0 0% 12%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 211 100% 50%;
   }
 }
 
@@ -121,12 +127,24 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Apple-style typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+    letter-spacing: -0.025em;
+  }
+
+  /* Smooth transitions for all interactive elements */
+  button, a, [role="button"] {
+    @apply transition-all duration-200 ease-out;
   }
 }
 
 @layer utilities {
-  /* Custom scrollbar for fleet cards */
+  /* Apple-style scrollbars */
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -140,12 +158,43 @@ All colors MUST be HSL.
     scroll-behavior: smooth;
   }
 
-  /* Fleet card animations */
-  .fleet-card-hover {
-    @apply hover:scale-[1.02] transition-transform duration-200;
+  /* Apple-inspired card interactions */
+  .apple-card-hover {
+    @apply hover:scale-[1.02] hover:shadow-lg transition-all duration-300 ease-out;
+    transform-origin: center;
   }
 
-  /* Mobile-first touch interactions */
+  /* Frosted glass effect */
+  .glass-effect {
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .dark .glass-effect {
+    background: rgba(17, 17, 17, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Apple-style button effects */
+  .apple-button {
+    @apply transform transition-all duration-150 ease-out;
+  }
+
+  .apple-button:active {
+    @apply scale-95;
+  }
+
+  /* Subtle shadows */
+  .apple-shadow {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+
+  .apple-shadow-lg {
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Mobile-optimized interactions */
   @media (max-width: 768px) {
     .mobile-card {
       width: 100%;
@@ -163,7 +212,7 @@ All colors MUST be HSL.
     }
   }
 
-  /* Touch-friendly button states */
+  /* Touch-friendly targets */
   .touch-target {
     @apply min-h-[44px] min-w-[44px];
   }
@@ -172,18 +221,24 @@ All colors MUST be HSL.
   .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
   .pt-safe { padding-top: env(safe-area-inset-top); }
 
-  /* Smooth transitions for mobile */
+  /* Remove tap highlights */
   * {
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Pull-to-refresh styling */
-  .pull-to-refresh {
-    transform: translateY(0);
-    transition: transform 0.3s ease;
+  /* Spring animations */
+  .spring-bounce {
+    animation: spring-bounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 
-  .pull-to-refresh.pulling {
-    transform: translateY(60px);
+  @keyframes spring-bounce {
+    0% { transform: scale(0.8) rotate(-2deg); opacity: 0; }
+    50% { transform: scale(1.05) rotate(1deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  /* Micro-interactions */
+  .micro-interaction {
+    @apply transition-all duration-200 ease-out hover:brightness-105 active:scale-98;
   }
 }

@@ -42,18 +42,24 @@ export default function AppSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r">
-      <SidebarContent>
+    <Sidebar collapsible="icon" className="border-r border-border/50 glass-effect">
+      <SidebarContent className="py-6">
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider px-4 mb-4">
+            Navigation
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1 px-3">
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                  <SidebarMenuButton 
+                    asChild 
+                    isActive={isActive(item.url)}
+                    className="h-11 rounded-xl hover:bg-secondary/80 active:scale-95 transition-all duration-200 data-[active=true]:bg-primary data-[active=true]:text-primary-foreground apple-shadow-sm"
+                  >
                     <NavLink to={item.url} end className={getNavCls} onClick={handleNavClick}>
-                      <item.icon className="mr-2 h-4 w-4" />
-                      {state !== "collapsed" && <span>{labelMap[item.title]}</span>}
+                      <item.icon className="mr-3 h-5 w-5" />
+                      {state !== "collapsed" && <span className="font-medium">{labelMap[item.title]}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
