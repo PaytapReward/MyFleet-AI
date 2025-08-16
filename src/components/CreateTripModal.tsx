@@ -165,8 +165,6 @@ export const CreateTripModal = ({ open, onOpenChange }: CreateTripModalProps) =>
   const tripTypes = [
     { value: "local", label: "Local", icon: Car },
     { value: "intercity", label: "Intercity", icon: MapPin },
-    { value: "corporate", label: "Corporate", icon: User },
-    { value: "airport", label: "Airport", icon: Clock },
   ] as const;
 
   return (
@@ -196,7 +194,7 @@ export const CreateTripModal = ({ open, onOpenChange }: CreateTripModalProps) =>
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div className="grid grid-cols-2 gap-3">
                           {tripTypes.map((type) => {
                             const Icon = type.icon;
                             return (
@@ -237,9 +235,36 @@ export const CreateTripModal = ({ open, onOpenChange }: CreateTripModalProps) =>
                       name="pickup.address"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Pickup Address</FormLabel>
+                          <FormLabel>Pickup Location</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter pickup location" {...field} />
+                            <div className="relative">
+                              <Input placeholder="Search pickup location..." {...field} />
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="absolute right-1 top-1 h-8"
+                                onClick={() => {
+                                  // Use current location
+                                  if (navigator.geolocation) {
+                                    navigator.geolocation.getCurrentPosition(
+                                      (position) => {
+                                        const { latitude, longitude } = position.coords;
+                                        field.onChange(`Current Location (${latitude.toFixed(6)}, ${longitude.toFixed(6)})`);
+                                      },
+                                      (error) => {
+                                        console.error("Error getting location:", error);
+                                        alert("Unable to get current location. Please enter manually.");
+                                      }
+                                    );
+                                  } else {
+                                    alert("Geolocation is not supported by this browser.");
+                                  }
+                                }}
+                              >
+                                <MapPin className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -265,9 +290,27 @@ export const CreateTripModal = ({ open, onOpenChange }: CreateTripModalProps) =>
                       name="destination.address"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Destination Address</FormLabel>
+                          <FormLabel>Destination Location</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter destination location" {...field} />
+                            <div className="relative">
+                              <Input placeholder="Search destination location..." {...field} />
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="absolute right-1 top-1 h-8"
+                                onClick={() => {
+                                  // For destination, we could open a map picker or use Google Places API
+                                  // For now, let's just allow manual entry with a placeholder for future enhancement
+                                  const destination = prompt("Enter destination address:");
+                                  if (destination) {
+                                    field.onChange(destination);
+                                  }
+                                }}
+                              >
+                                <MapPin className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
