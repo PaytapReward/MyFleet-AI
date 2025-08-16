@@ -169,376 +169,305 @@ export const CreateTripModal = ({ open, onOpenChange }: CreateTripModalProps) =>
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-xl">
             <Car className="h-5 w-5" />
             Create New Trip
           </DialogTitle>
           <DialogDescription>
-            Fill in the trip details to create a new booking and assign a vehicle with driver.
+            Quick booking form for your next trip
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Trip Type Selection */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Trip Type</CardTitle>
-              </CardHeader>
-              <CardContent>
+            
+            {/* Trip Type - Simplified */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium text-muted-foreground">Trip Type</h3>
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="flex gap-3">
+                        {tripTypes.map((type) => {
+                          const Icon = type.icon;
+                          return (
+                            <Button
+                              key={type.value}
+                              type="button"
+                              variant={field.value === type.value ? "default" : "outline"}
+                              className="flex-1 h-12"
+                              onClick={() => field.onChange(type.value)}
+                            >
+                              <Icon className="h-4 w-4 mr-2" />
+                              {type.label}
+                            </Button>
+                          );
+                        })}
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Route - Simplified */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium text-muted-foreground">Route</h3>
+              <div className="space-y-3">
                 <FormField
                   control={form.control}
-                  name="type"
+                  name="pickup.address"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel className="text-sm">From</FormLabel>
                       <FormControl>
-                        <div className="grid grid-cols-2 gap-3">
-                          {tripTypes.map((type) => {
-                            const Icon = type.icon;
-                            return (
-                              <Button
-                                key={type.value}
-                                type="button"
-                                variant={field.value === type.value ? "default" : "outline"}
-                                className="h-auto p-4 flex flex-col gap-2"
-                                onClick={() => field.onChange(type.value)}
-                              >
-                                <Icon className="h-5 w-5" />
-                                <span className="text-sm">{type.label}</span>
-                              </Button>
-                            );
-                          })}
+                        <div className="relative">
+                          <Input placeholder="Pickup location..." {...field} />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-1 top-1 h-8 w-8 p-0"
+                            onClick={() => {
+                              if (navigator.geolocation) {
+                                navigator.geolocation.getCurrentPosition(
+                                  (position) => {
+                                    const { latitude, longitude } = position.coords;
+                                    field.onChange(`Current Location (${latitude.toFixed(6)}, ${longitude.toFixed(6)})`);
+                                  },
+                                  (error) => {
+                                    console.error("Error getting location:", error);
+                                    alert("Unable to get current location. Please enter manually.");
+                                  }
+                                );
+                              }
+                            }}
+                          >
+                            <MapPin className="h-4 w-4" />
+                          </Button>
                         </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              </CardContent>
-            </Card>
-
-            {/* Route Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <MapPin className="h-5 w-5" />
-                  Route Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <FormField
-                      control={form.control}
-                      name="pickup.address"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Pickup Location</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Input placeholder="Search pickup location..." {...field} />
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                className="absolute right-1 top-1 h-8"
-                                onClick={() => {
-                                  // Use current location
-                                  if (navigator.geolocation) {
-                                    navigator.geolocation.getCurrentPosition(
-                                      (position) => {
-                                        const { latitude, longitude } = position.coords;
-                                        field.onChange(`Current Location (${latitude.toFixed(6)}, ${longitude.toFixed(6)})`);
-                                      },
-                                      (error) => {
-                                        console.error("Error getting location:", error);
-                                        alert("Unable to get current location. Please enter manually.");
-                                      }
-                                    );
-                                  } else {
-                                    alert("Geolocation is not supported by this browser.");
-                                  }
-                                }}
-                              >
-                                <MapPin className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <FormField
-                      control={form.control}
-                      name="destination.address"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Destination Location</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Input placeholder="Search destination location..." {...field} />
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                className="absolute right-1 top-1 h-8"
-                                onClick={() => {
-                                  // For destination, we could open a map picker or use Google Places API
-                                  // For now, let's just allow manual entry with a placeholder for future enhancement
-                                  const destination = prompt("Enter destination address:");
-                                  if (destination) {
-                                    field.onChange(destination);
-                                  }
-                                }}
-                              >
-                                <MapPin className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Vehicle and Driver Assignment */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Car className="h-5 w-5" />
-                  Vehicle & Driver Assignment
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="vehicleId"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Select Vehicle</FormLabel>
-                        <Select onValueChange={handleVehicleChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Choose a vehicle" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {vehicles.map((vehicle) => (
-                              <SelectItem key={vehicle.id} value={vehicle.id}>
-                                <div className="flex items-center gap-2">
-                                  <span className="font-medium">{vehicle.number}</span>
-                                  <span className="text-muted-foreground">•</span>
-                                  <span className="text-sm text-muted-foreground">{vehicle.model}</span>
-                                  {vehicle.driver && (
-                                    <Badge variant="secondary" className="ml-2 text-xs">
-                                      {vehicle.driver.name}
-                                    </Badge>
-                                  )}
-                                </div>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="driverId"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Select Driver</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Choose a driver" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {availableDrivers.map((driver) => (
-                              <SelectItem key={driver.id} value={driver.id}>
-                                <div className="flex items-center gap-2">
-                                  <span className="font-medium">{driver.name}</span>
-                                  <span className="text-muted-foreground">•</span>
-                                  <span className="text-sm text-muted-foreground">{driver.licenseNumber}</span>
-                                </div>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {selectedVehicle && (
-                  <div className="p-3 bg-muted rounded-lg">
-                    <div className="flex items-center gap-4 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Car className="h-4 w-4" />
-                        <span className="font-medium">{selectedVehicle.number}</span>
-                        <span className="text-muted-foreground">{selectedVehicle.model}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <DollarSign className="h-4 w-4" />
-                        <span>Balance: ₹{selectedVehicle.payTapBalance.toLocaleString()}</span>
-                      </div>
-                      {selectedVehicle.fastTagLinked && (
-                        <Badge variant="secondary" className="text-xs">FASTag Linked</Badge>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Passenger and Trip Details */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  Passenger & Trip Details
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="passenger.name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Passenger Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter passenger name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="passenger.phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter phone number" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="passenger.email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email (Optional)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter email address" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="scheduledStartTime"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Scheduled Start Time</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className={cn(
-                                  "pl-3 text-left font-normal",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                {field.value ? (
-                                  format(field.value, "PPP p")
-                                ) : (
-                                  <span>Pick date and time</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              disabled={(date) => date < new Date()}
-                              initialFocus
-                              className="pointer-events-auto"
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="baseFare"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Base Fare (₹)</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="Enter base fare"
-                            {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
 
                 <FormField
                   control={form.control}
-                  name="notes"
+                  name="destination.address"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Notes (Optional)</FormLabel>
+                      <FormLabel className="text-sm">To</FormLabel>
                       <FormControl>
-                        <Textarea
-                          placeholder="Add any special instructions or notes"
-                          {...field}
-                        />
+                        <div className="relative">
+                          <Input placeholder="Destination location..." {...field} />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-1 top-1 h-8 w-8 p-0"
+                            onClick={() => {
+                              const destination = prompt("Enter destination address:");
+                              if (destination) {
+                                field.onChange(destination);
+                              }
+                            }}
+                          >
+                            <MapPin className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
-              </CardContent>
-            </Card>
+              </div>
+            </div>
+
+            {/* Vehicle & Driver - Simplified */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium text-muted-foreground">Assignment</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <FormField
+                  control={form.control}
+                  name="vehicleId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">Vehicle</FormLabel>
+                      <Select onValueChange={handleVehicleChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select vehicle" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {vehicles.map((vehicle) => (
+                            <SelectItem key={vehicle.id} value={vehicle.id}>
+                              <span className="font-medium">{vehicle.number}</span>
+                              <span className="text-muted-foreground ml-1">• {vehicle.model}</span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="driverId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">Driver</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select driver" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {availableDrivers.map((driver) => (
+                            <SelectItem key={driver.id} value={driver.id}>
+                              {driver.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            {/* Passenger Details - Simplified */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium text-muted-foreground">Passenger</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <FormField
+                  control={form.control}
+                  name="passenger.name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Passenger name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="passenger.phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">Phone</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Phone number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            {/* Trip Details - Simplified */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium text-muted-foreground">Details</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <FormField
+                  control={form.control}
+                  name="scheduledStartTime"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">Start Time</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "MMM dd, HH:mm")
+                              ) : (
+                                <span>Pick time</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) => date < new Date()}
+                            initialFocus
+                            className="pointer-events-auto"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="baseFare"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">Fare (₹)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Base fare"
+                          {...field}
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            {/* Notes - Optional */}
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">Notes (Optional)</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Special instructions..."
+                      className="resize-none"
+                      rows={2}
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
 
             {/* Actions */}
-            <div className="flex justify-end gap-3 pt-4">
+            <div className="flex justify-end gap-3 pt-2">
               <Button
                 type="button"
                 variant="outline"
@@ -548,7 +477,7 @@ export const CreateTripModal = ({ open, onOpenChange }: CreateTripModalProps) =>
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Creating Trip..." : "Create Trip"}
+                {isSubmitting ? "Creating..." : "Create Trip"}
               </Button>
             </div>
           </form>
