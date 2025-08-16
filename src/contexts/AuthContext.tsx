@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
 import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
+import { cleanupAuthState } from '@/utils/authCleanup';
+
 
 interface User {
   id: string;
@@ -54,6 +56,56 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Normalize a phone number to E.164. Defaults to +91 if 10-digit local number.
+  const normalizePhoneE164 = (raw: string): string | null => {
+    if (!raw) return null;
+    const trimmed = raw.trim();
+    const digits = trimmed.replace(/[^\d+]/g, '');
+
+    if (digits.startsWith('+')) {
+      // Basic length sanity check for E.164
+      if (digits.length < 8 || digits.length > 16) return null;
+      return digits;
+    }
+
+    // If starts with country code without +
+    if (digits.length >= 11 && digits.length <= 15) {
+      return `+${digits}`;
+    }
+
+    // Handle common Indian 10-digit numbers (strip leading zeros)
+    const ten = digits.replace(/^0+/, '');
+    if (ten.length === 10) {
+      return `+91${ten}`;
+    }
+
+    return null;
+  };
+
+  const mapAuthError = (code?: string, message?: string): string => {
+    switch (code) {
+      case 'phone_provider_disabled':
+        return 'Phone login is disabled. Please try email login.';
+      case 'phone_signups_disabled':
+        return 'Phone signups are disabled. Contact support.';
+      case 'invalid_phone_number':
+      case 'invalid_phone':
+        return 'Invalid phone number. Check country code and format.';
+      case 'otp_expired':
+        return 'Verification code expired. Please request a new one.';
+      case 'otp_invalid':
+        return 'Incorrect verification code. Please try again.';
+      case 'sms_send_failed':
+        return 'Failed to send SMS. Please try again later.';
+      default:
+        if (message && message.includes('Unsupported phone provider')) {
+          return 'Phone provider is not configured. Please try again shortly.';
+        }
+        return message || 'Something went wrong. Please try again.';
+    }
+  };
+
 
   // Helper function to transform Supabase user + profile to our User type
   const transformToUser = (supabaseUser: SupabaseUser, profile?: any): User => {
@@ -134,23 +186,38 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const sendOTP = async (phone: string): Promise<boolean> => {
     try {
       setIsLoading(true);
-      
-      const { error } = await supabase.auth.signInWithOtp({
-        phone,
-        options: {
-          shouldCreateUser: true,
-        }
-      });
-      
-      if (error) {
-        toast.error(error.message);
+
+      // Clean up existing auth state to avoid limbo
+      cleanupAuthState();
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch {}
+
+      const normalized = normalizePhoneE164(phone);
+      if (!normalized) {
+        toast.error('Please enter a valid phone number with country code.');
         return false;
       }
-      
-      toast.success(`OTP sent to ${phone}`);
+
+      console.log('[Auth] Sending OTP via SMS to', normalized);
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: normalized,
+        options: {
+          channel: 'sms',
+          shouldCreateUser: true,
+        },
+      });
+
+      if (error) {
+        const msg = mapAuthError((error as any)?.code, error.message);
+        toast.error(msg);
+        return false;
+      }
+
+      toast.success(`OTP sent to ${normalized}`);
       return true;
-    } catch (error) {
-      toast.error('Failed to send OTP. Please try again.');
+    } catch (error: any) {
+      toast.error(mapAuthError((error as any)?.code, error?.message || 'Failed to send OTP.'));
       return false;
     } finally {
       setIsLoading(false);
@@ -161,31 +228,39 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (phone: string, otp: string): Promise<boolean> => {
     try {
       setIsLoading(true);
-      
-      const { data, error } = await supabase.auth.verifyOtp({
-        phone,
-        token: otp,
-        type: 'sms'
-      });
-      
-      if (error) {
-        toast.error(error.message);
+
+      const normalized = normalizePhoneE164(phone);
+      if (!normalized) {
+        toast.error('Invalid phone number.');
         return false;
       }
-      
+
+      console.log('[Auth] Verifying OTP via SMS for', normalized);
+      const { data, error } = await supabase.auth.verifyOtp({
+        phone: normalized,
+        token: otp,
+        type: 'sms',
+      });
+
+      if (error) {
+        const msg = mapAuthError((error as any)?.code, error.message);
+        toast.error(msg);
+        return false;
+      }
+
       if (data.user) {
         // Migrate localStorage data if this is first Supabase login
         await migrateFromLocalStorage(data.user);
-        
+
         // Load or create user profile
         await loadUserProfile(data.user);
         toast.success('Login successful!');
         return true;
       }
-      
+
       return false;
-    } catch (error) {
-      toast.error('Login failed. Please try again.');
+    } catch (error: any) {
+      toast.error(mapAuthError((error as any)?.code, error?.message || 'Login failed.'));
       return false;
     } finally {
       setIsLoading(false);
@@ -195,13 +270,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Logout
   const logout = async () => {
     try {
-      await supabase.auth.signOut();
+      // Clean up auth state first
+      cleanupAuthState();
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch {}
       setUser(null);
       setSession(null);
       toast.success('Logged out successfully');
+      // Force reload to clear any stale state
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
     } catch (error) {
       console.error('Error logging out:', error);
-      // Still clear local state even if Supabase logout fails
       setUser(null);
       setSession(null);
     }
