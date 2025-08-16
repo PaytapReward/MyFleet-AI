@@ -270,18 +270,6 @@ export const CreateTripModal = ({ open, onOpenChange }: CreateTripModalProps) =>
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="pickup.landmark"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Pickup Landmark (Optional)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., Near Metro Station" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
                   </div>
                   
                   <div className="space-y-2">
@@ -313,18 +301,6 @@ export const CreateTripModal = ({ open, onOpenChange }: CreateTripModalProps) =>
                             </div>
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="destination.landmark"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Destination Landmark (Optional)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., Main Gate" {...field} />
-                          </FormControl>
                         </FormItem>
                       )}
                     />
