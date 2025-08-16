@@ -7,12 +7,16 @@ import {
   Shield, 
   AlertTriangle, 
   Plus,
-  Car
+  Car,
+  ChevronDown,
+  ChevronUp,
+  Fuel,
+  UserCheck
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import AssignDriverModal from "./AssignDriverModal";
 import VehicleDetailsModal from "./VehicleDetailsModal";
 import FuelModal from "./FuelModal";
@@ -44,6 +48,7 @@ interface VehicleCardProps {
 
 const VehicleCard = ({ vehicle }: VehicleCardProps) => {
   const { getDriverById } = useDrivers();
+  const [isExpanded, setIsExpanded] = useState(false);
   const [showAssignDriverModal, setShowAssignDriverModal] = useState(false);
   const [showVehicleDetailsModal, setShowVehicleDetailsModal] = useState(false);
   const [showFuelModal, setShowFuelModal] = useState(false);
@@ -60,229 +65,147 @@ const VehicleCard = ({ vehicle }: VehicleCardProps) => {
   const insuranceStatus = vehicle.documents.insurance.status;
   const isInsuranceActive = insuranceStatus === 'uploaded';
 
-
   return (
-    <Card className="w-full md:w-80 mobile-card md:flex-shrink-0 shadow-md hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-card to-muted/30 touch-target">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">{vehicle.number}</h3>
-            <p className="text-sm text-muted-foreground">{vehicle.model}</p>
+    <Card className="w-full md:w-80 mobile-card md:flex-shrink-0 backdrop-blur-lg bg-card/95 border-border/50 shadow-lg hover:shadow-xl transition-all duration-500 rounded-3xl overflow-hidden">
+      {/* Apple-inspired Vehicle Header */}
+      <CardHeader className="pb-4">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center">
+              <Car className="h-5 w-5 text-primary" strokeWidth={1.5} />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-foreground tracking-tight">{vehicle.number}</h3>
+              <p className="text-sm text-muted-foreground font-medium">{vehicle.model}</p>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            {vehicle.challans > 0 && (
-              <Badge variant="destructive" className="flex items-center gap-1">
-                <AlertTriangle className="h-3 w-3" />
-                {vehicle.challans} Challan{vehicle.challans > 1 ? 's' : ''}
-              </Badge>
-            )}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 w-7 p-0 hover:bg-primary/10"
-              onClick={() => setShowVehicleDetailsModal(true)}
+          {vehicle.challans > 0 && (
+            <Badge 
+              variant="destructive" 
+              className="rounded-full px-2.5 py-1 text-xs font-medium bg-red-500/10 text-red-600 border-red-200/50"
             >
-              <Car className="h-6 w-6 text-primary" />
-            </Button>
-          </div>
-        </CardTitle>
+              {vehicle.challans} Fine{vehicle.challans > 1 ? 's' : ''}
+            </Badge>
+          )}
+        </div>
       </CardHeader>
 
-      <CardContent className="md:space-y-4">
-        {/* Mobile: 3x2 grid of squares */}
-        <div className="grid grid-cols-3 gap-3 md:hidden">
+      <CardContent className="space-y-6 pb-6">
+        {/* Quick Stats Row - 3 Key Metrics */}
+        <div className="grid grid-cols-3 gap-4">
+          {/* Fuel Balance */}
           <div 
-            className="min-h-[90px] p-2.5 bg-muted rounded-lg flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/80 transition-colors"
+            className="flex flex-col items-center p-4 rounded-2xl bg-background/50 border border-border/30 cursor-pointer hover:bg-background/80 transition-all duration-300"
             onClick={() => setShowFuelModal(true)}
           >
-            <CreditCard className="h-4 w-4 text-primary mb-1" />
-            <p className="text-xs font-medium text-muted-foreground mb-1">Fuel</p>
-            <p className="text-sm font-semibold text-primary">₹{vehicle.payTapBalance}</p>
+            <Fuel className="h-4 w-4 text-muted-foreground mb-2" strokeWidth={1.5} />
+            <p className="text-xs text-muted-foreground font-medium mb-1">Fuel Balance</p>
+            <p className="text-sm font-bold text-primary">₹{vehicle.payTapBalance}</p>
           </div>
 
+          {/* Driver */}
           <div 
-            className="min-h-[90px] p-2.5 bg-muted rounded-lg flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/80 transition-colors"
-            onClick={() => setShowFastagModal(true)}
-          >
-            <LinkIcon className="h-4 w-4 text-primary mb-1" />
-            <p className="text-xs font-medium text-muted-foreground mb-1">FASTag</p>
-            <p className={`text-xs ${vehicle.fastTagLinked ? 'text-status-active' : 'text-status-urgent'}`}>
-              {vehicle.fastTagLinked ? 'Linked' : 'Not Linked'}
-            </p>
-          </div>
-
-          <div 
-            className="min-h-[90px] p-2.5 bg-muted rounded-lg flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/80 transition-colors"
+            className="flex flex-col items-center p-4 rounded-2xl bg-background/50 border border-border/30 cursor-pointer hover:bg-background/80 transition-all duration-300"
             onClick={() => setShowDriverModal(true)}
           >
-            <User className="h-4 w-4 text-primary mb-1" />
-            <p className="text-xs font-medium text-muted-foreground mb-1">Driver</p>
-            <p className="text-xs text-foreground truncate w-full">{driverName || 'Not Assigned'}</p>
-          </div>
-
-          <div 
-            className="min-h-[90px] p-2.5 bg-muted rounded-lg flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/80 transition-colors"
-            onClick={() => setShowServiceModal(true)}
-          >
-            <Wrench className="h-4 w-4 text-primary mb-1" />
-            <p className="text-xs font-medium text-muted-foreground mb-1">Service</p>
-            <p className="text-xs text-foreground truncate w-full">{vehicle.lastService}</p>
-          </div>
-
-          <div className="min-h-[90px] p-2.5 bg-muted rounded-lg flex flex-col items-center justify-center text-center">
-            <Shield className="h-4 w-4 text-primary mb-1" />
-            <p className="text-xs font-medium text-muted-foreground mb-1">Insurance</p>
-            <p className={`text-xs ${isInsuranceActive ? 'text-status-active' : 'text-status-urgent'}`}>
-              {isInsuranceActive ? 'Active' : 'Inactive'}
+            <UserCheck className="h-4 w-4 text-muted-foreground mb-2" strokeWidth={1.5} />
+            <p className="text-xs text-muted-foreground font-medium mb-1">Driver</p>
+            <p className={`text-sm font-bold ${driverName ? 'text-foreground' : 'text-muted-foreground'} truncate w-full text-center`}>
+              {driverName || 'Unassigned'}
             </p>
           </div>
 
+          {/* Fines Count */}
           <div 
-            className="min-h-[90px] p-2.5 bg-muted rounded-lg flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/80 transition-colors"
+            className="flex flex-col items-center p-4 rounded-2xl bg-background/50 border border-border/30 cursor-pointer hover:bg-background/80 transition-all duration-300"
             onClick={() => setShowChallanModal(true)}
           >
-            <AlertTriangle className="h-4 w-4 text-primary mb-1" />
-            <p className="text-xs font-medium text-muted-foreground mb-1">Fines</p>
-            <p className={`text-xs ${vehicle.challans > 0 ? 'text-status-urgent' : 'text-muted-foreground'}`}>
+            <AlertTriangle className="h-4 w-4 text-muted-foreground mb-2" strokeWidth={1.5} />
+            <p className="text-xs text-muted-foreground font-medium mb-1">Fines</p>
+            <p className={`text-sm font-bold ${vehicle.challans > 0 ? 'text-red-600' : 'text-green-600'}`}>
               {vehicle.challans}
             </p>
           </div>
         </div>
 
-        {/* Desktop/Tablet: keep existing layout */}
-        <div className="hidden md:block space-y-4">
-          {/* PayTap Tag */}
-          <div 
-            className="flex items-center justify-between p-3 bg-muted rounded-lg cursor-pointer hover:bg-muted/80 transition-colors"
-            onClick={() => setShowFuelModal(true)}
-          >
-            <div className="flex items-center space-x-2">
-              <CreditCard className="h-4 w-4 text-primary" />
-              <div>
-                <p className="text-sm font-medium">Fuel Balance</p>
-                <p className="text-lg font-semibold text-primary">₹{vehicle.payTapBalance}</p>
-              </div>
+        {/* Expandable Details Section */}
+        <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+          <CollapsibleTrigger className="w-full">
+            <div className="flex items-center justify-between p-4 rounded-2xl bg-background/30 border border-border/20 hover:bg-background/50 transition-all duration-300">
+              <span className="text-sm font-medium text-muted-foreground">More Details</span>
+              {isExpanded ? (
+                <ChevronUp className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
+              ) : (
+                <ChevronDown className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
+              )}
             </div>
-            <Button size="sm" variant="default">
-              <Plus className="h-3 w-3 mr-1" />
-              Add Money
-            </Button>
-          </div>
+          </CollapsibleTrigger>
 
-          {/* FASTag */}
-          <div 
-            className="flex items-center justify-between p-3 bg-muted rounded-lg cursor-pointer hover:bg-muted/80 transition-colors"
-            onClick={() => setShowFastagModal(true)}
-          >
-            <div className="flex items-center space-x-2">
-              <LinkIcon className="h-4 w-4 text-primary" />
-              <div>
-                <p className="text-sm font-medium">FASTag</p>
-                <p className={`text-sm ${vehicle.fastTagLinked ? 'text-status-active' : 'text-status-urgent'}`}>
-                  {vehicle.fastTagLinked ? 'Linked' : 'Not Linked'}
-                </p>
-              </div>
-            </div>
-            <Button size="sm" variant={vehicle.fastTagLinked ? "secondary" : "warning"}>
-              {vehicle.fastTagLinked ? 'Add Balance' : 'Link'}
-            </Button>
-          </div>
-
-          {/* Driver Assignment */}
-          <div 
-            className="flex items-center justify-between p-3 bg-muted rounded-lg cursor-pointer hover:bg-muted/80 transition-colors"
-            onClick={() => setShowDriverModal(true)}
-          >
-            <div className="flex items-center space-x-2">
-              <User className="h-4 w-4 text-primary" />
-              <div>
-                <p className="text-sm font-medium">Driver</p>
-                <p className="text-sm text-foreground">{driverName || 'Not Assigned'}</p>
-              </div>
-            </div>
-            <Button 
-              size="sm" 
-              variant="secondary"
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowDriverModal(true);
-              }}
+          <CollapsibleContent className="space-y-3 pt-3">
+            {/* FASTag Status */}
+            <div 
+              className="flex items-center justify-between p-4 rounded-2xl bg-background/30 border border-border/20 cursor-pointer hover:bg-background/50 transition-all duration-300"
+              onClick={() => setShowFastagModal(true)}
             >
-              {driverName ? 'Manage' : 'Add Driver'}
-            </Button>
-          </div>
-
-          {/* Maintenance */}
-          <div 
-            className="flex items-center justify-between p-3 bg-muted rounded-lg cursor-pointer hover:bg-muted/80 transition-colors"
-            onClick={() => setShowServiceModal(true)}
-          >
-            <div className="flex items-center space-x-2">
-              <Wrench className="h-4 w-4 text-primary" />
-              <div>
-                <p className="text-sm font-medium">Last Service</p>
-                <p className="text-sm text-foreground">{vehicle.lastService}</p>
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <LinkIcon className="h-4 w-4 text-primary" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">FASTag</p>
+                  <p className={`text-xs font-medium ${vehicle.fastTagLinked ? 'text-green-600' : 'text-red-600'}`}>
+                    {vehicle.fastTagLinked ? 'Linked' : 'Not Linked'}
+                  </p>
+                </div>
               </div>
+              <Button size="sm" variant={vehicle.fastTagLinked ? "secondary" : "default"} className="rounded-xl">
+                {vehicle.fastTagLinked ? 'Manage' : 'Link'}
+              </Button>
             </div>
-            <Button 
-              size="sm" 
-              variant="secondary"
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowServiceModal(true);
-              }}
+
+            {/* Insurance Status */}
+            <div className="flex items-center justify-between p-4 rounded-2xl bg-background/30 border border-border/20">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Shield className="h-4 w-4 text-primary" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Insurance</p>
+                  <p className={`text-xs font-medium ${isInsuranceActive ? 'text-green-600' : 'text-red-600'}`}>
+                    {isInsuranceActive ? 'Active' : 'Inactive'}
+                    {vehicle.documents.insurance.expiryDate && (
+                      <span className="text-muted-foreground ml-1">
+                        • Expires {new Date(vehicle.documents.insurance.expiryDate).toLocaleDateString()}
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+              <Button size="sm" variant={isInsuranceActive ? "secondary" : "destructive"} className="rounded-xl">
+                {isInsuranceActive ? 'View' : 'Renew'}
+              </Button>
+            </div>
+
+            {/* Service Status */}
+            <div 
+              className="flex items-center justify-between p-4 rounded-2xl bg-background/30 border border-border/20 cursor-pointer hover:bg-background/50 transition-all duration-300"
+              onClick={() => setShowServiceModal(true)}
             >
-              Schedule Next
-            </Button>
-          </div>
-
-          {/* Challans */}
-          <div 
-            className="flex items-center justify-between p-3 bg-muted rounded-lg cursor-pointer hover:bg-muted/80 transition-colors"
-            onClick={() => setShowChallanModal(true)}
-          >
-            <div className="flex items-center space-x-2">
-              <AlertTriangle className="h-4 w-4 text-primary" />
-              <div>
-                <p className="text-sm font-medium">Challans</p>
-                <p className={`text-sm ${vehicle.challans > 0 ? 'text-status-urgent' : 'text-muted-foreground'}`}>
-                  {vehicle.challans} {vehicle.challans === 1 ? 'Challan' : 'Challans'}
-                </p>
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Wrench className="h-4 w-4 text-primary" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Service</p>
+                  <p className="text-xs text-muted-foreground font-medium">Last: {vehicle.lastService}</p>
+                </div>
               </div>
+              <Button size="sm" variant="secondary" className="rounded-xl">
+                Schedule
+              </Button>
             </div>
-            <Button 
-              size="sm" 
-              variant={vehicle.challans > 0 ? "destructive" : "secondary"}
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowChallanModal(true);
-              }}
-            >
-              {vehicle.challans > 0 ? 'Pay Now' : 'View'}
-            </Button>
-          </div>
-
-          {/* Insurance Status */}
-          <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-            <div className="flex items-center space-x-2">
-              <Shield className="h-4 w-4 text-primary" />
-              <div>
-                <p className="text-sm font-medium">Insurance</p>
-                <p className={`text-sm ${isInsuranceActive ? 'text-status-active' : 'text-status-urgent'}`}>
-                  {isInsuranceActive ? 'Active' : 'Inactive'}
-                  {vehicle.documents.insurance.expiryDate && (
-                    <span className="text-xs text-muted-foreground ml-1">
-                      (Expires: {new Date(vehicle.documents.insurance.expiryDate).toLocaleDateString()})
-                    </span>
-                  )}
-                </p>
-              </div>
-            </div>
-            <Button size="sm" variant={isInsuranceActive ? "secondary" : "destructive"}>
-              {isInsuranceActive ? 'View' : 'Renew'}
-            </Button>
-          </div>
-        </div>
+          </CollapsibleContent>
+        </Collapsible>
       </CardContent>
 
       {/* Driver Assignment Modal */}
