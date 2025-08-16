@@ -90,7 +90,7 @@ const AssignDriverModal = ({ open, setOpen, vehicleId, vehicleNumber, currentDri
       setIsLoading(true);
 
       // Create new driver
-      const newDriver = addDriver(formData);
+      const newDriver = await addDriver(formData);
       
       // Unassign current driver if exists
       if (currentDriverId) {

@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Driver, AddDriverFormData } from '@/types/driver';
 import { useAuth } from './AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface DriverContextType {
   drivers: Driver[];
-  addDriver: (driverData: AddDriverFormData) => Driver;
+  addDriver: (driverData: AddDriverFormData) => Promise<Driver>;
   updateDriver: (driverId: string, updates: Partial<Driver>) => void;
   removeDriver: (driverId: string) => void;
   getDriversByUser: (userId: string) => Driver[];
@@ -26,57 +28,208 @@ export const useDrivers = () => {
 
 export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load drivers from localStorage when user changes
+  // Load drivers from Supabase when user changes
   useEffect(() => {
     if (user) {
-      const storedDrivers = localStorage.getItem(`drivers_${user.id}`);
-      if (storedDrivers) {
-        setDrivers(JSON.parse(storedDrivers));
-      }
+      loadDrivers();
     } else {
       setDrivers([]);
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, [user]);
 
-  // Save drivers to localStorage whenever drivers change
-  useEffect(() => {
-    if (user && drivers.length >= 0) {
-      localStorage.setItem(`drivers_${user.id}`, JSON.stringify(drivers));
+  const loadDrivers = async () => {
+    if (!user) return;
+    
+    try {
+      setIsLoading(true);
+      
+      // First, try to migrate from localStorage
+      await migrateFromLocalStorage();
+      
+      const { data, error } = await supabase
+        .from('drivers')
+        .select('*')
+        .eq('owner_id', user.id);
+      
+      if (error) throw error;
+      
+      // Transform Supabase data to Driver interface
+      const transformedDrivers: Driver[] = data?.map(driver => ({
+        id: driver.id,
+        name: driver.full_name,
+        licenseNumber: driver.license_number,
+        dateOfBirth: '', // Not stored in Supabase schema
+        phone: '', // Not stored in Supabase schema  
+        userId: driver.user_id,
+        createdAt: driver.created_at,
+        assignedVehicles: driver.assigned_vehicles || []
+      })) || [];
+      
+      setDrivers(transformedDrivers);
+    } catch (error) {
+      console.error('Error loading drivers:', error);
+      toast({
+        title: "Error loading drivers",
+        description: "Failed to load your drivers. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
     }
-  }, [drivers, user]);
+  };
 
-  const addDriver = (driverData: AddDriverFormData): Driver => {
+  const migrateFromLocalStorage = async () => {
+    if (!user) return;
+    
+    const localKey = `drivers_${user.id}`;
+    const storedDrivers = localStorage.getItem(localKey);
+    
+    if (storedDrivers) {
+      try {
+        const localDrivers: Driver[] = JSON.parse(storedDrivers);
+        
+        // Check if we already have drivers in Supabase
+        const { data: existingDrivers } = await supabase
+          .from('drivers')
+          .select('id')
+          .eq('owner_id', user.id);
+        
+        if (!existingDrivers?.length && localDrivers.length > 0) {
+          // Migrate drivers to Supabase
+          const driversToInsert = localDrivers.map(driver => ({
+            full_name: driver.name,
+            license_number: driver.licenseNumber,
+            assigned_vehicles: driver.assignedVehicles,
+            owner_id: user.id,
+            user_id: user.id,
+            profile_id: user.id
+          }));
+          
+          const { error } = await supabase
+            .from('drivers')
+            .insert(driversToInsert);
+          
+          if (!error) {
+            localStorage.removeItem(localKey);
+            toast({
+              title: "Data migrated",
+              description: "Your drivers have been migrated to the cloud.",
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error migrating drivers:', error);
+      }
+    }
+  };
+
+  const addDriver = async (driverData: AddDriverFormData): Promise<Driver> => {
     if (!user) throw new Error('User must be logged in to add driver');
 
-    const newDriver: Driver = {
-      id: Date.now().toString(),
-      name: driverData.name,
-      licenseNumber: driverData.licenseNumber,
-      dateOfBirth: driverData.dateOfBirth,
-      phone: driverData.phone,
-      userId: user.id,
-      createdAt: new Date().toISOString(),
-      assignedVehicles: []
-    };
+    try {
+      const { data, error } = await supabase
+        .from('drivers')
+        .insert({
+          full_name: driverData.name,
+          license_number: driverData.licenseNumber,
+          assigned_vehicles: [],
+          owner_id: user.id,
+          user_id: user.id,
+          profile_id: user.id
+        })
+        .select()
+        .single();
+      
+      if (error) throw error;
+      
+      const newDriver: Driver = {
+        id: data.id,
+        name: data.full_name,
+        licenseNumber: data.license_number,
+        dateOfBirth: driverData.dateOfBirth,
+        phone: driverData.phone,
+        userId: data.user_id,
+        createdAt: data.created_at,
+        assignedVehicles: data.assigned_vehicles || []
+      };
 
-    setDrivers(prev => [...prev, newDriver]);
-    return newDriver;
+      setDrivers(prev => [...prev, newDriver]);
+      
+      toast({
+        title: "Driver added successfully",
+        description: `${driverData.name} has been added to your drivers.`,
+      });
+      
+      return newDriver;
+    } catch (error) {
+      console.error('Error adding driver:', error);
+      toast({
+        title: "Error adding driver",
+        description: "Failed to add driver. Please try again.",
+        variant: "destructive"
+      });
+      throw error;
+    }
   };
 
-  const updateDriver = (driverId: string, updates: Partial<Driver>) => {
-    setDrivers(prev =>
-      prev.map(driver =>
-        driver.id === driverId ? { ...driver, ...updates } : driver
-      )
-    );
+  const updateDriver = async (driverId: string, updates: Partial<Driver>) => {
+    try {
+      const { error } = await supabase
+        .from('drivers')
+        .update({
+          full_name: updates.name,
+          license_number: updates.licenseNumber,
+          assigned_vehicles: updates.assignedVehicles
+        })
+        .eq('id', driverId)
+        .eq('owner_id', user?.id);
+      
+      if (error) throw error;
+      
+      setDrivers(prev =>
+        prev.map(driver =>
+          driver.id === driverId ? { ...driver, ...updates } : driver
+        )
+      );
+    } catch (error) {
+      console.error('Error updating driver:', error);
+      toast({
+        title: "Error updating driver",
+        description: "Failed to update driver. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const removeDriver = (driverId: string) => {
-    setDrivers(prev => prev.filter(driver => driver.id !== driverId));
+  const removeDriver = async (driverId: string) => {
+    try {
+      const { error } = await supabase
+        .from('drivers')
+        .delete()
+        .eq('id', driverId)
+        .eq('owner_id', user?.id);
+      
+      if (error) throw error;
+      
+      setDrivers(prev => prev.filter(driver => driver.id !== driverId));
+      
+      toast({
+        title: "Driver removed",
+        description: "Driver has been removed from your list.",
+      });
+    } catch (error) {
+      console.error('Error removing driver:', error);
+      toast({
+        title: "Error removing driver",
+        description: "Failed to remove driver. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const getDriversByUser = (userId: string) => {
