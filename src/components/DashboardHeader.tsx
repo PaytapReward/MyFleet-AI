@@ -1,9 +1,10 @@
-import { Bell, User, LogOut, Settings } from "lucide-react";
+import { MessageCircle, User, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,11 +13,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import ChatbotModal from "@/components/ChatbotModal";
 
 const DashboardHeader = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
   return (
     <header className="sticky top-0 z-40 glass-effect border-b border-border/50 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -31,9 +35,13 @@ const DashboardHeader = () => {
         </div>
         
         <div className="flex items-center space-x-3">
-          <Button variant="ghost" size="icon" className="relative apple-button rounded-xl h-11 w-11">
-            <Bell className="h-5 w-5" />
-            <span className="absolute -top-1 -right-1 h-3 w-3 bg-destructive rounded-full animate-pulse"></span>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="relative apple-button rounded-xl h-11 w-11 hover:bg-primary/10"
+            onClick={() => setIsChatOpen(true)}
+          >
+            <MessageCircle className="h-5 w-5" />
           </Button>
           
           <DropdownMenu>
@@ -71,6 +79,11 @@ const DashboardHeader = () => {
           </DropdownMenu>
         </div>
       </div>
+      
+      <ChatbotModal 
+        isOpen={isChatOpen} 
+        onClose={() => setIsChatOpen(false)} 
+      />
     </header>
   );
 };
